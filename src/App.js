@@ -1,9 +1,13 @@
-import './App.css';
-
+import './App.css'
+import { Routes, Route } from 'react-router-dom'
+import HomeScreen from './screens/HomeScreen';
 function App() {
   return (
     <div className="App">
-      <i class="fa-solid fa-bars"></i>
+      <Routes>
+        <Route path='/' element={<HomeScreen />} />
+
+      </Routes>
     </div>
   );
 }
