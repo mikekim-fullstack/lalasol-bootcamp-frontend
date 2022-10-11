@@ -10,6 +10,7 @@ const ContentScreen = () => {
             <Nav />
             <h1>ContentScreen</h1>
             {selectedCat && <h2>{selectedCat.lists[selectedCat.id]}</h2>}
+            {selectedCat && <h2>{selectedCat?.course}</h2>}
         </div>
     )
 }

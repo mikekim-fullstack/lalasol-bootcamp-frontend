@@ -6,6 +6,7 @@ const categorySlice = createSlice({
     reducers: {
         setCat: (state, action) => {
             state.cat = action.payload
+            console.log('state.cat: ', state.cat)
         }
     }
 })

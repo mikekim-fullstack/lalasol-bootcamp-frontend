@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import './NavSubmenu.css'
-import { useSelector } from 'react-redux'
-import { selectCat } from '../slices/categorySlice'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectCat, setCat } from '../slices/categorySlice'
 import { Link } from 'react-router-dom'
 const NavSubmenu = ({ className }) => {
     const subMenu = [
@@ -73,6 +73,7 @@ const NavSubmenu = ({ className }) => {
     }, [subMenu])
 
     const selectedCat = useSelector(selectCat)
+    const dispatch = useDispatch()
     return (
         <div className={`nav__submenu ${className}`}>
             <h2>{selectedCat && selectedCat.lists[selectedCat.id]}</h2>
@@ -83,7 +84,7 @@ const NavSubmenu = ({ className }) => {
                         <h3 className='submenu__title'>{arr[0].toUpperCase()}</h3>
                         {arr[1].map((course, index) => (
                             // <Link key={index} to={`/${selectedCat.lists[selectedCat.id].toLowerCase().replace(' ', '_')}/${course.toLowerCase().replace(' ', '_')}`}><h4 className='sub__submenu'>{course}</h4></Link>
-                            <Link key={index} to='/content'><h4 className='sub__submenu'>{course}</h4></Link>
+                            <Link onClick={() => dispatch(setCat({ ...selectedCat, course }))} key={index} to='/content'><h4 className='sub__submenu'>{course}</h4></Link>
                         ))}
                     </div>
 
