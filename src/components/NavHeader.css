@@ -30,6 +30,7 @@
 }
 
 .nav__menu .cat {
+    padding: 0 5px;
     font-size: 0.7rem;
     color: rgb(187, 187, 1);
 }
@@ -37,7 +38,7 @@
 .nav__menu span>.bootcamp {
     padding-left: 5px;
     color: yellow;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
 }
 
 .nav__user {
