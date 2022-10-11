@@ -1,0 +1,72 @@
+.nav__header {
+    height: 56px;
+    background-color: var(--bg-primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    color: white;
+}
+
+.nav__menu {
+    /* border: 1px dashed pink; */
+    /* width: 100%; */
+    display: flex;
+    align-items: flex-start;
+}
+
+.nav__menu svg {
+    fill: white;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+
+.nav__menu .logo {
+    font-size: 1.2rem;
+    font-weight: 400;
+    /* margin: 0 20px; */
+    color: rgb(0, 222, 222)
+}
+
+.nav__menu .cat {
+    font-size: 0.7rem;
+    color: rgb(187, 187, 1);
+}
+
+.nav__menu span>.bootcamp {
+    padding-left: 5px;
+    color: yellow;
+    font-size: 0.8rem;
+}
+
+.nav__user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav__user button {
+    border: none;
+    outline: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: rgb(0, 92, 0);
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 300;
+}
+
+.nav__user button:hover {
+    background-color: rgb(0, 70, 0);
+}
+
+.nav__user button:active {
+    border: 1px solid grey;
+}
+
+.nav__user i {
+    font-size: 24px;
+}

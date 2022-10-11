@@ -1,0 +1,40 @@
+.nav__categories {
+    /* border: 1px dashed pink; */
+    height: 28px;
+    margin: 0px 15px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-start;
+    text-align: center;
+    /* overflow-x: scroll;
+    overflow-y: hidden; */
+    overflow: scroll;
+    scrollbar-width: none;
+    background-color: rgb(96, 0, 0);
+    border-radius: 15px;
+    background-image: linear-gradient(90deg,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0) 20%,
+            rgba(0, 0, 0, 0) 50%,
+            rgba(0, 0, 0, 0) 80%,
+            rgba(0, 0, 0, 0.8) 100%);
+    /* z-index: 2; */
+}
+
+.nav__btn_category {
+    border: none;
+    outline: none;
+    color: white;
+    background-color: #393939;
+    margin: 3px;
+    padding: 0px 10px;
+    border-radius: 16px;
+    border: 1px solid gray;
+    transition: all 250ms ease;
+    cursor: pointer;
+}
+
+.nav__btn_category:hover {
+    background-color: #191919;
+    border-color: white;
+}

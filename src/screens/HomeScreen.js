@@ -1,8 +1,13 @@
 import React from 'react'
+import Nav from '../components/Nav'
 import './HomeScreen.css'
+
 const HomeScreen = () => {
     return (
-        <div>HomeScreen</div>
+        <>
+            <Nav />
+            <div>HomeScreen</div>
+        </>
     )
 }
 
