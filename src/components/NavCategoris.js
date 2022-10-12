@@ -3,7 +3,7 @@ import './NavCategories.css'
 import { useDispatch } from 'react-redux'
 import { setCat } from '../slices/categorySlice'
 const NavCategoris = () => {
-    const categories = ['HTML', 'CSS', 'JS', 'Data Structure', 'ReactJS', 'Practice', 'General', 'HR']
+    const categories = ['HTML', 'CSS', 'JavaScript', 'Data Structure', 'ReactJS', 'Practices', 'General', 'HR']
     const dispatch = useDispatch()
     const handleBtnClick = (e) => {
         console.log(e.target.name)
