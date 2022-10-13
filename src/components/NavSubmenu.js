@@ -3,10 +3,11 @@ import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getCurrentCat, setCat } from '../slices/categorySlice'
 import { Link } from 'react-router-dom'
-// -- This is temporary data set and later this data will be
-//    fetched from server.
-// --
+
 const NavSubmenu = ({ className }) => {
+    // -- This is temporary data set and later this data will be
+    //    fetched from server.
+    // --
     const allCoursesData = [
         {
             id: 0,
