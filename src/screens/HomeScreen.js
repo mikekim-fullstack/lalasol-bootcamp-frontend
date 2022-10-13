@@ -4,9 +4,8 @@ import './HomeScreen.css'
 
 const HomeScreen = () => {
     return (
-        <>
 
-            <div>HomeScreen</div>
+        <div className='home__screen'>HomeScreen
             <h1>HomeScreen</h1>
             <h1>HomeScreen</h1>
             <h1>HomeScreen</h1>
@@ -43,7 +42,8 @@ const HomeScreen = () => {
             <h1>HomeScreen</h1>
             <h1>HomeScreen</h1>
             <h1>HomeScreen</h1>
-        </>
+        </div>
+
     )
 }
 

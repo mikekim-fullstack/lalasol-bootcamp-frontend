@@ -3,11 +3,12 @@ import { Routes, Route } from 'react-router-dom'
 import HomeScreen from './screens/HomeScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import CourseScreen from './screens/CourseScreen'
-import Nav from './components/Nav'
+// import Nav from './components/Nav'
+import NavHeader from './components/NavHeader'
 function App() {
   return (
     <div className="App">
-      <Nav />
+      <NavHeader />
       <Routes>
         <Route path='/' element={<HomeScreen />} />
         <Route path='/profile' element={<ProfileScreen />} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getCurrentCat, setCat } from '../slices/categorySlice'
@@ -229,11 +230,12 @@ const NavSubmenu = ({ className }) => {
 
 
     ]
-    const [selectedCourseId, setSelectedCourseId] = useState(null)
+    const navigate = useNavigate()
+    const [navPath, setNavPath] = useState(null)
     const [selCourse, setSelCourse] = useState(null)
     let selectedCat = useSelector(getCurrentCat)
 
-    //return object id, title
+    // -- return object id, title. --
     selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
     const dispatch = useDispatch()
 
@@ -246,7 +248,7 @@ const NavSubmenu = ({ className }) => {
 
     const handleChaper = (e) => {
         // console.log(e.target.name)
-        setSelectedCourseId(parseInt(e.target.name))
+        // setSelectedCourseId(parseInt(e.target.name))
         const _selCourse = selCourses.filter((course) => {
             // console.log('----course.id-----', course.id, parseInt(e.target.name))
             return parseInt(course.id) === parseInt(e.target.name)
@@ -262,10 +264,10 @@ const NavSubmenu = ({ className }) => {
         const path = e.target.name?.split(',')
         const subject = path[0].trim()
         const subjectId = parseInt(path[1].trim())
+
+        navigate(`${subject}/${subjectId}`)
+        // setNavPath([subject, subjectId])
         // console.log(subject, subjectId)
-
-
-
     }
 
 
@@ -278,6 +280,7 @@ const NavSubmenu = ({ className }) => {
 
     return (
         <div className={`nav__submenu ${className}`}>
+            {/* {navPath && <Navigate to={`${navPath[0]}/:${navPath[1]}`} />} */}
             <div className='submenu__title'>{selectedCat && selectedCat?.title}</div>
             <div className='submenu__chapters'>
                 {selCourses?.map((course) => (
@@ -315,9 +318,6 @@ const NavSubmenu = ({ className }) => {
                     })
                 }
             </div>
-
-
-
         </div>
     )
 }
