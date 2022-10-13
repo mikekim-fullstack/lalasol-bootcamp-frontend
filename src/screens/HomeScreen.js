@@ -1,12 +1,48 @@
 import React from 'react'
-import Nav from '../components/Nav'
+
 import './HomeScreen.css'
 
 const HomeScreen = () => {
     return (
         <>
-            <Nav />
+
             <div>HomeScreen</div>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
+            <h1>HomeScreen</h1>
         </>
     )
 }

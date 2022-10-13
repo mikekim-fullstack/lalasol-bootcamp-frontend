@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectCat, setCat } from '../slices/categorySlice'
+import { getCurrentCat, setCat } from '../slices/categorySlice'
 import { Link } from 'react-router-dom'
 const NavSubmenu = ({ className }) => {
-    const subMenu = {
-        'HTML': [{
+    const allCoursesData = [
+        {
             id: 0,
+            cat_id: 8,
             title: 'HTML Intro',
             courses: ['Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -17,6 +18,7 @@ const NavSubmenu = ({ className }) => {
         },
         {
             id: 1,
+            cat_id: 8,
             title: 'HTML Level 1',
             courses: ['Reading', 'Video #1'],
             quiz: ['Quiz'],
@@ -26,6 +28,7 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         }, {
             id: 2,
+            cat_id: 8,
             title: 'HTML Level 2',
             courses: ['HTML Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -36,6 +39,7 @@ const NavSubmenu = ({ className }) => {
         },
         {
             id: 3,
+            cat_id: 8,
             title: 'HTML Level 3',
             courses: ['HTML Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -43,10 +47,11 @@ const NavSubmenu = ({ className }) => {
             reference: ['Reference'],
             projects: ['Course Projects', 'Interview Projects'],
             skills: ['Skills'],
-        }]
+        }
         ,
-        'CSS': [{
-            id: 1,
+        {
+            id: 4,
+            cat_id: 6,
             title: 'CSS Intro',
             courses: ['CSS Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -56,7 +61,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 2,
+            id: 5,
+            cat_id: 6,
             title: 'CSS Level 1',
             courses: ['CSS Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -66,7 +72,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 3,
+            id: 6,
+            cat_id: 6,
             title: 'CSS Level 2',
             courses: ['CSS Reading', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -76,7 +83,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 4,
+            id: 7,
+            cat_id: 6,
             title: 'CSS Level 3',
             courses: ['CSS Reading 3', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -86,7 +94,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 6,
+            id: 8,
+            cat_id: 6,
             title: 'CSS Level 4',
             courses: ['CSS Reading 4', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -96,7 +105,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 7,
+            id: 9,
+            cat_id: 6,
             title: 'CSS Level 5',
             courses: ['CSS Reading 5', 'Video #1', 'Video #2'],
             quiz: ['Quiz'],
@@ -105,95 +115,102 @@ const NavSubmenu = ({ className }) => {
             projects: ['Course Projects', 'Interview Projects'],
             skills: ['Skills'],
         },
-        ],
-        'JavaScript': [
-            {
-                id: 2,
-                title: 'JavaScript  Intro',
-                courses: ['JavaScript Reading', 'Video #1', 'Video #2', 'Video #3'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            },
-            {
-                id: 3,
-                title: 'JavaScript Level 1',
-                courses: ['JavaScript Reading 1', 'Video #1', 'Video #2', 'Video #3'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            },
-            {
-                id: 4,
-                title: 'JavaScript Level 2',
-                courses: ['JavaScript Reading 2', 'Video #1', 'Video #2', 'Video #3'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            }
-        ]
-        ,
-        'Data Structure': [
-            {
-                id: 3,
-                title: 'Data Structure Intro',
-                courses: ['Data Structure Reading', 'Video #1', 'Video #2'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            },
-            {
-                id: 4,
-                title: 'Data Structure Level ',
-                courses: ['Data Structure Reading 1', 'Video #1', 'Video #2'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            },
-            {
-                id: 5,
-                title: 'Data Structure Level 2',
-                courses: ['Data Structure Reading 2', 'Video #1', 'Video #2'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            }, {
-                id: 6,
-                title: 'Data Structure Level 3',
-                courses: ['Data Structure Reading 3', 'Video #1', 'Video #2'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            },
-            {
-                id: 7,
-                title: 'Data Structure Level 4',
-                courses: ['Data Structure Reading 4', 'Video #1', 'Video #2'],
-                quiz: ['Quiz'],
-                homework: ['Home Work #1'],
-                reference: ['Reference'],
-                projects: ['Course Projects', 'Interview Projects'],
-                skills: ['Skills'],
-            }
 
-        ]
+
+        {
+            id: 10,
+            cat_id: 5,
+            title: 'JavaScript  Intro',
+            courses: ['JavaScript Reading', 'Video #1', 'Video #2', 'Video #3'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        },
+        {
+            id: 11,
+            cat_id: 5,
+            title: 'JavaScript Level 1',
+            courses: ['JavaScript Reading 1', 'Video #1', 'Video #2', 'Video #3'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        },
+        {
+            id: 12,
+            cat_id: 5,
+            title: 'JavaScript Level 2',
+            courses: ['JavaScript Reading 2', 'Video #1', 'Video #2', 'Video #3'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        }
+
         ,
-        'ReactJS': [{
-            id: 4,
+
+        {
+            id: 13,
+            cat_id: 4,
+            title: 'Data Structure Intro',
+            courses: ['Data Structure Reading', 'Video #1', 'Video #2'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        },
+        {
+            id: 14,
+            cat_id: 4,
+            title: 'Data Structure Level ',
+            courses: ['Data Structure Reading 1', 'Video #1', 'Video #2'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        },
+        {
+            id: 15,
+            cat_id: 4,
+            title: 'Data Structure Level 2',
+            courses: ['Data Structure Reading 2', 'Video #1', 'Video #2'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        }, {
+            id: 16,
+            cat_id: 4,
+            title: 'Data Structure Level 3',
+            courses: ['Data Structure Reading 3', 'Video #1', 'Video #2'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        },
+        {
+            id: 17,
+            cat_id: 4,
+            title: 'Data Structure Level 4',
+            courses: ['Data Structure Reading 4', 'Video #1', 'Video #2'],
+            quiz: ['Quiz'],
+            homework: ['Home Work #1'],
+            reference: ['Reference'],
+            projects: ['Course Projects', 'Interview Projects'],
+            skills: ['Skills'],
+        }
+        ,
+        {
+            id: 18,
+            cat_id: 3,
             title: 'React JS Intro',
             courses: ['React JS Reading', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -203,7 +220,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 5,
+            id: 19,
+            cat_id: 3,
             title: 'React JS Level 1',
             courses: ['React JS Reading 1', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -213,7 +231,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 6,
+            id: 20,
+            cat_id: 3,
             title: 'React JS Level 2',
             courses: ['React JS Reading 2', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -223,7 +242,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 7,
+            id: 21,
+            cat_id: 3,
             title: 'React JS Level 3',
             courses: ['React JS Reading 3', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -233,7 +253,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 8,
+            id: 22,
+            cat_id: 3,
             title: 'React JS Level 4',
             courses: ['React JS Reading 4', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -243,7 +264,8 @@ const NavSubmenu = ({ className }) => {
             skills: ['Skills'],
         },
         {
-            id: 9,
+            id: 23,
+            cat_id: 3,
             title: 'React JS Level 5',
             courses: ['React JS Reading 5', 'Video #1', 'Video #2', 'Video #3'],
             quiz: ['Quiz'],
@@ -252,87 +274,116 @@ const NavSubmenu = ({ className }) => {
             projects: ['Course Projects', 'Interview Projects'],
             skills: ['Skills'],
         },
-        ]
+
         ,
-        'Practices': [
-            {
-                id: 5,
-                title: 'Practice 1',
-                practices: ['Beginner', 'Intermediate', 'Advanced'],
-            }
-        ]
+
+        {
+            id: 24,
+            cat_id: 9,
+            title: 'Practice 1',
+            practices: ['Beginner', 'Intermediate', 'Advanced'],
+        }
+
         ,
-        'General': [{
-            id: 6,
+        {
+            id: 25,
+            cat_id: 2,
             title: 'General 1',
             general: ['General'],
-        }]
+        }
         ,
-        'HR': [{
-            id: 7,
+        {
+            id: 26,
+            cat_id: 1,
             title: 'HR 1',
             hr: ['HR'],
-        }]
+        }
         ,
 
-    }
-    const [selectedChapter, setSelectedChapter] = useState(null)
-    const selectedCat = useSelector(selectCat)
+    ]
+    const [selectedCourseId, setSelectedCourseId] = useState(null)
+    const [selCourse, setSelCourse] = useState(null)
+    let selectedCat = useSelector(getCurrentCat)
+
+    //return object id, title
+    selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
     const dispatch = useDispatch()
-    const selectedMenuName = selectedCat?.lists[selectedCat.id]
 
-    const selectedSubMenu = Object.entries(subMenu).filter((entry) => entry[0] === selectedMenuName)[0]
-    const subjectTitle = selectedSubMenu && selectedSubMenu[0]
-    const subjects = selectedSubMenu && selectedSubMenu[1]?.map((subject) => subject.title)
-    const chapter = selectedSubMenu && selectedSubMenu[1]
+    // console.log('selectedCat: ', selectedCat.title)
+
+    //---------- Lists of course title which belong to selected category ------//
+    const selCourses = allCoursesData
+        .filter((courses) => courses.cat_id === selectedCat.id)
+
+
     const handleChaper = (e) => {
-        console.log(e.target.name)
-        setSelectedChapter(chapter[parseInt(e.target.name)])
+        // console.log(e.target.name)
+        setSelectedCourseId(parseInt(e.target.name))
+        const _selCourse = selCourses.filter((course) => {
+            // console.log('----course.id-----', course.id, parseInt(e.target.name))
+            return parseInt(course.id) === parseInt(e.target.name)
+        })
+        if (_selCourse) setSelCourse(_selCourse[0])
+        else setSelCourse(null)
 
     }
 
-    useEffect(() => {
-        /*
-        console.log('submenu: ', Object.keys(subMenu))
-        Object.entries(subMenu).map((entity, index) => {
-            const key = entity[0]
-            const value = entity[1]
-            console.log('key:value = ', key, value, ', length of value: ', value.length)
+    const handleChaperSubject = (e) => {
 
-        })
-        */
-        console.log('selectedSubMenu: ', selectedSubMenu, subjectTitle, subjects)
+    }
 
-        // console.log('submenu: ', Object.entries(subMenu[selectedCat?.id]))
-    }, [subMenu])
+
 
     useEffect(() => {
-        if (selectedChapter) {
-
-            console.log('selectedChapter: ', selectedChapter, Object.entries(selectedChapter).map((entry, index) => entry[0]))
-
-
-        }
-    }, [selectedChapter])
-
-    useEffect(() => {
-        setSelectedChapter(chapter[0])
-    }, [selectedMenuName])
+        setSelCourse(null)
+    }, [selectedCat])
+    // console.log('selCourse: ', selCourse)
 
 
     return (
         <div className={`nav__submenu ${className}`}>
-            <div className='submenu__title'>{selectedMenuName && selectedMenuName}</div>
+            <div className='submenu__title'>{selectedCat && selectedCat?.title}</div>
             <div className='submenu__chapters'>
-                {subjects?.map((sub, index) => (
-                    <button className='submenu__chapter_btn' onClick={handleChaper} key={index} name={index}>
-                        {sub}
+                {selCourses?.map((course) => (
+                    <button className='submenu__chapter_btn' onClick={handleChaper} key={course.id} name={course.id}>
+                        {course.title}
                     </button>
                 )
                 )}
             </div>
             <div className='submenu__chapter_content'>
                 {
+                    selCourse && Object.entries(selCourse).map((entry, index) => {
+                        const key = entry[0]
+                        const values = entry[1]
+                        // console.log('selectedChapter-entry:', entry)
+                        return (key !== 'id' && key !== 'cat_id' ?
+                            <div key={index}>
+                                {/*  -- Display the title of sub-items from a course.. -- */}
+                                <div className={`content__title ${key === 'title' && 'chapter'}`}>{key === 'title' ? 'CHAPTER' : key.toUpperCase()}</div>
+                                {key === 'title' ?
+                                    <div>{values}</div>
+                                    :
+                                    // -- Display sub items from a course.. --
+                                    values.map((value, index2) => {
+                                        return <button onClick={handleChaperSubject} name={index2} key={index2} className='content__subject'>{value}</button>
+                                    })
+                                }
+                            </div>
+                            : null)
+                    })
+                }
+            </div>
+
+
+
+        </div>
+    )
+}
+
+export default NavSubmenu
+
+/* {
                     selectedChapter && Object.entries(selectedChapter).map((entry, index) => {
                         const key = entry[0]
                         const values = entry[1]
@@ -350,26 +401,18 @@ const NavSubmenu = ({ className }) => {
                             </div>
                         ) : null
                     })
-                }
-            </div>
-            {/* {subMenu && subMenu.length > 0 && Object.entries(subMenu[selectedCat?.id]).map((arr, index) => {
-                return (arr[0] !== 'id' && (
-                    <div key={index}>
+                } */
+/* {subMenu && subMenu.length > 0 && Object.entries(subMenu[selectedCat?.id]).map((arr, index) => {
+    return (arr[0] !== 'id' && (
+        <div key={index}>
 
-                        <h3 className='submenu__title'>{arr[0].toUpperCase()}</h3>
-                        {arr[1].map((course, index) => (
-                            // <Link key={index} to={`/${selectedCat.lists[selectedCat.id].toLowerCase().replace(' ', '_')}/${course.toLowerCase().replace(' ', '_')}`}><h4 className='sub__submenu'>{course}</h4></Link>
-                            <Link onClick={() => dispatch(setCat({ ...selectedCat, course }))} key={index} to='/content'><h4 className='sub__submenu'>{course}</h4></Link>
-                        ))}
-                    </div>
-
-
-                ))
-            })} */}
-
-
+            <h3 className='submenu__title'>{arr[0].toUpperCase()}</h3>
+            {arr[1].map((course, index) => (
+                // <Link key={index} to={`/${selectedCat.lists[selectedCat.id].toLowerCase().replace(' ', '_')}/${course.toLowerCase().replace(' ', '_')}`}><h4 className='sub__submenu'>{course}</h4></Link>
+                <Link onClick={() => dispatch(setCat({ ...selectedCat, course }))} key={index} to='/content'><h4 className='sub__submenu'>{course}</h4></Link>
+            ))}
         </div>
-    )
-}
 
-export default NavSubmenu
+
+    ))
+})} */
