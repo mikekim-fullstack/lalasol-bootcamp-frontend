@@ -19,7 +19,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 1, 'title': 'Home Work #1' }],
             projects: [{ 'id': 1, 'title': 'Course Projects' }, { 'id': 2, 'title': 'Interview Projects' }],
             skills: [{ 'id': 1, 'title': 'Skills' }],
-            reference: [{ 'id': 1, 'title': 'Reference' }],
+            references: [{ 'id': 1, 'title': 'Reference' }],
         },
         {
             id: 1,
@@ -30,7 +30,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 2, 'title': 'Home Work #1' }],
             projects: [{ 'id': 3, 'title': 'Course Projects' }, { 'id': 4, 'title': 'Interview Projects' }],
             skills: [{ 'id': 2, 'title': 'Skills #1' }],
-            reference: [{ 'id': 2, 'title': 'Reference' }],
+            references: [{ 'id': 2, 'title': 'Reference' }],
         },
         {
             id: 2,
@@ -41,7 +41,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 3, 'title': 'Home Work #1' }],
             projects: [{ 'id': 5, 'title': 'Course Projects' }, { 'id': 6, 'title': 'Interview Projects' }],
             skills: [{ 'id': 3, 'title': 'Skills #1' }],
-            reference: [{ 'id': 3, 'title': 'Reference' }],
+            references: [{ 'id': 3, 'title': 'Reference' }],
         },
         {
             id: 3,
@@ -52,7 +52,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 4, 'title': 'Home Work #1' }],
             projects: [{ 'id': 7, 'title': 'Course Projects' }, { 'id': 8, 'title': 'Interview Projects' }],
             skills: [{ 'id': 4, 'title': 'Skills #1' }],
-            reference: [{ 'id': 4, 'title': 'Reference' }],
+            references: [{ 'id': 4, 'title': 'Reference' }],
         },
         {
             id: 4,
@@ -63,7 +63,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 5, 'title': 'Home Work #1' }],
             projects: [{ 'id': 9, 'title': 'Course Projects' }, { 'id': 10, 'title': 'Interview Projects' }],
             skills: [{ 'id': 5, 'title': 'Skills #1' }],
-            reference: [{ 'id': 5, 'title': 'Reference' }],
+            references: [{ 'id': 5, 'title': 'Reference' }],
         },
         {
             id: 5,
@@ -74,7 +74,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 6, 'title': 'Home Work #1' }],
             projects: [{ 'id': 11, 'title': 'Course Projects' }, { 'id': 12, 'title': 'Interview Projects' }],
             skills: [{ 'id': 6, 'title': 'Skills #1' }],
-            reference: [{ 'id': 6, 'title': 'Reference' }],
+            references: [{ 'id': 6, 'title': 'Reference' }],
         },
         {
             id: 6,
@@ -85,7 +85,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 7, 'title': 'Home Work #1' }],
             projects: [{ 'id': 13, 'title': 'Course Projects' }, { 'id': 14, 'title': 'Interview Projects' }],
             skills: [{ 'id': 7, 'title': 'Skills #1' }],
-            reference: [{ 'id': 7, 'title': 'Reference' }],
+            references: [{ 'id': 7, 'title': 'Reference' }],
         },
         {
             id: 7,
@@ -96,7 +96,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 8, 'title': 'Home Work #1' }],
             projects: [{ 'id': 15, 'title': 'Course Projects' }, { 'id': 16, 'title': 'Interview Projects' }],
             skills: [{ 'id': 8, 'title': 'Skills #1' }],
-            reference: [{ 'id': 8, 'title': 'Reference' }],
+            references: [{ 'id': 8, 'title': 'Reference' }],
         },
         {
             id: 8,
@@ -107,7 +107,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 9, 'title': 'Home Work #1' }],
             projects: [{ 'id': 17, 'title': 'Course Projects' }, { 'id': 18, 'title': 'Interview Projects' }],
             skills: [{ 'id': 9, 'title': 'Skills #1' }],
-            reference: [{ 'id': 9, 'title': 'Reference' }],
+            references: [{ 'id': 9, 'title': 'Reference' }],
         },
         {
             id: 9,
@@ -118,7 +118,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 10, 'title': 'Home Work #1' }],
             projects: [{ 'id': 19, 'title': 'Course Projects' }, { 'id': 20, 'title': 'Interview Projects' }],
             skills: [{ 'id': 10, 'title': 'Skills #1' }],
-            reference: [{ 'id': 10, 'title': 'Reference' }],
+            references: [{ 'id': 10, 'title': 'Reference' }],
         },
         {
             id: 10,
@@ -129,7 +129,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 11, 'title': 'Home Work #1' }],
             projects: [{ 'id': 21, 'title': 'Course Projects' }, { 'id': 22, 'title': 'Interview Projects' }],
             skills: [{ 'id': 11, 'title': 'Skills #1' }],
-            reference: [{ 'id': 11, 'title': 'Reference' }],
+            references: [{ 'id': 11, 'title': 'Reference' }],
         },
         {
             id: 11,
@@ -140,7 +140,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 12, 'title': 'Home Work #1' }],
             projects: [{ 'id': 23, 'title': 'Course Projects' }, { 'id': 24, 'title': 'Interview Projects' }],
             skills: [{ 'id': 12, 'title': 'Skills #1' }],
-            reference: [{ 'id': 12, 'title': 'Reference' }],
+            references: [{ 'id': 12, 'title': 'Reference' }],
         },
         {
             id: 12,
@@ -151,7 +151,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 13, 'title': 'Home Work #1' }],
             projects: [{ 'id': 25, 'title': 'Course Projects' }, { 'id': 26, 'title': 'Interview Projects' }],
             skills: [{ 'id': 32, 'title': 'Skills #1' }],
-            reference: [{ 'id': 13, 'title': 'Reference' }],
+            references: [{ 'id': 13, 'title': 'Reference' }],
         },
         {
             id: 13,
@@ -162,7 +162,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 14, 'title': 'Home Work #1' }],
             projects: [{ 'id': 27, 'title': 'Course Projects' }, { 'id': 28, 'title': 'Interview Projects' }],
             skills: [{ 'id': 14, 'title': 'Skills #1' }],
-            reference: [{ 'id': 14, 'title': 'Reference' }],
+            references: [{ 'id': 14, 'title': 'Reference' }],
         },
         {
             id: 14,
@@ -173,7 +173,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 15, 'title': 'Home Work #1' }],
             projects: [{ 'id': 29, 'title': 'Course Projects' }, { 'id': 30, 'title': 'Interview Projects' }],
             skills: [{ 'id': 15, 'title': 'Skills #1' }],
-            reference: [{ 'id': 15, 'title': 'Reference' }],
+            references: [{ 'id': 15, 'title': 'Reference' }],
         },
         {
             id: 15,
@@ -184,7 +184,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 16, 'title': 'Home Work #1' }],
             projects: [{ 'id': 31, 'title': 'Course Projects' }, { 'id': 32, 'title': 'Interview Projects' }],
             skills: [{ 'id': 16, 'title': 'Skills #1' }],
-            reference: [{ 'id': 16, 'title': 'Reference' }],
+            references: [{ 'id': 16, 'title': 'Reference' }],
         },
         {
             id: 18,
@@ -195,7 +195,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 17, 'title': 'Home Work #1' }],
             projects: [{ 'id': 33, 'title': 'Course Projects' }, { 'id': 34, 'title': 'Interview Projects' }],
             skills: [{ 'id': 17, 'title': 'Skills #1' }],
-            reference: [{ 'id': 17, 'title': 'Reference' }],
+            references: [{ 'id': 17, 'title': 'Reference' }],
         },
         {
             id: 19,
@@ -206,7 +206,7 @@ const NavSubmenu = ({ className }) => {
             homeworks: [{ 'id': 18, 'title': 'Home Work #1' }],
             projects: [{ 'id': 35, 'title': 'Course Projects' }, { 'id': 36, 'title': 'Interview Projects' }],
             skills: [{ 'id': 18, 'title': 'Skills #1' }],
-            reference: [{ 'id': 18, 'title': 'Reference' }],
+            references: [{ 'id': 18, 'title': 'Reference' }],
         },
         {
             id: 24,
@@ -269,14 +269,6 @@ const NavSubmenu = ({ className }) => {
         // setNavPath([subject, subjectId])
         // console.log(subject, subjectId)
     }
-
-
-
-    useEffect(() => {
-        setSelCourse(null)
-    }, [selectedCat])
-    // console.log('selCourse: ', selCourse)
-
 
     return (
         <div className={`nav__submenu ${className}`}>
