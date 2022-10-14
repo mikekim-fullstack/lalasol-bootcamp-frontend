@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { getCurrentCat, setCat } from '../slices/categorySlice'
+import { getCurrentCat, setCat, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
 import { Link } from 'react-router-dom'
 
-const NavSubmenu = ({ className }) => {
+const NavSubmenu = ({ className, clickedCat }) => {
     // -- This is temporary data set and later this data will be
     //    fetched from server.
     // --
+
     const allCoursesData = [
         {
             id: 0,
@@ -221,10 +222,10 @@ const NavSubmenu = ({ className }) => {
             general: [{ 'id': 1, 'title': 'General' },],
         },
         {
-            id: 25,
+            id: 26,
             cat_id: 1,
             title: 'HR 1',
-            general: [{ 'id': 1, 'title': 'HR' },],
+            hr: [{ 'id': 1, 'title': 'HR' },],
         },
         //-------------------------------
 
@@ -234,6 +235,7 @@ const NavSubmenu = ({ className }) => {
     const [navPath, setNavPath] = useState(null)
     const [selCourse, setSelCourse] = useState(null)
     let selectedCat = useSelector(getCurrentCat)
+    const selCatStatus = useSelector(getSelCatStatus)
 
     // -- return object id, title. --
     selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
@@ -248,13 +250,18 @@ const NavSubmenu = ({ className }) => {
 
     const handleChaper = (e) => {
         // console.log(e.target.name)
-        // setSelectedCourseId(parseInt(e.target.name))
+
+        // -- Show all courses from the selected category 
+        //    at the top of submenu(sideBar). --
         const _selCourse = selCourses.filter((course) => {
             // console.log('----course.id-----', course.id, parseInt(e.target.name))
             return parseInt(course.id) === parseInt(e.target.name)
         })
         if (_selCourse) setSelCourse(_selCourse[0])
         else setSelCourse(null)
+
+        // -- After select the chapter show the items of selected chapter. ---
+        dispatch(setSelCatStatus(false))
 
     }
 
@@ -266,11 +273,12 @@ const NavSubmenu = ({ className }) => {
         const subjectId = parseInt(path[1].trim())
 
         navigate(`${subject}/${subjectId}`)
-        // setNavPath([subject, subjectId])
-        // console.log(subject, subjectId)
-    }
 
+        console.log(subject, subjectId)
+    }
+    // console.log('selCatStatus: ', className, selCatStatus)
     return (
+        // -- Display chapters. --
         <div className={`nav__submenu ${className}`}>
             {/* {navPath && <Navigate to={`${navPath[0]}/:${navPath[1]}`} />} */}
             <div className='submenu__title'>{selectedCat && selectedCat?.title}</div>
@@ -282,34 +290,39 @@ const NavSubmenu = ({ className }) => {
                 )
                 )}
             </div>
-            <div className='submenu__chapter_content'>
-                {
-                    selCourse && Object.entries(selCourse).map((courseEntry, index) => {
-                        const keyTitle = courseEntry[0]
-                        const courseValues = courseEntry[1]
-                        // console.log('selectedChapter-entry:', courseValues)
-                        return (keyTitle !== 'id' && keyTitle !== 'cat_id' ?
-                            <div key={index}>
-                                {/*  -- Display the title of sub-items from a course.. -- */}
-                                <div className={`content__title ${keyTitle === 'title' && 'chapter'}`}>
-                                    {keyTitle === 'title' ? 'CHAPTER' : keyTitle.toUpperCase()}
+            {/* -- Display sub items from selected chaper. -- */}
+            {!selCatStatus && (
+                <div className='submenu__chapter_content'>
+                    {
+                        selCourse && Object.entries(selCourse).map((courseEntry, index) => {
+                            const keyTitle = courseEntry[0]
+                            const courseValues = courseEntry[1]
+                            // console.log('selectedChapter-entry:', courseValues)
+                            return (keyTitle !== 'id' && keyTitle !== 'cat_id' ?
+                                <div key={index}>
+                                    {/*  -- Display the title of sub-items from a course.. -- */}
+                                    <div className={`content__title ${keyTitle === 'title' && 'chapter'}`}>
+                                        {keyTitle === 'title' ? 'CHAPTER' : keyTitle.toUpperCase()}
+                                    </div>
+                                    {keyTitle === 'title' ?
+                                        <div>{courseValues}</div>
+                                        :
+                                        // -- Display sub items from a course.. --
+                                        Object.entries(courseValues).map((valueEntry) => {
+                                            // -- const index = valueEntry[0] // only array index. --
+                                            const itemValues = valueEntry[1]
+                                            // console.log('item: ', keyTitle, valueEntry)
+                                            return <button onClick={handleChaperSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
+                                        })
+                                    }
                                 </div>
-                                {keyTitle === 'title' ?
-                                    <div>{courseValues}</div>
-                                    :
-                                    // -- Display sub items from a course.. --
-                                    Object.entries(courseValues).map((valueEntry) => {
-                                        // -- const index = valueEntry[0] // only array index. --
-                                        const itemValues = valueEntry[1]
-                                        // console.log('item: ', keyTitle, valueEntry)
-                                        return <button onClick={handleChaperSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
-                                    })
-                                }
-                            </div>
-                            : null)
-                    })
-                }
-            </div>
+                                : null)
+                        })
+                    }
+                </div>
+            )}
+
+
         </div>
     )
 }

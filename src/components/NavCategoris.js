@@ -1,7 +1,8 @@
 import React from 'react'
 import './NavCategories.css'
 import { useDispatch } from 'react-redux'
-import { setCat } from '../slices/categorySlice'
+import { setCat, setSelCatStatus } from '../slices/categorySlice'
+
 const NavCategoris = () => {
     // const categories = ['HTML', 'CSS', 'JavaScript', 'Data Structure', 'ReactJS', 'Practices', 'General', 'HR']
     const categories = [
@@ -63,9 +64,14 @@ const NavCategoris = () => {
     // console.log('sorted: ', sortedCat)
 
     const dispatch = useDispatch()
+
     const handleBtnClick = (e) => {
         // console.log(e.target.name)
         dispatch(setCat({ selectedId: e.target.name, lists: categories }))
+
+        // -- For letting the submenu(sideBar) to only show the subject lists not showing 
+        //    previous items of selected subject. --
+        dispatch(setSelCatStatus(true))
 
     }
     return (

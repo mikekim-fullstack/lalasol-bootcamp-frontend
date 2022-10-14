@@ -1,8 +1,9 @@
 import React from 'react'
-
+import { useParams } from 'react-router-dom'
 import './HomeScreen.css'
 
 const HomeScreen = () => {
+
     return (
 
         <div className='home__screen'>HomeScreen

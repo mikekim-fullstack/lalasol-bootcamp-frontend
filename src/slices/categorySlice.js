@@ -7,12 +7,18 @@ const categorySlice = createSlice({
         setCat: (state, action) => {
             state.cats = action.payload
             // console.log('state.cat: ', state.cats)
+        },
+
+        setSelCatStatus: (state, action) => {
+            state.selCatStatus = action.payload // true/false
         }
+
     }
+
 })
 export default categorySlice.reducer
 
-export const { setCat } = categorySlice.actions
+export const { setCat, setSelCatStatus } = categorySlice.actions
 export const getCats = state => state.category.cats
 export const getCurrentCat = state => state.category.cats && Object.entries(state.category.cats.lists)
     .filter(([key, cat]) => {
@@ -21,3 +27,5 @@ export const getCurrentCat = state => state.category.cats && Object.entries(stat
     })
 export const getCatIdByName = (state, catName) => state.category.cats && Object.entries(state.category.cats.lists)
     .filter(([key, cat]) => cat.title === catName)
+
+export const getSelCatStatus = (state) => state.category.selCatStatus
