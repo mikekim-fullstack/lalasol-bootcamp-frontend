@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getCurrentCat, setCat, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
+import { setChapters, getChapters } from '../slices/chapterSlice'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 const NavSubmenu = ({ className, clickedCat }) => {
     // -- This is temporary data set and later this data will be
@@ -240,7 +242,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
     // -- return object id, title. --
     selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
     const dispatch = useDispatch()
-
+    const chapters = useSelector(getChapters)
     // console.log('selectedCat: ', selectedCat.title)
 
     //---------- Lists of course title which belong to selected category ------//
@@ -248,7 +250,34 @@ const NavSubmenu = ({ className, clickedCat }) => {
         .filter((courses) => courses.cat_id === selectedCat.id)
 
 
-    const handleChaper = (e) => {
+    let BASE_URL = null
+    if (process.env.REACT_APP_DEBUG == 'true') {
+        BASE_URL = process.env.REACT_APP_BASE_URL_DEBUG
+    } else {
+        BASE_URL = process.env.REACT_APP_BASE_URL
+    }
+
+    console.log('env variables: ', process.env.REACT_APP_DEBUG, typeof process.env.REACT_APP_DEBUG, BASE_URL)
+
+    const getData = async () => {
+        await axios.get(BASE_URL + '/api/chapters')
+            .then(res => {
+
+                if (res.status == 200) {
+                    // console.log(res.data[0].html)
+
+                    dispatch(setChapters(res.data))
+                    // console.log('axios: get from chapter: ', res)
+                }
+                return true
+            })
+            .catch(error => {
+                console.log('axios-error:', error.message)
+                return false
+            })
+    }
+
+    const handleChapter = (e) => {
         // console.log(e.target.name)
 
         // -- Show all courses from the selected category 
@@ -262,21 +291,41 @@ const NavSubmenu = ({ className, clickedCat }) => {
 
         // -- After select the chapter show the items of selected chapter. ---
         dispatch(setSelCatStatus(false))
+        getData()
 
     }
-
-    const handleChaperSubject = (e) => {
+    const fetchChapter = async (subject, subjectId) => {
+        await axios.get(process.env.REACT_APP_BASE_URL + `/api/chapter/${subjectId}`,
+            {
+                headers: {
+                    "Content-type": "Application/Json",
+                }
+            }
+        )
+            .then(res => {
+                console.log(res.data)
+                // setHtml(res.data)
+            })
+            .catch(err => console.log('error: ', err))
+    }
+    const handleChapterSubject = (e) => {
         // -- Get subject name and id to pass them to the page through 
         //    the Navigation and Route to fetch data from server. --
         const path = e.target.name?.split(',')
         const subject = path[0].trim()
         const subjectId = parseInt(path[1].trim())
+        // fetchChapter(subject, subjectId)
+        const selectedChapter = chapters?.filter((chapter) => chapter.id == subjectId)
+        if (selectedChapter?.length == 1) navigate(`${subject}/${subjectId}`)
+        else navigate('screen404')
 
-        navigate(`${subject}/${subjectId}`)
 
-        console.log(subject, subjectId)
+        console.log('handleChapterSubject--click: ', subject, subjectId, selectedChapter)
     }
     // console.log('selCatStatus: ', className, selCatStatus)
+    useEffect(() => {
+
+    }, [])
     return (
         // -- Display chapters. --
         <div className={`nav__submenu ${className}`}>
@@ -284,7 +333,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
             <div className='submenu__title'>{selectedCat && selectedCat?.title}</div>
             <div className='submenu__chapters'>
                 {selCourses?.map((course) => (
-                    <button className='submenu__chapter_btn' onClick={handleChaper} key={course.id} name={course.id}>
+                    <button className='submenu__chapter_btn' onClick={handleChapter} key={course.id} name={course.id}>
                         {course.title}
                     </button>
                 )
@@ -312,7 +361,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                             // -- const index = valueEntry[0] // only array index. --
                                             const itemValues = valueEntry[1]
                                             // console.log('item: ', keyTitle, valueEntry)
-                                            return <button onClick={handleChaperSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
+                                            return <button onClick={handleChapterSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
                                         })
                                     }
                                 </div>

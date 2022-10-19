@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "lalasol-bootcamp"
-  }
+    "default": "lalasol-bootcamp",
+    "dev": "lalasol-bootcamp",
+    "pro": "lalasol-bootcamp"
+  },
+  "targets": {},
+  "etags": {}
 }

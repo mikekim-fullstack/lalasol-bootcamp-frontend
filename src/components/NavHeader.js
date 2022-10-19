@@ -35,12 +35,15 @@ const NavHeader = () => {
     }, [selectedCat])
 
 
+
+
     // -- When mouse is clicked outside of side menu,
     //    close side menu. --
     const mouseListener = (e) => {
         const navBar = document.querySelector('.nav__header')
         const sideMenu = document.querySelector('.nav__submenu')
-        // console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, sideMenu)
+
+        console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, sideMenu,)
 
         if (sideMenu && sideMenu.className.includes('nav-open')) {
             // -- exclude the areas in sideMenu and navbar. -- 
@@ -51,6 +54,19 @@ const NavHeader = () => {
     }
 
     useEffect(() => {
+        // -- When mouse is clicked on iframe
+        //    close side menu. Because iframe doesn't have onClick event--
+        window.focus()
+        window.addEventListener("blur", () => {
+            setTimeout(() => {
+                if (document.activeElement.tagName === "IFRAME") {
+                    setShowSubmenu(false)
+                    // console.log("clicked");
+                }
+            });
+        }, { once: false })
+
+
         document.addEventListener('click', mouseListener)
         return () => document.removeEventListener('click', mouseListener)
     }, [])

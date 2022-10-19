@@ -1,6 +1,15 @@
 {
   "hosting": {
+    "firebase": "https://lalasol-bootcamp.web.app",
     "public": "build",
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+    
+,    
     "ignore": [
       "firebase.json",
       "**/.*",

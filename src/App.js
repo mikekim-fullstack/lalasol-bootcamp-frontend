@@ -12,6 +12,7 @@ import NavHeader from './components/NavHeader'
 import PracticeScreen from './screens/PracticeScreen'
 import GeneralScreen from './screens/GeneralScreen'
 import HRScreen from './screens/HRScreen'
+import Screen404 from './screens/Screen404'
 function App() {
   return (
     <div className="App">
@@ -29,6 +30,8 @@ function App() {
         <Route path='/practices/:practice_id' element={<PracticeScreen />} />
         <Route path='/general/:general_id' element={<GeneralScreen />} />
         <Route path='/hr/:hr_id' element={<HRScreen />} />
+
+        <Route path='/screen404' element={<Screen404 />} />
       </Routes>
     </div>
   );
