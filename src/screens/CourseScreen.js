@@ -27,7 +27,7 @@ const CourseScreen = () => {
     const [htmlCode, setHtmlCode] = useState(null)
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
-
+    const youtubeID = 'W_HCgUeEN5c'
 
 
     const fetchFile = async (file) => {
@@ -156,9 +156,10 @@ const CourseScreen = () => {
                             customStyle={{ border: 'none', borderRadius: '0', boxShadow: 'none', width: '90%', padding: '20px 0px', height: '400px' }}
                             children={gitHubFile && gitHubFile}
                         />}
-                        <iframe type="text/html" style={{ margin: '0', width: '90%', frameBorder: '0' }} src="https://www.youtube.com/embed/W_HCgUeEN5c" allowFullScreen></iframe>
+                        {/* <iframe type="text/html" style={{ margin: '0', width: '90%', frameBorder: '0' }} src="https://www.youtube.com/embed/W_HCgUeEN5c" allowFullScreen></iframe> */}
+                        <iframe width="560" height="315" src={`https://www.youtube.com/embed/${youtubeID}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
-
+                        {/* https://youtu.be/W_HCgUeEN5c */}
                     </div>
 
                     <h1>CourseScreen 2</h1>
