@@ -156,7 +156,7 @@ const CourseScreen = () => {
                             customStyle={{ border: 'none', borderRadius: '0', boxShadow: 'none', width: '90%', padding: '20px 0px', height: '400px' }}
                             children={gitHubFile && gitHubFile}
                         />}
-                        <iframe style={{ margin: '0', width: '90%', frameBorder: '0' }} src="https://www.youtube.com/embed/y881t8ilMyc" allowFullscreen></iframe>
+                        <iframe type="text/html" style={{ margin: '0', width: '90%', frameBorder: '0' }} src="https://www.youtube.com/embed/W_HCgUeEN5c" allowFullScreen></iframe>
 
 
                     </div>
