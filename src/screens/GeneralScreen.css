@@ -2,3 +2,9 @@
     margin-top: var(--nav-height);
     padding: 0;
 }
+
+iframe {
+    width: 90%;
+    height: 100vh;
+    border: 0;
+}
