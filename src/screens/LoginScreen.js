@@ -27,7 +27,7 @@ const LoginScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log(e.target, e.target.email.value, e.target.password.value)
+        // console.log(e.target, e.target.email.value, e.target.password.value)
         try {
 
             const res = await axios({
@@ -42,7 +42,7 @@ const LoginScreen = () => {
                 }
 
             })
-            console.log('res: ', res.data)
+            // console.log('res: ', res.data)
             dispatch(login(res.data))
         }
         catch (e) {

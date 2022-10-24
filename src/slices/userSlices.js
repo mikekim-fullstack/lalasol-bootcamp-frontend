@@ -6,14 +6,14 @@ const userSlice = createSlice({
     reducers: {
         login: (state, action) => {
             // const [login, error, loading] = fetchData(action.payload.method, action.payload.url, action.payload.headers, action.payload.body)
-            console.log('userSlice: login-  ', action.payload)
+            // console.log('userSlice: login-  ', action.payload)
             state.user = action.payload
             localStorage.setItem('userLogin', JSON.stringify(action.payload))
         },
         logout: (state, action) => {
             localStorage.removeItem('userLogin')
             state.user = null
-            console.log('logout')
+            // console.log('logout')
         }
     }
 })

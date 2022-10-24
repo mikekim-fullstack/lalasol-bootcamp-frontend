@@ -1,3 +1,8 @@
+/* html,
+body {
+    background-color: black;
+} */
+
 .loginScreen {
     position: relative;
     height: 100%;
@@ -8,11 +13,13 @@
 
 .loginScreen__background {
 
-    background-image: url('../images/login-bg.jpg');
+    /* background-image: url('../images/login-bg.jpg'); 
+     background-image: rgb(0, 0, 0);
     background-position: center;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
 
+    background-color: black;
 
 }
 

@@ -87,7 +87,7 @@ const NavCategoris = () => {
 
     useEffect(() => {
         if (categories != null) {
-            console.log('-----categoreis----:', categories)
+            // console.log('-----categoreis----:', categories)
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title])
