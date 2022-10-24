@@ -32,6 +32,7 @@ const NavHeader = () => {
     const handleLogout = () => {
         dispatch(logout())
         navigate('/')
+        navigate(0) // -- to refresh forcefully. --
     }
     useEffect(() => {
         if (selectedCat) {
