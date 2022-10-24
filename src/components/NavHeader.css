@@ -47,6 +47,7 @@
 }
 
 .nav__menu .cat {
+    display: none;
     padding: 0 5px;
     font-size: 0.7rem;
     color: rgb(187, 187, 1);
@@ -88,6 +89,7 @@
     color: white;
     font-size: 1.3rem;
     font-weight: 300;
+    cursor: pointer;
 }
 
 .nav__user button:hover {
@@ -100,4 +102,11 @@
 
 .nav__user i {
     font-size: 24px;
+}
+
+@media screen and (min-width:400px) {
+    .nav__menu .cat {
+        display: unset
+    }
+
 }

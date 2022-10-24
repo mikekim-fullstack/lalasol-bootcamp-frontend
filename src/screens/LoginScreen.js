@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { login, getUser } from '../slices/userSlices';
 const LoginScreen = () => {
     const [toggleIcon, setToggleIcon] = useState(true)
-    const [signIn, setSignIn] = useState(false)
+    const [singUp, setSingUp] = useState(false)
     const [loginError, setLoginError] = useState(null)
     // const [inputData, setInputData] = useState({ email: '', password: '', updated: false })
     // const user = useSelector(selectUser)
@@ -65,26 +65,23 @@ const LoginScreen = () => {
         <div className='loginScreen'>
             {/* Background */}
             <div className="loginScreen__background">
-                {/* <img className='loginScreen__logo'
-                    src='https://upload.wikimedia.org/wikipedia/commons/7/7a/Logonetflix.png'
-                    alt='netflix background' /> */}
-                <span className='loginScreen__logo'>LaLaSol <i>BootCamp</i></span>
-
-                {!signIn && <button onClick={() => setSignIn(true)} className='loginScreen__button'>Sign Up</button>}
+                <div className='loginScreen__header'>
+                    <span className='loginScreen__logo'>LaLaSol <i>BootCamp</i></span>
+                    {!singUp && <button onClick={() => setSingUp(true)} className='loginScreen__button'>Sign Up</button>}
+                </div>
                 <div className="loginScreen__gradient" />
             </div>
             {/* Login Body */}
             <div className="loginScreen__body">
                 {
-                    // signIn ? <SignUpScreen />
-                    signIn ? <h1>Signup screen</h1>
+                    // singUp ? <SignUpScreen />
+                    singUp ? <h1>Signup screen</h1>
                         :
                         <div className='loginScreen__contents'>
                             <h1>Fullstack Software Developer Bootcamp</h1>
                             <h2>Starts in every 3 month</h2>
                             <h3>Fulltime Evening Course | React Course | Career Services</h3>
                             <div className="loginScreen__input">
-                                {/* {loginError && <div className='error_message'>Error:&nbsp;{loginError}</div>} */}
                                 {<div className='error_message'
                                     style={loginError && {
                                         backgroundColor: 'rgba(138, 10, 10, 0.5)',
