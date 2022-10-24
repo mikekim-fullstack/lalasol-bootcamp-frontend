@@ -102,9 +102,29 @@
     /* border: 1px dashed pink; */
     /* height: 42px; */
     /* line-height: 42px; */
-    margin-top: 10px;
-    vertical-align: center;
+    margin-top: 50px;
+    /* vertical-align: center; */
 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+}
+
+.loginScreen__input .error_message {
+    text-align: left;
+    padding: 10px;
+    /* background-color: rgba(138, 10, 10, 0.5); */
+    /* border: 2px solid rgba(90, 0, 0, 1); */
+
+    width: 100%;
+    /* max-width: 600px; */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    transition: all 0.5s ease;
 }
 
 .loginScreen__input>form {
@@ -215,6 +235,12 @@
         margin: auto;
         /* gap: 2px; */
         max-width: 600px;
+    }
+
+    .loginScreen__input .error_message {
+        width: 100%;
+        max-width: 600px;
+        box-sizing: border-box;
     }
 
     .loginScreen__btn_signIn {

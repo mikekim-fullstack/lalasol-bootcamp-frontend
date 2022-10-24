@@ -6,7 +6,7 @@ process.env.REACT_APP_DEBUG == 'true' ?
     axios.defaults.baseURL = 'http://127.0.0.1:8000'
     : axios.defaults.baseURL = 'https://lalasol-bootcamp-backend-production.up.railway.app'
 
-const useAxios = ({ method, url, headers = null, body = null }) => {
+const useAxios = ({ method, url, headers = null, data = null }) => {
     const [response, setResponse] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -17,7 +17,7 @@ const useAxios = ({ method, url, headers = null, body = null }) => {
                 method,
                 url,
                 headers,
-                body,
+                data,
             })
             // const result = await axios.get('/api/course-category/')
             // console.log('axios: result-', result)

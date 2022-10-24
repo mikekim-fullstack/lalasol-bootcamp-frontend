@@ -6,10 +6,12 @@ import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCat, getCurrentCat, getCatIdByName, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
+import { getUser } from '../slices/userSlices'
 
 
 const NavHeader = () => {
     const dispatch = useDispatch()
+    const user = useSelector(getUser)
 
     let selectedCat = useSelector(getCurrentCat)
 
@@ -87,7 +89,7 @@ const NavHeader = () => {
                 <NavCategoris />
                 <div className='nav__user'>
                     <i className="fa-regular fa-bell"></i>
-                    <button>M</button>
+                    <button>{user && `${user.first_name[0].toUpperCase()}${user.last_name[0].toUpperCase()}`}</button>
                 </div>
                 {selectedCat && <NavSubmenu className={showSubmenu && 'nav-open'} />}
             </div>

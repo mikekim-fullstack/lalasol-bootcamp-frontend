@@ -15,8 +15,20 @@ import GeneralScreen from './screens/GeneralScreen'
 import HRScreen from './screens/HRScreen'
 import Screen404 from './screens/Screen404'
 import LoginScreen from './screens/LoginScreen'
+
+import axios from 'axios'
+import { useSelector, useDispatch } from 'react-redux'
+import { login, getUser } from './slices/userSlices';
+
+// process.env.REACT_API_DEBUG
+process.env.REACT_APP_DEBUG == 'true' ?
+  axios.defaults.baseURL = 'http://127.0.0.1:8000'
+  : axios.defaults.baseURL = 'https://lalasol-bootcamp-backend-production.up.railway.app'
+
+
 function App() {
-  const [user, setUser] = useState(false)
+  // const [user, setUser] = useState(false)
+  const user = useSelector(getUser)
 
   return (
     <div className="App">
