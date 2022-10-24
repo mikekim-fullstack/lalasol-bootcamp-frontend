@@ -118,26 +118,16 @@
 
 }
 
-.loginScreen__input>form .email {
+.loginScreen__input>form .email,
+.loginScreen__input>form .password {
     position: relative;
-    /* border: 1px dashed pink; */
     height: 100%;
-    /* line-height: 2rem; */
     width: 100%;
 }
 
-.loginScreen__input>form>input {
-    padding: 10px 0;
-    outline: none;
-    width: 100%;
 
-    border: none;
-    font-size: 1rem;
-    text-indent: 10px;
-    border-radius: 3px;
-}
-
-.loginScreen__input>form .email>input {
+.loginScreen__input>form .email>input,
+.loginScreen__input>form .password>input {
     padding: 10px 0;
 
     padding-right: 50px;
@@ -153,29 +143,46 @@
 
 }
 
-.loginScreen__input>form .email>input::placeholder {
-    /* padding-right: 10px;
-    width: 70%;
-    color: pink; */
+.loginScreen__input>form .email>input:focus,
+.loginScreen__input>form .password>input:focus {
+    border: 1.5px solid rgb(255, 69, 100);
 }
 
-.loginScreen__input>form .email>i {
+
+
+.email_icon {
     position: absolute;
-    color: rgb(175, 175, 175);
-    top: 0;
+    color: rgb(50, 50, 50);
+    top: 50%;
+    transform: translate(0, -50%);
     right: 5px;
-    font-size: 2rem;
-    line-height: 41px;
-    height: 41px;
+    font-size: 1.5rem;
+}
+
+.pass_icon {
+    position: absolute;
+    color: rgb(50, 50, 50);
+    top: 50%;
+    transform: translate(0, -50%);
+    right: 5px;
+    font-size: 1.5rem;
+    padding: 5px;
+
+    /* border: 1px dashed pink; */
+
 
 }
 
-/* .loginScreen__input>form .email:last-child {
-    position: absolute;
-    color: pink;
-    top: 0;
-    left: 0;
-} */
+.pass_icon:hover {
+
+    border-radius: 50%;
+
+    background-color: rgb(218, 218, 218);
+    cursor: pointer;
+    /* color: white; */
+}
+
+
 
 .loginScreen__btn_signIn {
 

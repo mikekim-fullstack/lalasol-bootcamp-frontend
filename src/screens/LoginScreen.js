@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import './LoginScreen.css'
 // import SignUpScreen from './SignUpScreen'
 import { useSelector } from 'react-redux'
 // import { selectUser } from '../features/userSlice'
 const LoginScreen = () => {
+    const [toggleIcon, setToggleIcon] = useState(true)
     // const user = useSelector(selectUser)
     const [signIn, setSignIn] = useState(false)
     // console.log('Login-user: ', user)
@@ -45,9 +49,14 @@ const LoginScreen = () => {
                                     <form onSubmit={handleSubmit}>
                                         <div className='email'>
                                             <input type={'email'} placeholder='Email Address*'></input>
-                                            <i class="fa-regular fa-envelope"></i>
+                                            <EmailOutlinedIcon className='email_icon' />
+                                            {/* <i className="fa-regular fa-envelope"></i> */}
                                         </div>
-                                        <input type={'password'} placeholder='Password*'></input>
+                                        <div className='password' >
+                                            <input type={`${toggleIcon ? 'password' : 'text'}`} placeholder='Password*'></input>
+                                            {toggleIcon ? <VisibilityOffOutlinedIcon onClick={() => setToggleIcon(!toggleIcon)} className='pass_icon' /> : <VisibilityOutlinedIcon onClick={() => setToggleIcon(!toggleIcon)} className='pass_icon' />}
+                                        </div>
+
                                         <button disabled={true} type='submit' className='loginScreen__btn_signIn'>Sign In</button>
                                     </form>
                                 </div>
