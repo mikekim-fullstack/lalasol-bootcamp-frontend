@@ -29,6 +29,7 @@ process.env.REACT_APP_DEBUG == 'true' ?
 function App() {
   // const [user, setUser] = useState(false)
   const user = useSelector(getUser)
+  console.log(user)
 
   return (
     <div className="App">

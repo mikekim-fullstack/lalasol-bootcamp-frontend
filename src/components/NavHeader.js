@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import NavCategoris from './NavCategoris'
 import './NavHeader.css'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCat, getCurrentCat, getCatIdByName, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
-import { getUser } from '../slices/userSlices'
+import { getUser, logout } from '../slices/userSlices'
 
 
 const NavHeader = () => {
     const dispatch = useDispatch()
     const user = useSelector(getUser)
+    const navigate = useNavigate()
 
     let selectedCat = useSelector(getCurrentCat)
 
@@ -28,7 +29,10 @@ const NavHeader = () => {
         dispatch(setCat(null))
         console.log('click Home button')
     }
-
+    const handleLogout = () => {
+        dispatch(logout())
+        navigate('/')
+    }
     useEffect(() => {
         if (selectedCat) {
             setShowSubmenu(true)
@@ -88,8 +92,9 @@ const NavHeader = () => {
                 </div>
                 <NavCategoris />
                 <div className='nav__user'>
+                    <div className='logout' onClick={handleLogout}>Logout</div>
                     <i className="fa-regular fa-bell"></i>
-                    <button>{user && `${user.first_name[0].toUpperCase()}${user.last_name[0].toUpperCase()}`}</button>
+                    <button>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
                 </div>
                 {selectedCat && <NavSubmenu className={showSubmenu && 'nav-open'} />}
             </div>
