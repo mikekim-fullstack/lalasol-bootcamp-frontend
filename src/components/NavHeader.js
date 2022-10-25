@@ -96,7 +96,8 @@ const NavHeader = () => {
                 <div className='nav__user'>
                     {/* <div className='logout' onClick={handleLogout}>Logout</div> */}
                     <i className="fa-regular fa-bell"></i>
-                    <button onClick={handleLogout}>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
+                    {/* <button className='btn_user_profile' onClick={handleLogout}>VS</button> */}
+                    <button className='btn_user_profile' onClick={handleLogout}>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
                 </div>
                 {selectedCat && <NavSubmenu className={showSubmenu && 'nav-open'} />}
             </div>

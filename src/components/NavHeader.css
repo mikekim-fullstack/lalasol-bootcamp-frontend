@@ -78,17 +78,20 @@
     border-bottom: 3px solid rgb(78, 78, 78);
 }
 
-.nav__user button {
-    border: none;
+.nav__user .btn_user_profile {
     outline: none;
+    border: none;
+
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    margin-left: 10px;
+    margin-left: 5px;
     background-color: rgb(0, 92, 0);
     color: white;
     font-size: 1rem;
     font-weight: 300;
+    /* border: 1px dashed pink; */
+    padding: 5px;
     cursor: pointer;
 }
 
