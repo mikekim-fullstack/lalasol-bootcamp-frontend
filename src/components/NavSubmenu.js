@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { getCurrentCat, setCat, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
-import { setChapters, getChapters } from '../slices/chapterSlice'
+import { getCurrentCat, setCat, setCurrentCat } from '../slices/categorySlice'
+import { setCourses, getCourses } from '../slices/courseSlice'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 
@@ -236,48 +236,47 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const navigate = useNavigate()
     const [navPath, setNavPath] = useState(null)
     const [selCourse, setSelCourse] = useState(null)
-    let selectedCat = useSelector(getCurrentCat)
-    const selCatStatus = useSelector(getSelCatStatus)
+    const selectedCat = useSelector(getCurrentCat)
 
     // -- return object id, title. --
-    selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
+    // selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
     const dispatch = useDispatch()
-    const chapters = useSelector(getChapters)
-    // console.log('selectedCat: ', selectedCat.title)
+    const courses = useSelector(getCourses)
+    // console.log('enrolledCourses: ', courses)
 
     //---------- Lists of course title which belong to selected category ------//
     const selCourses = allCoursesData
-        .filter((courses) => courses.cat_id === selectedCat.id)
+    //     .filter((courses) => courses.cat_id === selectedCat.id)
 
 
-    let BASE_URL = null
-    if (process.env.REACT_APP_DEBUG == 'true') {
-        BASE_URL = process.env.REACT_APP_BASE_URL_DEBUG
-    } else {
-        BASE_URL = process.env.REACT_APP_BASE_URL
-    }
+    // let BASE_URL = null
+    // if (process.env.REACT_APP_DEBUG == 'true') {
+    //     BASE_URL = process.env.REACT_APP_BASE_URL_DEBUG
+    // } else {
+    //     BASE_URL = process.env.REACT_APP_BASE_URL
+    // }
 
-    console.log('env variables: ', process.env.REACT_APP_DEBUG, typeof process.env.REACT_APP_DEBUG, BASE_URL)
+    // console.log('env variables: ', process.env.REACT_APP_DEBUG, typeof process.env.REACT_APP_DEBUG, BASE_URL)
 
-    const getData = async () => {
-        await axios.get(BASE_URL + '/api/chapters')
-            .then(res => {
+    // const getData = async () => {
+    //     await axios.get(BASE_URL + '/api/courses')
+    //         .then(res => {
 
-                if (res.status == 200) {
-                    // console.log(res.data[0].html)
+    //             if (res.status == 200) {
+    //                 // console.log(res.data[0].html)
 
-                    dispatch(setChapters(res.data))
-                    // console.log('axios: get from chapter: ', res)
-                }
-                return true
-            })
-            .catch(error => {
-                console.log('axios-error:', error.message)
-                return false
-            })
-    }
+    //                 dispatch(setCourses(res.data))
+    //                 console.log('axios: get from course: ', res)
+    //             }
+    //             return true
+    //         })
+    //         .catch(error => {
+    //             console.log('axios-error:', error.message)
+    //             return false
+    //         })
+    // }
 
-    const handleChapter = (e) => {
+    const handleCourse = (e) => {
         // console.log(e.target.name)
 
         // -- Show all courses from the selected category 
@@ -289,13 +288,14 @@ const NavSubmenu = ({ className, clickedCat }) => {
         if (_selCourse) setSelCourse(_selCourse[0])
         else setSelCourse(null)
 
-        // -- After select the chapter show the items of selected chapter. ---
-        dispatch(setSelCatStatus(false))
-        getData()
+        // -- After select the course show the items of selected course. ---
+        // dispatch(setSelCatStatus(false))
+        // getData()
 
     }
-    const fetchChapter = async (subject, subjectId) => {
-        await axios.get(process.env.REACT_APP_BASE_URL + `/api/chapter/${subjectId}`,
+    const fetchCourse = async () => {
+        // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
+        await axios.get(process.env.REACT_APP_BASE_URL + `/api/courses`,
             {
                 headers: {
                     "Content-type": "Application/Json",
@@ -308,49 +308,51 @@ const NavSubmenu = ({ className, clickedCat }) => {
             })
             .catch(err => console.log('error: ', err))
     }
-    const handleChapterSubject = (e) => {
+    const handleCourseSubject = (e) => {
         // -- Get subject name and id to pass them to the page through 
         //    the Navigation and Route to fetch data from server. --
         const path = e.target.name?.split(',')
         const subject = path[0].trim()
         const subjectId = parseInt(path[1].trim())
-        // fetchChapter(subject, subjectId)
-        const selectedChapter = chapters?.filter((chapter) => chapter.id == subjectId)
-        if (selectedChapter?.length == 1) navigate(`${subject}/${subjectId}`)
+        // fetchCourse(subject, subjectId)
+        const selectedCourse = courses?.filter((course) => course.id == subjectId)
+        if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
         else navigate('screen404')
 
 
-        console.log('handleChapterSubject--click: ', subject, subjectId, selectedChapter)
+        console.log('handleCourseSubject--click: ', subject, subjectId, selectedCourse)
     }
     // console.log('selCatStatus: ', className, selCatStatus)
     useEffect(() => {
-
+        // console.log('useEffect-NavSubmenu: ')
+        // fetchCourse()
     }, [])
+    console.log('------------ -NavSubmenu -----------')
     return (
-        // -- Display chapters. --
+        // -- Display courses. --
         <div className={`nav__submenu ${className}`}>
             {/* {navPath && <Navigate to={`${navPath[0]}/:${navPath[1]}`} />} */}
             <div className='submenu__title'>{selectedCat && selectedCat?.title}</div>
-            <div className='submenu__chapters'>
-                {selCourses?.map((course) => (
-                    <button className='submenu__chapter_btn' onClick={handleChapter} key={course.id} name={course.id}>
+            <div className='submenu__courses'>
+                {courses?.map((course) => (
+                    <button className='submenu__course_btn' onClick={handleCourse} key={course.id} name={course.id}>
                         {course.title}
                     </button>
                 )
                 )}
             </div>
             {/* -- Display sub items from selected chaper. -- */}
-            {!selCatStatus && (
-                <div className='submenu__chapter_content'>
+            {!selectedCat.status && (
+                <div className='submenu__course_content'>
                     {
                         selCourse && Object.entries(selCourse).map((courseEntry, index) => {
                             const keyTitle = courseEntry[0]
                             const courseValues = courseEntry[1]
-                            // console.log('selectedChapter-entry:', courseValues)
+                            // console.log('selectedCourse-entry:', courseValues)
                             return (keyTitle !== 'id' && keyTitle !== 'cat_id' ?
                                 <div key={index}>
                                     {/*  -- Display the title of sub-items from a course.. -- */}
-                                    <div className={`content__title ${keyTitle === 'title' && 'chapter'}`}>
+                                    <div className={`content__title ${keyTitle === 'title' && 'course'}`}>
                                         {keyTitle === 'title' ? 'CHAPTER' : keyTitle.toUpperCase()}
                                     </div>
                                     {keyTitle === 'title' ?
@@ -361,7 +363,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                             // -- const index = valueEntry[0] // only array index. --
                                             const itemValues = valueEntry[1]
                                             // console.log('item: ', keyTitle, valueEntry)
-                                            return <button onClick={handleChapterSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
+                                            return <button onClick={handleCourseSubject} key={itemValues.id} name={` ${keyTitle}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
                                         })
                                     }
                                 </div>
@@ -379,10 +381,10 @@ const NavSubmenu = ({ className, clickedCat }) => {
 export default NavSubmenu
 
 /* {
-                    selectedChapter && Object.entries(selectedChapter).map((entry, index) => {
+                    selectedCourse && Object.entries(selectedCourse).map((entry, index) => {
                         const key = entry[0]
                         const values = entry[1]
-                        // console.log('selectedChapter-entry:', entry)
+                        // console.log('selectedCourse-entry:', entry)
                         return key !== 'id' ? (
                             <div>
                                 <div className='content__title' key={index}>{key.toUpperCase()}</div>

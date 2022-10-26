@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
-import { useDispatch } from 'react-redux'
-import { setCat, setSelCatStatus } from '../slices/categorySlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCat, setCurrentCat, getCurrentCat } from '../slices/categorySlice'
+import { setCourses } from '../slices/courseSlice'
+import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
-const NavCategoris = () => {
+import axios from 'axios'
+const NavCategoreis = () => {
+    const user = useSelector(getUser)
+    const selectedCat = useSelector(getCurrentCat)
     const [sortedCat, setSortedCat] = useState(null)
     const [categories, catError, catLoading] = useAxios({
         method: 'GET',
@@ -74,34 +79,63 @@ const NavCategoris = () => {
     // console.log('sorted: ', sortedCat)
 
     const dispatch = useDispatch()
+    const fetchEnrolledCourses = async (userId, selectedCatId) => {
+        console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
+        // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
 
-    const handleBtnClick = (e) => {
-        // console.log(e.target.name)
+        await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
+            {
+                headers: {
+                    "Content-type": "Application/Json",
+                }
+            }
+        )
+            .then(res => {
+                // console.log(res.data)
+                dispatch(setCourses(res.data))
+            })
+            .catch(err => console.log('error: ', err))
+    }
+    const handleSelectCategoryClick = (e) => {
+        const selectedCat = sortedCat[e.target.name]
+        // console.log('selectedCat: ', sortedCat, selectedCat)
+
+        // -- For letting the submenu(sideBar) to only show the subject lists not showing 
+        //    previous items of selected subject. --
+        dispatch(setCurrentCat({ id: selectedCat[0], title: selectedCat[1], status: true }))
+        fetchEnrolledCourses(user.id, selectedCat[0])
+        /*
+        console.log('selected Cat: ', e.target.name, categories, categories[0].title)
         dispatch(setCat({ selectedId: e.target.name, lists: categories }))
 
         // -- For letting the submenu(sideBar) to only show the subject lists not showing 
         //    previous items of selected subject. --
-        dispatch(setSelCatStatus(true))
+        // dispatch(setSelCatStatus({...selectedCat,status:true}))
+        // dispatch(setSelCatStatus({ id: e.target.name, title: categories[0][1].title, status: true }))
+        
+        */
 
     }
 
     useEffect(() => {
         if (categories != null) {
-            // console.log('-----categoreis----:', categories)
+
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title])
             setSortedCat(_sortedCat)
+            // console.log('-----_sortedCat----:', _sortedCat)
+
         }
     }, [categories])
     return (
         <div className='nav__categories'>
-            {sortedCat?.map((category, index) => <button key={category[0]} className='nav__btn_category' onClick={handleBtnClick} name={category[0]} dangerouslySetInnerHTML={{ __html: (category[1].replace(' ', '&nbsp;')) }}></button>)}
+            {sortedCat?.map((category, index) => <button key={category[0]} className='nav__btn_category' onClick={handleSelectCategoryClick} name={index} dangerouslySetInnerHTML={{ __html: (category[1].replace(' ', '&nbsp;')) }}></button>)}
         </div>
     )
 }
 
-export default NavCategoris
+export default NavCategoreis
 
 
 /*

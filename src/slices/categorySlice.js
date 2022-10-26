@@ -9,8 +9,9 @@ const categorySlice = createSlice({
             // console.log('categorySlice-state.cat: ', state.cats)
         },
 
-        setSelCatStatus: (state, action) => {
-            state.selCatStatus = action.payload // true/false
+        setCurrentCat: (state, action) => {
+            state.selectedCat = action.payload //id: catid , status: true/false, title: ...
+
         }
 
     }
@@ -18,14 +19,14 @@ const categorySlice = createSlice({
 })
 export default categorySlice.reducer
 
-export const { setCat, setSelCatStatus } = categorySlice.actions
+export const { setCat, setCurrentCat } = categorySlice.actions
 export const getCats = state => state.category.cats
-export const getCurrentCat = state => state.category.cats && Object.entries(state.category.cats.lists)
-    .filter(([key, cat]) => {
-        // console.log('getCurrentCat-slice: ', state.category.cats.selectedId, cat.id)
-        return (parseInt(state.category.cats.selectedId) === parseInt(cat.id))
-    })
+// export const getCurrentCat = state => state.category.cats && Object.entries(state.category.cats.lists)
+//     .filter(([key, cat]) => {
+//         // console.log('getCurrentCat-slice: ', state.category.cats.selectedId, cat.id)
+//         return (parseInt(state.category.cats.selectedId) === parseInt(cat.id))
+//     })
 export const getCatIdByName = (state, catName) => state.category.cats && Object.entries(state.category.cats.lists)
     .filter(([key, cat]) => cat.title === catName)
 
-export const getSelCatStatus = (state) => state.category.selCatStatus
+export const getCurrentCat = (state) => state.category.selectedCat

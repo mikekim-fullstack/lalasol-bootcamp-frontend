@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import NavCategoris from './NavCategoris'
+import NavCategories from './NavCategories'
 import './NavHeader.css'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { setCat, getCurrentCat, getCatIdByName, setSelCatStatus, getSelCatStatus } from '../slices/categorySlice'
+import { setCat, setCurrentCat, getCurrentCat } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
 import { getUser, logout } from '../slices/userSlices'
 
@@ -16,12 +16,14 @@ const NavHeader = () => {
 
     let selectedCat = useSelector(getCurrentCat)
 
-    selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
+    // selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
 
-    const [showSubmenu, setShowSubmenu] = useState(false)
 
     const handleSubmenu = (e) => {
-        setShowSubmenu(!showSubmenu)
+        // setShowSubmenu(!showSubmenu)
+        dispatch(setCurrentCat({ ...selectedCat, status: !selectedCat.status }))
+
+        console.log('-------handleSubmenu clicked')
 
     }
 
@@ -35,13 +37,6 @@ const NavHeader = () => {
         window.location.reload()
         // navigate(0) // -- to refresh forcefully. --
     }
-    useEffect(() => {
-        if (selectedCat) {
-            setShowSubmenu(true)
-        }
-
-    }, [selectedCat])
-
 
 
 
@@ -56,7 +51,8 @@ const NavHeader = () => {
         if (sideMenu && sideMenu.className.includes('nav-open')) {
             // -- exclude the areas in sideMenu and navbar. -- 
             if (sideMenu && (e.clientX > sideMenu.clientWidth) && e.clientY > navBar.clientHeight) {
-                setShowSubmenu(false)
+                // setShowSubmenu(false)
+                dispatch(setCurrentCat({ ...selectedCat, status: false }))
             }
         }
     }
@@ -68,7 +64,7 @@ const NavHeader = () => {
         window.addEventListener("blur", () => {
             setTimeout(() => {
                 if (document.activeElement.tagName === "IFRAME") {
-                    setShowSubmenu(false)
+                    dispatch(setCurrentCat({ ...selectedCat, status: false }))
                     // console.log("clicked");
                 }
             });
@@ -78,7 +74,7 @@ const NavHeader = () => {
         document.addEventListener('click', mouseListener)
         return () => document.removeEventListener('click', mouseListener)
     }, [])
-
+    // console.log('selectedCat: ', selectedCat && selectedCat)
     // console.log('selectedCat: ', selectedCat?.title, showSubmenu)
     return (
 
@@ -92,14 +88,15 @@ const NavHeader = () => {
                         {selectedCat && selectedCat.title && <span className='cat' dangerouslySetInnerHTML={{ __html: selectedCat.title.replace(' ', '&nbsp;') }}></span>}
                     </span>
                 </div>
-                <NavCategoris />
+                <NavCategories />
                 <div className='nav__user'>
                     {/* <div className='logout' onClick={handleLogout}>Logout</div> */}
                     <i className="fa-regular fa-bell"></i>
                     {/* <button className='btn_user_profile' onClick={handleLogout}>VS</button> */}
                     <button className='btn_user_profile' onClick={handleLogout}>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
                 </div>
-                {selectedCat && <NavSubmenu className={showSubmenu && 'nav-open'} />}
+                {/* --- Show on/off the Side submenu. --- */}
+                {selectedCat && <NavSubmenu className={selectedCat.status && 'nav-open'} />}
             </div>
         </nav>
 

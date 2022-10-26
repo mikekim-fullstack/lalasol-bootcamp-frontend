@@ -24,7 +24,11 @@ import { login, getUser } from './slices/userSlices';
 process.env.REACT_APP_DEBUG == 'true' ?
   axios.defaults.baseURL = 'http://127.0.0.1:8000'
   : axios.defaults.baseURL = 'https://lalasol-bootcamp-backend-production.up.railway.app'
-
+// if (process.env.REACT_APP_DEBUG == 'true') {
+//     BASE_URL = process.env.REACT_APP_BASE_URL_DEBUG
+// } else {
+//     BASE_URL = process.env.REACT_APP_BASE_URL
+// }
 
 function App() {
   // const [user, setUser] = useState(false)
