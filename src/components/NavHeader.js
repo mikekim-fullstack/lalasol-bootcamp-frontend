@@ -4,7 +4,7 @@ import NavCategories from './NavCategories'
 import './NavHeader.css'
 import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { setCat, setCurrentCat, getCurrentCat } from '../slices/categorySlice'
+import { setCat, setSelectedCatStatus, getSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
 import { getUser, logout } from '../slices/userSlices'
 
@@ -14,22 +14,19 @@ const NavHeader = () => {
     const user = useSelector(getUser)
     const navigate = useNavigate()
 
-    let selectedCat = useSelector(getCurrentCat)
-
-    // selectedCat = selectedCat && selectedCat[0] && selectedCat[0][1]
+    const selectedCat = useSelector(getSelectedCat)
+    const selectedCatStatus = useSelector(getSelectedCatStatus)
 
 
     const handleSubmenu = (e) => {
-        // setShowSubmenu(!showSubmenu)
-        dispatch(setCurrentCat({ ...selectedCat, status: !selectedCat.status }))
-
-        console.log('-------handleSubmenu clicked')
+        dispatch(setSelectedCatStatus(!selectedCatStatus))
+        // console.log('-------handleSubmenu clicked')
 
     }
 
     const handleHome = (e) => {
         dispatch(setCat(null))
-        console.log('click Home button')
+        // console.log('click Home button')
     }
     const handleLogout = () => {
         dispatch(logout())
@@ -37,22 +34,19 @@ const NavHeader = () => {
         window.location.reload()
         // navigate(0) // -- to refresh forcefully. --
     }
-
-
-
     // -- When mouse is clicked outside of side menu,
     //    close side menu. --
     const mouseListener = (e) => {
         const navBar = document.querySelector('.nav__header')
         const sideMenu = document.querySelector('.nav__submenu')
 
-        console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, sideMenu,)
+        // console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, sideMenu,)
 
         if (sideMenu && sideMenu.className.includes('nav-open')) {
             // -- exclude the areas in sideMenu and navbar. -- 
             if (sideMenu && (e.clientX > sideMenu.clientWidth) && e.clientY > navBar.clientHeight) {
-                // setShowSubmenu(false)
-                dispatch(setCurrentCat({ ...selectedCat, status: false }))
+                dispatch(setSelectedCatStatus(false))
+                // console.log("clicked");
             }
         }
     }
@@ -64,8 +58,7 @@ const NavHeader = () => {
         window.addEventListener("blur", () => {
             setTimeout(() => {
                 if (document.activeElement.tagName === "IFRAME") {
-                    dispatch(setCurrentCat({ ...selectedCat, status: false }))
-                    // console.log("clicked");
+                    dispatch(setSelectedCatStatus(false))
                 }
             });
         }, { once: false })
@@ -74,18 +67,18 @@ const NavHeader = () => {
         document.addEventListener('click', mouseListener)
         return () => document.removeEventListener('click', mouseListener)
     }, [])
-    // console.log('selectedCat: ', selectedCat && selectedCat)
-    // console.log('selectedCat: ', selectedCat?.title, showSubmenu)
+    // console.log('---- NavHeader::selectedCat: ', selectedCat, selectedCat[1], selectedCatStatus)
     return (
 
         <nav className='nav__header'>
             <div className='nav__container'>
                 <div className='nav__menu'>
                     {/* {selectedCat && <svg onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg>} */}
+                    {/* <svg className={'active'} onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg> */}
                     <svg className={selectedCat && 'active'} onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg>
                     <span className='logo'>
                         <Link onClick={handleHome} to='/'>LaLaSol</Link>
-                        {selectedCat && selectedCat.title && <span className='cat' dangerouslySetInnerHTML={{ __html: selectedCat.title.replace(' ', '&nbsp;') }}></span>}
+                        {selectedCat && selectedCat[1] && <span className='cat' dangerouslySetInnerHTML={{ __html: selectedCat[1].replace(' ', '&nbsp;') }}></span>}
                     </span>
                 </div>
                 <NavCategories />
@@ -96,7 +89,7 @@ const NavHeader = () => {
                     <button className='btn_user_profile' onClick={handleLogout}>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
                 </div>
                 {/* --- Show on/off the Side submenu. --- */}
-                {selectedCat && <NavSubmenu className={selectedCat.status && 'nav-open'} />}
+                {selectedCat && <NavSubmenu className={selectedCatStatus && 'nav-open'} />}
             </div>
         </nav>
 

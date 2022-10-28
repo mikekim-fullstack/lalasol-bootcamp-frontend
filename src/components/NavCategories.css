@@ -34,6 +34,10 @@
     cursor: pointer;
 }
 
+.nav__btn_category.btn_selected {
+    border-color: cyan !important;
+}
+
 .nav__btn_category:hover {
     background-color: #191919;
     border-color: white;

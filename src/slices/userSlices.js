@@ -21,4 +21,7 @@ export default userSlice.reducer
 
 export const { login, logout } = userSlice.actions
 // export const getUser = (state) => state.user.user
-export const getUser = (state) => JSON.parse(localStorage.getItem('userLogin'))
+export const getUser = (state) => {
+    // console.log('slice ---- getUser called ')
+    return JSON.parse(localStorage.getItem('userLogin'))
+}

@@ -38,7 +38,7 @@
     font-weight: 300;
 }
 
-.submenu__chapters {
+.submenu__courses {
     border-top: 2px solid rgba(255, 192, 203, 0.4);
     border-bottom: 2px solid rgba(100, 100, 100, 0.4);
     text-align: start;
@@ -46,7 +46,7 @@
     /* opacity: 0.5; */
 }
 
-.submenu__chapter_btn {
+.submenu__course_btn {
     display: block;
     border: 1px solid gray;
     outline: none;
@@ -62,12 +62,16 @@
     transition: all 150ms ease-in-out;
 }
 
-.submenu__chapter_btn:hover {
+.submenu__course_btn.btn_selected {
+    border-color: turquoise;
+}
+
+.submenu__course_btn:hover {
     background-color: #191919;
     border: 1px solid white;
 }
 
-.submenu__chapter_content .content__title {
+.submenu__course_content .content__title {
     width: 100%;
     background-color: #6c6c6c;
     color: white;
@@ -75,7 +79,7 @@
     margin: 5px 0;
 }
 
-.submenu__chapter_content .content__title.chapter {
+.submenu__course_content .content__title.course {
 
     padding: 10px 0;
     background-image: linear-gradient(135deg, rgba(255, 165, 123, 0.2) 0 100%);
@@ -89,7 +93,7 @@
             rgba(0, 0, 0, 0.7) 100%);
 }
 
-.submenu__chapter_content .content__subject {
+.submenu__course_content .content__subject {
     display: block;
     width: 90%;
     /* border: 1px solid gray; */
@@ -100,11 +104,15 @@
     padding: 7px 10px;
     cursor: pointer;
     margin: 10px auto;
-    border-radius: 1px;
+    border-radius: 2px;
     transition: all 200ms ease-in-out;
 }
 
-.submenu__chapter_content .content__subject:hover {
+.submenu__course_content .content__subject.btn_selected {
+    background-color: #3e3e3e !important;
+}
+
+.submenu__course_content .content__subject:hover {
     color: rgb(231, 151, 2);
     transform: scale(1.07);
 }

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import HomeScreen from './screens/HomeScreen'
 import ProfileScreen from './screens/ProfileScreen'
-import CourseScreen from './screens/CourseScreen'
+import ChapterScreen from './screens/ChapterScreen'
 import QuizScreen from './screens/QuizScreen'
 import HomeworkScreen from './screens/HomeworkScreen'
 import ProjectScreen from './screens/ProjectScreen'
@@ -43,7 +43,7 @@ function App() {
           <Routes>
             <Route path='/' element={<HomeScreen />} />
             <Route path='/profile' element={<ProfileScreen />} />
-            <Route path='/courses/:course_id' element={<CourseScreen />} />
+            <Route path='/chapter/:chapter_id' element={<ChapterScreen />} />
             <Route path='/quiz/:quiz_id' element={<QuizScreen />} />
             <Route path='/homeworks/:homework_id' element={<HomeworkScreen />} />
             <Route path='/projects/:project_id' element={<ProjectScreen />} />
