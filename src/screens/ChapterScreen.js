@@ -51,7 +51,7 @@ const ChapterScreen = () => {
                 console.log('fetchChapterContent: ', res.data)
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
-                    // console.log('axios: ', res.data.content)
+                    console.log('axios: ', res.data.content)
                     previousContentIndex.current = 0
                     setCurrentContentIndex(0)
                     setChapterContentLength(res.data.content.length)
@@ -167,13 +167,14 @@ const ChapterScreen = () => {
                             <h1>{chapter.title}</h1>
                             <h2>{chapter.sub_title}</h2>
                             <p>{chapter.description}</p>
-                            {true && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
-                            {false && filePath &&
+                            {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
+                            {true && filePath &&
                                 <div className='iframe_container_file'>
                                     <iframe
                                         id='iframe_file'
                                         frameBorder="0"
                                         border='0'
+                                        width='100%'
                                         // scrolling="no"
                                         className='iframe__view'
                                         src={filePath}
@@ -185,7 +186,6 @@ const ChapterScreen = () => {
                             {youtube &&
                                 <div className='iframe_container_youtube'>
                                     <iframe
-                                        // width="90%" height="80vh"
                                         frameBorder="0"
                                         border='0'
                                         scrolling="no"
