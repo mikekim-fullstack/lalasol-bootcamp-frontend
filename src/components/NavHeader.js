@@ -51,6 +51,21 @@ const NavHeader = () => {
         }
     }
 
+
+    useEffect(() => {
+        if (selectedCatStatus) {
+            const val = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width')
+            console.log('useEffect - css val: ', val)
+            document.documentElement.style.setProperty('--side-menu-width-on-off', val)
+        }
+        else {
+            console.log('useEffect - css val: off')
+            document.documentElement.style.setProperty('--side-menu-width-on-off', '0')
+        }
+        //
+    }, [selectedCatStatus])
+
+
     useEffect(() => {
         // -- When mouse is clicked on iframe
         //    close side menu. Because iframe doesn't have onClick event--
@@ -67,7 +82,7 @@ const NavHeader = () => {
         document.addEventListener('click', mouseListener)
         return () => document.removeEventListener('click', mouseListener)
     }, [])
-    // console.log('---- NavHeader::selectedCat: ', selectedCat, selectedCat[1], selectedCatStatus)
+    console.log('---- NavHeader::selectedCat: ', selectedCat[1], selectedCatStatus)
     return (
 
         <nav className='nav__header'>

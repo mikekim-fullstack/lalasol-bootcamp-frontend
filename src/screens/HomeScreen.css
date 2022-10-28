@@ -1,4 +1,7 @@
 .home__screen {
+    margin-left: var(--side-menu-width-on-off);
     margin-top: var(--nav-height);
     padding: 0;
+    text-align: center;
+    transition: all 0.5s ease;
 }

@@ -56,14 +56,17 @@ const ChapterScreen = () => {
         // -- If there is no https, then broswer prohibits to request
         // so if it doesn't, replace http:// with https://. --
         let url
-        if (file.includes('https://')) {
+        if (file.includes('https://127.0.0.1')) {
             url = (file.replace('https:', 'http:'))
+        }
+        else if (file.includes('http://lalasol-bootcamp-backend-production.up.railway.app')) {
+            url = (file.replace('http:', 'https:'))
         }
         else {
             url = (file)
         }
         // setUrlFile(url)
-        // console.log('----urlFile: ', file, url, 'file extension: ',)
+        console.log('----urlFile: ', file, url)
 
         // -- Go and get the html file from server. --
         if (url.split('.').pop().toLowerCase() == 'html') {

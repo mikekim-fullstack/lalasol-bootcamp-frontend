@@ -138,7 +138,7 @@ body {
     box-sizing: border-box;
     margin-bottom: 10px;
     border-radius: 3px;
-    transition: all 0.5s ease;
+    transition: all 100ms ease;
 }
 
 .loginScreen__input>form {

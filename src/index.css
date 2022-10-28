@@ -2,6 +2,7 @@
   --bg-primary-color: #212121;
   --nav-height: 56px;
   --side-menu-width: 200px;
+  --side-menu-width-on-off: 0;
 }
 
 body {
