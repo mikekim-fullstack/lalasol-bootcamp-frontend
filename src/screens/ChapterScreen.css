@@ -15,6 +15,40 @@ html {
     transition: all 0.5s ease;
 }
 
+.chapter__screen_container {
+    position: relative;
+}
+
+.chapter__screen_footer {
+    position: sticky;
+
+    bottom: 10px;
+    /* right: 0; */
+    text-align: right;
+    margin-right: 20px;
+}
+
+.chapter__screen_footer_buttons>button {
+    outline: none;
+    border-style: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: rgba(39, 205, 234, 0.9);
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.chapter__screen_footer_buttons>button:hover {
+    background-color: rgba(24, 145, 167, 0.8);
+}
+
+.chapter__screen_footer_buttons>button:active {
+    background-color: rgba(27, 98, 110, 0.7);
+}
+
 .html_container {
     margin-top: 100px;
     width: 100%;

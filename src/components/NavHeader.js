@@ -82,7 +82,7 @@ const NavHeader = () => {
         document.addEventListener('click', mouseListener)
         return () => document.removeEventListener('click', mouseListener)
     }, [])
-    console.log('---- NavHeader::selectedCat: ', selectedCat[1], selectedCatStatus)
+    // console.log('---- NavHeader::selectedCat: ', selectedCat[1], selectedCatStatus)
     return (
 
         <nav className='nav__header'>

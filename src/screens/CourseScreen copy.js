@@ -42,7 +42,7 @@ const CourseScreen = () => {
             url = (file)
         }
         setUrlFile(url)
-        console.log('----urlFile: ', url, 'file extension: ', url.split('.').pop())
+        // console.log('----urlFile: ', url, 'file extension: ', url.split('.').pop())
 
         // -- Go and get the html file from server. --
         if (url.split('.').pop().toLowerCase() == 'html') {
