@@ -13,17 +13,17 @@ html {
     padding: 0;
     text-align: center;
     transition: all 0.5s ease;
+    border: 1px dashed pink;
 }
 
 .chapter__screen_container {
-    position: relative;
+    /* position: relative; */
 }
 
 .chapter__screen_footer {
-    position: sticky;
-
+    position: fixed;
+    right: 10px;
     bottom: 10px;
-    /* right: 0; */
     text-align: right;
     margin-right: 20px;
 }

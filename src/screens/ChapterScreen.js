@@ -201,10 +201,11 @@ const ChapterScreen = () => {
                         {chapterContentLength > 1 &&
                             <div className='chapter__screen_footer'>
                                 <div className='chapter__screen_footer_buttons'>
-                                    <button name='left' value={currentContentIndex} onClick={handleContentNavigation}>left</button>
-                                    <button name='right' value={currentContentIndex} onClick={handleContentNavigation}>right</button>
+                                    <button name='left' style={{ display: '' }} onClick={handleContentNavigation}>left</button>
+                                    <button name='right' style={{ display: '' }} onClick={handleContentNavigation}>right</button>
                                 </div>
-                            </div>}
+                            </div>
+                        }
 
                     </div>
                 )
