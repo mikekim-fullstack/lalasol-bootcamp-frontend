@@ -26,7 +26,19 @@ const ChapterScreen = () => {
     const previousContentIndex = useRef();
 
 
-
+    const resolveBlockMixedActivity = (file) => {
+        let url = null
+        if (file.includes('https://127.0.0.1')) {
+            url = (file.replace('https:', 'http:'))
+        }
+        else if (file.includes('http://lalasol')) {
+            url = (file.replace('http:', 'https:'))
+        }
+        else {
+            url = (file)
+        }
+        return url
+    }
     const selectContentFromChapter = async (content) => {
         // console.log('selectContentFromChapter: ', content)
         setHtmlCode(null)
@@ -38,7 +50,7 @@ const ChapterScreen = () => {
                 setYoutube(content.url)
                 break;
             case TYPE_HTML_File:
-                setFilePath(content.file)
+                setFilePath(resolveBlockMixedActivity(content.file))
                 await fetchFile(content.file)
                 break;
             default:
@@ -82,18 +94,19 @@ const ChapterScreen = () => {
     const fetchFile = async (file) => {
         // -- If there is no https, then broswer prohibits to request
         // so replace http:// with https://. --
-        let url
-        if (file.includes('https://127.0.0.1')) {
-            url = (file.replace('https:', 'http:'))
-        }
-        else if (file.includes('http://lalasol-bootcamp-backend-production.up.railway.app')) {
-            url = (file.replace('http:', 'https:'))
-        }
-        else {
-            url = (file)
-        }
+        // let url
+        // if (file.includes('https://127.0.0.1')) {
+        //     url = (file.replace('https:', 'http:'))
+        // }
+        // else if (file.includes('http://lalasol')) {
+        //     url = (file.replace('http:', 'https:'))
+        // }
+        // else {
+        //     url = (file)
+        // }
+        const url = resolveBlockMixedActivity(file)
 
-        // console.log('----urlFile: ', file, url)
+        console.log('----urlFile: ', file, ', url: ', url)
 
         // -- Go and get the html file from server. --
         if (url.split('.').pop().toLowerCase() == 'html') {
@@ -108,6 +121,7 @@ const ChapterScreen = () => {
                     // console.log(res.data)
                     setHtmlCode(res.data)
                 })
+                .catch(e => console.log('error: ', e))
         }
     }
     //-----------------------------------------------
@@ -169,11 +183,14 @@ const ChapterScreen = () => {
                             <p>{chapter.description}</p>
                             {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
                             {true && filePath &&
-                                <div className='iframe_container_file'>
+                                <div id='top' className='iframe_container_file'>
+                                    {/* <iframe id='scaled-frame' src={filePath} ></iframe> */}
+
                                     <iframe
                                         id='iframe_file'
                                         frameBorder="0"
                                         border='0'
+                                        // width="1024"
                                         width='100%'
                                         // scrolling="no"
                                         className='iframe__view'
@@ -184,7 +201,7 @@ const ChapterScreen = () => {
                             }
 
                             {youtube &&
-                                <div className='iframe_container_youtube'>
+                                <div id='top' className='iframe_container_youtube'>
                                     <iframe
                                         frameBorder="0"
                                         border='0'
@@ -201,8 +218,8 @@ const ChapterScreen = () => {
                         {chapterContentLength > 1 &&
                             <div className='chapter__screen_footer'>
                                 <div className='chapter__screen_footer_buttons'>
-                                    <button name='left' style={{ display: '' }} onClick={handleContentNavigation}>left</button>
-                                    <button name='right' style={{ display: '' }} onClick={handleContentNavigation}>right</button>
+                                    <a href='#top' name='left' onClick={handleContentNavigation}>left</a>
+                                    <a href='#top' name='right' onClick={handleContentNavigation}>right</a>
                                 </div>
                             </div>
                         }
