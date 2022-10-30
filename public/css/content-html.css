@@ -165,6 +165,11 @@ li span {
         flex-direction: row;
 
     }
+
+    h3 {
+        font-size: 1.5rem;
+        line-height: 2.2rem;
+    }
 }
 
 @media screen and (min-width:1200px) {
@@ -172,18 +177,18 @@ li span {
     h1 {
         font-size: 3rem;
         font-weight: 300;
-        line-height: 3rem;
+        line-height: 3.5rem;
     }
 
     h2 {
         font-size: 2rem;
-        line-height: 2rem;
+        line-height: 2.3rem;
         font-weight: 300;
     }
 
     h3 {
         font-size: 1.5rem;
-        line-height: 1.5rem;
+        line-height: 2.5rem;
     }
 
     li {
@@ -197,21 +202,13 @@ li span {
 
     }
 
-    a {
-        color: red;
-        text-decoration: none;
-    }
 
-    h3 {
-        font-weight: 300;
-        font-size: 2rem
-    }
 
-    .container div {
+    /* .container div {
 
         font-weight: 100;
         line-height: 2.8rem;
-    }
+    } */
 
     .row-1 {
 

@@ -6,7 +6,17 @@ const chapterSlice = createSlice({
     reducers: {
         setChapters: (state, action) => {
             // console.log('setChapter-slice:', action.payload)
-            state.data = action.payload
+
+            // --- sort chapters by chapter_no in the ascending order. --- 
+            if (action.payload && action.payload.length > 1) {
+
+                const unSortedChapters = action.payload
+                state.data = unSortedChapters.sort((a, b) => a.chapter_no > b.chapter_no ? 1 : (a.chapter_no < b.chapter_no) ? -1 : 0)
+            }
+            else {
+                state.data = action.payload
+            }
+
         },
 
     }

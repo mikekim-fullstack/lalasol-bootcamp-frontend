@@ -63,12 +63,13 @@ const ChapterScreen = () => {
                 console.log('fetchChapterContent: ', res.data)
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
-                    console.log('axios: ', res.data.content)
+                    const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
+                    console.log('fetchChapterContent: ', res.data.content)
                     previousContentIndex.current = 0
                     setCurrentContentIndex(0)
-                    setChapterContentLength(res.data.content.length)
-                    setContentData(res.data.content)
-                    selectContentFromChapter(res.data.content[0])
+                    setChapterContentLength(sortedChapterContent.length)
+                    setContentData(sortedChapterContent)
+                    selectContentFromChapter(sortedChapterContent[0])
                     // const content = res.data.content[0]
                     // setHtmlCode(null)
                     // setYoutube(null)

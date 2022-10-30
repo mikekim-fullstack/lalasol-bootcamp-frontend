@@ -254,7 +254,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
             }
         )
             .then(res => {
-                console.log(res.data)
+                console.log('fetchChapters: ', res.data)
                 dispatch(setChapters(res.data))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')

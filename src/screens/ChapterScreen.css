@@ -58,14 +58,9 @@ html {
 
 .chapter__screen .iframe_container_file {
 
-    /* overflow: scroll; */
 
     box-sizing: border-box;
-    /* position: relative; */
-
     overflow: hidden;
-    /* padding-bottom: 50%; */
-    /* 56.25%; 16:9 */
     width: 100%;
     height: 100vh;
     text-align: center;
@@ -73,12 +68,6 @@ html {
     margin-left: auto;
     margin-right: auto;
 
-    /* transform: scale(0.5, 0.5) */
-    /* transform: perspective(400px) rotateY(-45deg) scale(1.1, 1.1); */
-
-    /* perspective: 550px;
-    transform-style: preserve-3d;
-    margin: 0 auto; */
 }
 
 .chapter__screen .iframe_container_file>iframe {
