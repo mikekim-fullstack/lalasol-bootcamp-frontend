@@ -5,6 +5,7 @@ import { getChapters, getChapter, setChapters } from '../slices/chapterSlice'
 import { login } from '../slices/userSlices'
 import axios from 'axios'
 import './ChapterScreen.css'
+import { Warning } from '@mui/icons-material'
 const ChapterScreen = () => {
     const TYPE_Text = 7
     const TYPE_NONE = 6
@@ -51,7 +52,10 @@ const ChapterScreen = () => {
                 break;
             case TYPE_HTML_File:
                 setFilePath(resolveBlockMixedActivity(content.file))
-                await fetchFile(content.file)
+
+                // //--- If the html file code injects into div then call fetchFile. ---
+                // await fetchFile(content.file)
+                // //---.
                 break;
             default:
                 break;
@@ -70,22 +74,6 @@ const ChapterScreen = () => {
                     setChapterContentLength(sortedChapterContent.length)
                     setContentData(sortedChapterContent)
                     selectContentFromChapter(sortedChapterContent[0])
-                    // const content = res.data.content[0]
-                    // setHtmlCode(null)
-                    // setYoutube(null)
-                    // setFilePath(null)
-                    // switch (content.chapter_category) {
-                    //     case TYPE_YOUTUBE:
-                    //         console.log('youtube: ', content.url.split('/').pop())
-                    //         setYoutube(content.url)
-                    //         break;
-                    //     case TYPE_HTML_File:
-                    //         setFilePath(content.file)
-                    //         fetchFile(content.file)
-                    //         break;
-                    //     default:
-                    //         break;
-                    // }
                 }
                 //content.chapter_category == TYPE_HTML_File
             })
@@ -95,16 +83,6 @@ const ChapterScreen = () => {
     const fetchFile = async (file) => {
         // -- If there is no https, then broswer prohibits to request
         // so replace http:// with https://. --
-        // let url
-        // if (file.includes('https://127.0.0.1')) {
-        //     url = (file.replace('https:', 'http:'))
-        // }
-        // else if (file.includes('http://lalasol')) {
-        //     url = (file.replace('http:', 'https:'))
-        // }
-        // else {
-        //     url = (file)
-        // }
         const url = resolveBlockMixedActivity(file)
 
         console.log('----urlFile: ', file, ', url: ', url)
@@ -137,8 +115,8 @@ const ChapterScreen = () => {
         // console.log('useEffect - handleContentNavigation:', currentContentIndex)
     }, [currentContentIndex])
     // console.log('currentContentIndex: ', currentContentIndex)
-    //-----------------------------------------------
 
+    //-----------------------------------------------
     useEffect(() => {
         fetchChapterContent(chapter_id)
         console.log('useEffect',)
@@ -146,33 +124,19 @@ const ChapterScreen = () => {
 
     }, [chapter_id])
 
-    /*
-          // ----------- IFrame Listener ----------- //
-          const iframe_file = document.getElementById("iframe_file")
-      const load_iframe_file = (e) => {
-          console.log('load_iframe_file: ', window.location)
-          // console.log('load_iframe_file: ', iframe_file.contentWindow.location)
-          // iframe_file.style.height =
-          //     iframe_file.contentWindow.document.body.scrollHeight + 'px';
-      }
-    
-          useEffect(() => {
-              if (iframe_file) {
-                  console.log('--------- useEffect', iframe_file)
-                  iframe_file.addEventListener('load', load_iframe_file)
-                  return () => iframe_file.removeEventListener('load', load_iframe_file)
-              }
-          }, [iframe_file])
-      
-          const eventMessage = (event) => {
-              console.log('eventMessage: ', event.origin)
-      
-          }
-          useEffect(() => {
-              window.addEventListener("message", eventMessage, false)
-              return () => window.removeEventListener("message", eventMessage)
-          })
-      */
+    //-----------------------------------------------
+    const isViewedContent = (e) => {
+        // console.log('useEffect - eventListener - scroll', document.querySelector('.chapter__screen').getBoundingClientRect().bottom, window.innerHeight)
+        if (document.querySelector('.chapter__screen').getBoundingClientRect().bottom <= window.innerHeight) {
+            console.log('useEffect - eventListener - scroll -- viewed',)
+        }
+    }
+    useEffect(() => {
+        document.addEventListener("scroll", isViewedContent)
+        return () => document.removeEventListener("scroll", isViewedContent)
+    }, [])
+
+
     return (
         <div className='chapter__screen'>
             {
