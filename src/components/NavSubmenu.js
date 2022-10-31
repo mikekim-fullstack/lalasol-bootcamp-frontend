@@ -8,6 +8,7 @@ import { setChapters, getChapters } from '../slices/chapterSlice'
 import { setPathCourseID, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { getUser } from '../slices/userSlices'
 
 const NavSubmenu = ({ className, clickedCat }) => {
     // -- This is temporary data set and later this data will be
@@ -243,22 +244,21 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const chapters = useSelector(getChapters)
     const pathCourseID = useSelector(getPathCourseID)
     const pathChapterID = useSelector(getPathChapterID)
+    const user = useSelector(getUser)
 
 
     const fetchChapters = async (course_id) => {
-        await axios.get(axios.defaults.baseURL + `/api/fetch-chapters-bycourse/${course_id}`,
-            {
-                headers: {
-                    "Content-type": "Application/Json",
-                }
-            }
-        )
+        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
             .then(res => {
                 console.log('fetchChapters: ', res.data)
                 dispatch(setChapters(res.data))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')
+                // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
             })
+            // .then(res=>{
+            //     console.log('chapter Viewed: ', res.data)
+            // })
             .catch(err => console.log('error: ', err))
     }
 
@@ -281,7 +281,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
         dispatch(setPathChapterID(chapterId))
         // fetchCourse(chapter, chapterId)
         // const selectedCourse = courses?.filter((course) => course.id == chapterId)
-        if (chapters?.length > 0) navigate(`${chapter}/${chapterId}`)
+        if (chapters?.length > 0) navigate(`${chapter}/${chapterId}/${user.id}`)
         else navigate('screen404')
 
 
@@ -317,7 +317,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                 name={` ${chapter.title}, ${chapter.id}`}
                                 // className={`content__subject btn_chapter_selected`}>
                                 className={`content__subject ${pathChapterID == chapter.id && 'btn_selected'}`}>
-                                {chapter.title}
+                                {chapter.title}:{chapter.viewed}/{chapter.content.length}
                             </button>
                             // const courseValues = courseEntry[1]
                             // // console.log('selectedCourse-entry:', courseValues)

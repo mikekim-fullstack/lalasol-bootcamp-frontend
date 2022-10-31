@@ -43,7 +43,7 @@ function App() {
           <Routes>
             <Route path='/' element={<HomeScreen />} />
             <Route path='/profile' element={<ProfileScreen />} />
-            <Route path='/chapter/:chapter_id' element={<ChapterScreen />} />
+            <Route path='/chapter/:chapter_id/:user_id/' element={<ChapterScreen />} />
             <Route path='/quiz/:quiz_id' element={<QuizScreen />} />
             <Route path='/homeworks/:homework_id' element={<HomeworkScreen />} />
             <Route path='/projects/:project_id' element={<ProjectScreen />} />

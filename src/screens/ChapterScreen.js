@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { getChapters, getChapter, setChapters } from '../slices/chapterSlice'
-import { login } from '../slices/userSlices'
+import { login, getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './ChapterScreen.css'
 import { Warning } from '@mui/icons-material'
@@ -15,7 +15,8 @@ const ChapterScreen = () => {
     const TYPE_VIDEO_File = 2
     const TYPE_HTML_File = 1
 
-    const { chapter_id } = useParams()
+    const { chapter_id, user_id } = useParams()
+    // const { user } = useSelector(getUser)
     const [chapter, setChapter] = useState(useSelector((state) => getChapter(state, chapter_id)))
     const [contentData, setContentData] = useState(null)
     const [chapterContentLength, setChapterContentLength] = useState(0)
@@ -40,11 +41,25 @@ const ChapterScreen = () => {
         }
         return url
     }
+    const fetchUpdateContentViewed = async (content_id) => {
+        await axios({
+            method: 'POST',
+            url: axios.defaults.baseURL + `/api/chapters-content-viewed/`,
+            headers: { "Content-Type": "multipart/form-data" },
+            data: { student_id: user_id, chapter_id, content_id }
+
+        })
+            .then(res => console.log('fetchUpdateContentViewed-result: ', res.data))
+            .catch(e => console.log('fetchUpdateContentViewed-error: ', e))
+
+    }
     const selectContentFromChapter = async (content) => {
         // console.log('selectContentFromChapter: ', content)
+        if (content == 'null') return
         setHtmlCode(null)
         setYoutube(null)
         setFilePath(null)
+        fetchUpdateContentViewed(content.id)
         switch (content.chapter_category) {
             case TYPE_YOUTUBE:
                 console.log('youtube: ', content.url.split('/').pop())
@@ -61,7 +76,9 @@ const ChapterScreen = () => {
                 break;
         }
     }
+
     const fetchChapterContent = async (chapterId) => {
+        // 
         await axios.get(axios.defaults.baseURL + `/api/chapter/${chapterId}`)
             .then(res => {
                 console.log('fetchChapterContent: ', res.data)
@@ -73,10 +90,16 @@ const ChapterScreen = () => {
                     setCurrentContentIndex(0)
                     setChapterContentLength(sortedChapterContent.length)
                     setContentData(sortedChapterContent)
-                    selectContentFromChapter(sortedChapterContent[0])
+                    if (sortedChapterContent.length > 0) {
+                        selectContentFromChapter(sortedChapterContent[0])
+                        if (sortedChapterContent.length == 1) {
+                            return fetchUpdateContentViewed(sortedChapterContent[0].id)
+                        }
+                    }
                 }
-                //content.chapter_category == TYPE_HTML_File
+
             })
+            .then(res => console.log('----- content Viewed updated: ', res))
             .catch(e => console.log('error-fetch-chapter: ', e))
     }
     //-----------------------------------------------
@@ -118,8 +141,11 @@ const ChapterScreen = () => {
 
     //-----------------------------------------------
     useEffect(() => {
+        // const user_id = JSON.parse(localStorage.getItem('userLogin'))
         fetchChapterContent(chapter_id)
-        console.log('useEffect',)
+        console.log('useEffect', user_id)
+
+
 
 
     }, [chapter_id])
