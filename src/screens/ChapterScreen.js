@@ -7,6 +7,7 @@ import axios from 'axios'
 import './ChapterScreen.css'
 import { Warning } from '@mui/icons-material'
 import ProgressBarChapter from '../components/ProgressBarChapter'
+import { setCat, setSelectedCatStatus, getSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
 const ChapterScreen = () => {
     const TYPE_Text = 7
     const TYPE_NONE = 6
@@ -17,6 +18,7 @@ const ChapterScreen = () => {
     const TYPE_HTML_File = 1
 
     const { chapter_id, user_id } = useParams()
+    const selectedCatStatus = useSelector(getSelectedCatStatus)
     // const { user } = useSelector(getUser)
     const [chapter, setChapter] = useState(useSelector((state) => getChapter(state, chapter_id)))
     const [contentData, setContentData] = useState(null)
@@ -143,10 +145,6 @@ const ChapterScreen = () => {
         // if (contentData) selectContentFromChapter(contentData[currentContentIndex])
         fetchChapterContent(chapter_id)
         console.log('useEffect', user_id)
-
-
-
-
     }, [chapter_id])
 
     //-----------------------------------------------
@@ -161,10 +159,22 @@ const ChapterScreen = () => {
         return () => document.removeEventListener("scroll", isViewedContent)
     }, [])
 
-
+    // // --- Trigger when window is refleshed. ---
+    // useEffect(() => {
+    //     window.addEventListener("beforeunload", alertUser);
+    //     return () => {
+    //         window.removeEventListener("beforeunload", alertUser);
+    //     };
+    // }, []);
+    // const alertUser = (e) => {
+    //     e.preventDefault();
+    //     e.returnValue = "";
+    //     // console.log('selectedCat: ', selectedCat)
+    //     // dispatch(setSelectedCatStatus(false))
+    // };
     return (
         <div className='chapter__screen'>
-            <ProgressBarChapter />
+            {!selectedCatStatus && <ProgressBarChapter />}
             {
                 chapter && (
                     <div className='chapter__screen_container'>
@@ -174,7 +184,7 @@ const ChapterScreen = () => {
                             <p>{chapter.description}</p>
                             {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
                             {true && filePath &&
-                                <div id='top' className='iframe_container_file'>
+                                <div id='top' className='iframe_container_file' >
                                     {/* <iframe id='scaled-frame' src={filePath} ></iframe> */}
 
                                     <iframe
@@ -187,6 +197,7 @@ const ChapterScreen = () => {
                                         className='iframe__view'
                                         src={filePath}
                                         title="description">
+
                                     </iframe>
                                 </div>
                             }

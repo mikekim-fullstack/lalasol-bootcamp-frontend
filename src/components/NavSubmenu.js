@@ -263,10 +263,10 @@ const NavSubmenu = ({ className, clickedCat }) => {
     }
 
 
-    const handleCourseClick = async (e) => {
-        console.log('handleCourseClick: ', e.target.name)
-        await fetchChapters(e.target.name)
-        dispatch(setPathCourseID(e.target.name))
+    const handleCourseClick = async (e, courseid) => {
+        console.log('handleCourseClick: ', courseid)
+        await fetchChapters(courseid)
+        dispatch(setPathCourseID(courseid))
         // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
         // else navigate('screen404')
 
@@ -292,18 +292,44 @@ const NavSubmenu = ({ className, clickedCat }) => {
     return (
         // -- Display courses. --
         <div className={`nav__submenu ${className}`}>
-            {/* {navPath && <Navigate to={`${navPath[0]}/:${navPath[1]}`} />} */}
-            {/* <div className='submenu__title'>test</div> */}
-            <div className='submenu__title'>{selectedCat && selectedCat[1]}</div>
+
+            <div className='submenu__title'>Courses - {selectedCat && selectedCat[1]}</div>
             <div className='submenu__courses'>
                 {courses?.map((course) => (
-                    <button className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`} onClick={handleCourseClick} key={course.id} name={course.id}>
-                        {course.title}
-                    </button>
+                    <div key={course.id}>
+                        <div
+                            className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`}
+                            onClick={(e) => handleCourseClick(e, course.id)}>
+                            <img width='30px' height='30px' src={axios.defaults.baseURL + course.course_image}></img>
+                            <span>{course.title}</span>
+
+                        </div>
+                        {/* -- Display chapters from selected chaper. -- */}
+                        {!selectedCat.status && pathCourseID == course.id && (
+                            <div className='submenu__course_content'>
+                                {
+                                    chapters && chapters.length > 0 && chapters.map((chapter, index) => {
+                                        return <button onClick={handleSelectedChapter}
+                                            key={chapter.id}
+                                            name={` ${chapter.title}, ${chapter.id}`}
+                                            // className={`content__subject btn_chapter_selected`}>
+                                            className={`content__subject ${pathChapterID == chapter.id && 'btn_selected'}`}>
+                                            {chapter.title}:{chapter.viewed}/{chapter.content.length}
+                                        </button>
+
+                                    })
+                                }
+                            </div>
+                        )}
+                    </div>
                 )
                 )}
             </div>
-            {/* -- Display chapters from selected chaper. -- */}
+            <div className='settings'>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox='0 -6 50 50' height="40" width="40"><path d="m15.917 36.667-.792-5.292q-.708-.25-1.437-.687-.73-.438-1.355-.896L7.417 32l-4.125-7.208L7.75 21.5q-.083-.333-.104-.75-.021-.417-.021-.75t.021-.75q.021-.417.104-.75l-4.458-3.292L7.417 8l4.916 2.208q.625-.458 1.375-.896.75-.437 1.417-.687l.792-5.292h8.166l.792 5.292q.708.25 1.458.667.75.416 1.334.916L32.583 8l4.125 7.208-4.458 3.209q.083.375.104.791.021.417.021.792 0 .375-.021.771t-.104.771l4.417 3.25L32.583 32l-4.916-2.208q-.625.458-1.355.916-.729.459-1.437.667l-.792 5.292Zm4.125-11.125q2.291 0 3.916-1.625T25.583 20q0-2.292-1.625-3.917t-3.916-1.625q-2.334 0-3.959 1.625T14.458 20q0 2.292 1.625 3.917t3.959 1.625Zm0-2.75q-1.167 0-1.98-.813-.812-.812-.812-1.979t.812-1.979q.813-.813 1.98-.813 1.125 0 1.937.813.813.812.813 1.979t-.813 1.979q-.812.813-1.937.813ZM20 20Zm-1.792 13.875h3.542l.583-4.583q1.375-.334 2.563-1.021 1.187-.688 2.146-1.646l4.333 1.833L33 25.542l-3.792-2.834q.167-.666.271-1.333.104-.667.104-1.375t-.083-1.375q-.083-.667-.292-1.333L33 14.458l-1.625-2.916-4.333 1.833q-.959-1.042-2.125-1.729-1.167-.688-2.584-.938l-.541-4.583H18.25l-.583 4.583q-1.375.292-2.563.98-1.187.687-2.146 1.687l-4.333-1.833L7 14.458l3.792 2.834q-.167.666-.271 1.333-.104.667-.104 1.375t.104 1.375q.104.667.271 1.333L7 25.542l1.625 2.916 4.333-1.833q.959.958 2.146 1.646 1.188.687 2.563 1.021Z" /></svg>
+                <span>Settings</span>
+            </div>
+            {/* -- Display chapters from selected chaper. --
             {!selectedCat.status && (
                 <div className='submenu__course_content'>
                     {
@@ -315,31 +341,11 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                 className={`content__subject ${pathChapterID == chapter.id && 'btn_selected'}`}>
                                 {chapter.title}:{chapter.viewed}/{chapter.content.length}
                             </button>
-                            // const courseValues = courseEntry[1]
-                            // // console.log('selectedCourse-entry:', courseValues)
-                            // return (course.title !== 'id' && course.title !== 'cat_id' ?
-                            //     <div key={index}>
-                            //         {/*  -- Display the title of sub-items from a course.. -- */}
-                            //         <div className={`content__title ${course.title === 'title' && 'course'}`}>
-                            //             {course.title === 'title' ? 'CHAPTER' : course.title.toUpperCase()}
-                            //         </div>
-                            //         {course.title === 'title' ?
-                            //             <div>{courseValues}</div>
-                            //             :
-                            //             // -- Display sub items from a course.. --
-                            //             Object.entries(courseValues).map((valueEntry) => {
-                            //                 // -- const index = valueEntry[0] // only array index. --
-                            //                 const itemValues = valueEntry[1]
-                            //                 // console.log('item: ', course.title, valueEntry)
-                            //                 return <button onClick={handleCourseSubject} key={index} name={` ${course.title}, ${itemValues.id}`} className='content__subject'>{itemValues.title}</button>
-                            //             })
-                            //         }
-                            //     </div>
-                            //     : null)
+                            
                         })
                     }
                 </div>
-            )}
+            )} */}
 
 
         </div>
@@ -347,37 +353,3 @@ const NavSubmenu = ({ className, clickedCat }) => {
 }
 
 export default NavSubmenu
-
-/* {
-                    selectedCourse && Object.entries(selectedCourse).map((entry, index) => {
-                        const key = entry[0]
-                        const values = entry[1]
-                        // console.log('selectedCourse-entry:', entry)
-                        return key !== 'id' ? (
-                            <div>
-                                <div className='content__title' key={index}>{key.toUpperCase()}</div>
-                                {key === 'title' ?
-                                    <div>{values}</div>
-                                    :
-                                    values.map((value, index) => {
-                                        return <div>{value}</div>
-                                    })
-                                }
-                            </div>
-                        ) : null
-                    })
-                } */
-/* {subMenu && subMenu.length > 0 && Object.entries(subMenu[selectedCat?.id]).map((arr, index) => {
-    return (arr[0] !== 'id' && (
-        <div key={index}>
-
-            <h3 className='submenu__title'>{arr[0].toUpperCase()}</h3>
-            {arr[1].map((course, index) => (
-                // <Link key={index} to={`/${selectedCat.lists[selectedCat.id].toLowerCase().replace(' ', '_')}/${course.toLowerCase().replace(' ', '_')}`}><h4 className='sub__submenu'>{course}</h4></Link>
-                <Link onClick={() => dispatch(setCat({ ...selectedCat, course }))} key={index} to='/content'><h4 className='sub__submenu'>{course}</h4></Link>
-            ))}
-        </div>
-
-
-    ))
-})} */

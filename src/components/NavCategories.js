@@ -66,7 +66,7 @@ const NavCategoreis = () => {
             }
         )
             .then(res => {
-                // console.log(res.data)
+                console.log('--fetchEnrolledCourses:', res.data)
                 dispatch(setCourses(res.data))
                 console.log('done')
             })
@@ -77,9 +77,8 @@ const NavCategoreis = () => {
         await fetchEnrolledCourses(user.id, catId)
 
         dispatch(setSelectedCat(cat))
-        dispatch(setSelectedCatStatus(true))
         dispatch(setPathCatID(catId))
-        // dispatch(setChapters(null))
+
     }
     const handleSelectCategoryClick = async (e) => {
         const _sortedCat = sortedCat[e.target.name]
@@ -117,7 +116,29 @@ const NavCategoreis = () => {
         // console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 
+    /*
+    // //-- Detect Window is refreshed. --
+    useEffect(() => {
 
+        window.onbeforeunload = (event) => {
+            const e = event || window.event;
+            // Cancel the event
+            console.log('------onbeforeunload------')
+            e.preventDefault();
+            if (e) {
+                e.returnValue = ''; // Legacy method for cross browser support
+            }
+            return ''; // Legacy method for cross browser support
+        };
+
+    }, []);
+    const alertUser = (e) => {
+        e.preventDefault();
+        e.returnValue = "";
+        // console.log('selectedCat: ', selectedCat)
+        dispatch(setSelectedCatStatus(false))
+    };
+*/
     return (
         <div className='nav__categories'>
             {sortedCat?.map((category, index) => {
