@@ -6,6 +6,7 @@ import { login, getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './ChapterScreen.css'
 import { Warning } from '@mui/icons-material'
+import ProgressBarChapter from '../components/ProgressBarChapter'
 const ChapterScreen = () => {
     const TYPE_Text = 7
     const TYPE_NONE = 6
@@ -81,20 +82,17 @@ const ChapterScreen = () => {
         // 
         await axios.get(axios.defaults.baseURL + `/api/chapter/${chapterId}`)
             .then(res => {
-                console.log('fetchChapterContent: ', res.data)
+                // console.log('fetchChapterContent: ', res.data)
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
                     const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
-                    console.log('fetchChapterContent: ', res.data.content)
+                    // console.log('fetchChapterContent: ', res.data.content)
                     previousContentIndex.current = 0
                     setCurrentContentIndex(0)
                     setChapterContentLength(sortedChapterContent.length)
                     setContentData(sortedChapterContent)
                     if (sortedChapterContent.length > 0) {
                         selectContentFromChapter(sortedChapterContent[0])
-                        if (sortedChapterContent.length == 1) {
-                            return fetchUpdateContentViewed(sortedChapterContent[0].id)
-                        }
                     }
                 }
 
@@ -142,6 +140,7 @@ const ChapterScreen = () => {
     //-----------------------------------------------
     useEffect(() => {
         // const user_id = JSON.parse(localStorage.getItem('userLogin'))
+        // if (contentData) selectContentFromChapter(contentData[currentContentIndex])
         fetchChapterContent(chapter_id)
         console.log('useEffect', user_id)
 
@@ -165,6 +164,7 @@ const ChapterScreen = () => {
 
     return (
         <div className='chapter__screen'>
+            <ProgressBarChapter />
             {
                 chapter && (
                     <div className='chapter__screen_container'>

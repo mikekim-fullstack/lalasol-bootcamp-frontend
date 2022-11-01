@@ -2,19 +2,48 @@ import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setSelectedCat, setSelectedCatStatus } from '../slices/categorySlice'
-import { setPathCatID, getPathCatID } from '../slices/pathSlice'
+import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
 import { setCourses } from '../slices/courseSlice'
 import { setChapters, getChapters } from '../slices/chapterSlice'
 import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
 import axios from 'axios'
 import { Sync } from '@mui/icons-material'
-const NavCategoreis = () => {
+/*
+ const dispatch = useDispatch()
+    const selectedCat = useSelector(getSelectedCat)
+    const courses = useSelector(getCourses)
+    const chapters = useSelector(getChapters)
+    const pathCourseID = useSelector(getPathCourseID)
+    const pathChapterID = useSelector(getPathChapterID)
     const user = useSelector(getUser)
-    const pathCatID = useSelector(getPathCatID)
+
+
+    const fetchChapters = async (course_id) => {
+        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
+            .then(res => {
+                console.log('fetchChapters: ', res.data)
+                dispatch(setChapters(res.data))
+                // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
+                // else navigate('screen404')
+                // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
+            })
+            // .then(res=>{
+            //     console.log('chapter Viewed: ', res.data)
+            // })
+            .catch(err => console.log('error: ', err))
+    }
+
+*/
+
+const NavCategoreis = () => {
+    const [pathCatID, courseID, chapterID] = useSelector(getPathID)
+    const user = useSelector(getUser)
+    // const pathCatID = useSelector(getPathCatID)
     // const sel = useSelector(state => { console.log('test'); return state.category.data; }, shallowEqual)
     const [sortedCat, setSortedCat] = useState(null)
     const dispatch = useDispatch()
+    const chapters = useSelector(getChapters)
 
     const [categories, catError, catLoading] = useAxios({
         method: 'GET',
@@ -44,7 +73,14 @@ const NavCategoreis = () => {
             .catch(err => console.log('error: ', err))
     }
 
+    const updateCategory = async (catId, cat) => {
+        await fetchEnrolledCourses(user.id, catId)
 
+        dispatch(setSelectedCat(cat))
+        dispatch(setSelectedCatStatus(true))
+        dispatch(setPathCatID(catId))
+        // dispatch(setChapters(null))
+    }
     const handleSelectCategoryClick = async (e) => {
         const _sortedCat = sortedCat[e.target.name]
         console.log('handleSelectCategoryClick: ', _sortedCat)
@@ -57,6 +93,7 @@ const NavCategoreis = () => {
 
         dispatch(setSelectedCat(_sortedCat))
         dispatch(setSelectedCatStatus(true))
+        dispatch(resetPathAll())
         dispatch(setPathCatID(catId))
         dispatch(setChapters(null))
 
@@ -70,8 +107,14 @@ const NavCategoreis = () => {
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title])
             setSortedCat(_sortedCat)
             // console.log('-----_sortedCat----:', _sortedCat)
+            if (pathCatID && courseID && chapterID) {
+                const selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
+                // console.log('-----_sortedCat----:', _sortedCat, selectedCat)
+                updateCategory(pathCatID, selectedCat[0])
+            }
 
         }
+        // console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 
 

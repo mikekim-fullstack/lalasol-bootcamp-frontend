@@ -12,6 +12,7 @@ const userSlice = createSlice({
         },
         logout: (state, action) => {
             localStorage.removeItem('userLogin')
+            localStorage.removeItem('navPath')
             state.user = null
             // console.log('logout')
         }

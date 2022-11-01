@@ -55,11 +55,11 @@ const NavHeader = () => {
     useEffect(() => {
         if (selectedCatStatus) {
             const val = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width')
-            console.log('useEffect - css val: ', val)
+            // console.log('useEffect - css val: ', val)
             document.documentElement.style.setProperty('--side-menu-width-on-off', val)
         }
         else {
-            console.log('useEffect - css val: off')
+            // console.log('useEffect - css val: off')
             document.documentElement.style.setProperty('--side-menu-width-on-off', '0')
         }
         //
@@ -99,7 +99,8 @@ const NavHeader = () => {
                 <NavCategories />
                 <div className='nav__user'>
                     {/* <div className='logout' onClick={handleLogout}>Logout</div> */}
-                    <i className="fa-regular fa-bell"></i>
+                    {/* <i className="fa-regular fa-bell"></i> */}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 50 50" height="40" width="40"><path d="M7.083 31.458v-2.125H10.5V16.75q0-3.417 2.083-6.042Q14.667 8.083 18 7.375V6.208q0-.833.583-1.396.584-.562 1.417-.562.833 0 1.417.562.583.563.583 1.396v1.167q3.333.708 5.438 3.333 2.104 2.625 2.104 6.042v12.583h3.375v2.125Zm12.917-12Zm0 16.875q-1.208 0-2.104-.875Q17 34.583 17 33.333h6q0 1.25-.875 2.125T20 36.333Zm-7.417-7h14.834V16.75q0-3.125-2.146-5.292Q23.125 9.292 20 9.292q-3.083 0-5.25 2.166-2.167 2.167-2.167 5.292Z" /></svg>
                     {/* <button className='btn_user_profile' onClick={handleLogout}>VS</button> */}
                     <button className='btn_user_profile' onClick={handleLogout}>{user && `${user?.first_name[0]?.toUpperCase()}${user?.last_name[0]?.toUpperCase()}`}</button>
                 </div>

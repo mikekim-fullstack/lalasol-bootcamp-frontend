@@ -11,6 +11,8 @@
 # production
 /build
 
+DIFF*.JS
+
 # misc
 .DS_Store
 .env.local
