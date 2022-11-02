@@ -73,7 +73,7 @@ const NavCategoreis = () => {
             }
         )
             .then(res => {
-                console.log('--fetchEnrolledCourses:', res.data)
+                // console.log('--fetchEnrolledCourses:', res.data)
                 dispatch(setCourses(res.data))
                 console.log('done')
             })
@@ -125,11 +125,11 @@ const NavCategoreis = () => {
             }
 
         }
-        // console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
+        console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 
     useEffect(() => {
-        console.log('NaveCategores-useEffect-courses:', coursesEnrolled)
+        // console.log('NaveCategores-useEffect-courses:', coursesEnrolled)
         dispatch(setCoursesEnrolledStatus(coursesEnrolled))
     }, [coursesEnrolled])
     /*

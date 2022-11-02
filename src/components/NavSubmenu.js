@@ -264,7 +264,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
 
 
     const handleCourseClick = async (e, courseid) => {
-        console.log('handleCourseClick: ', courseid)
+        // console.log('handleCourseClick: ', courseid)
         await fetchChapters(courseid)
         dispatch(setPathCourseID(courseid))
         // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)

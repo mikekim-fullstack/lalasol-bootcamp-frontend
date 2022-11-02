@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import NavCategories from './NavCategories'
 import './NavHeader.css'
 import './NavSubmenu.css'
+import './CourseCard.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { setCat, setSelectedCatStatus, getSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
@@ -35,19 +36,32 @@ const NavHeader = () => {
         window.location.reload()
         // navigate(0) // -- to refresh forcefully. --
     }
+
+
+
+
     // -- When mouse is clicked outside of side menu,
     //    close side menu. --
     const mouseListener = (e) => {
         const navBar = document.querySelector('.nav__header')
         const sideMenu = document.querySelector('.nav__submenu')
 
-        console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, sideMenu,)
-
+        const courseCards = document.querySelectorAll('.course__card')
+        let clickedCard = false
+        // console.log('mouse position: ', e.clientX, e.clientY, ', clientHeight:', navBar.clientHeight, ', courseCard=', courseCards, ', side-menu=', sideMenu,)
         if (sideMenu && sideMenu.className.includes('nav-open')) {
             // -- exclude the areas in sideMenu and navbar. -- 
+
             if (sideMenu && (e.clientX > sideMenu.clientWidth) && e.clientY > navBar.clientHeight) {
-                dispatch(setSelectedCatStatus(false))
-                // console.log("clicked");
+                for (let i = 0; i < courseCards.length; i++) {
+                    if (courseCards[i].contains(e.target)) {
+                        clickedCard = true
+                        break
+                    }
+                }
+                // console.log('_courseCard: ', clickedCard, courseCards[0])
+                if (!clickedCard)
+                    dispatch(setSelectedCatStatus(false))
             }
         }
     }
@@ -59,7 +73,6 @@ const NavHeader = () => {
             const val = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width')
             console.log('useEffect - css val: ', val, selectedCatStatus)
             document.documentElement.style.setProperty('--side-menu-width-on-off', val)
-            // dispatch(setSelectedCatStatus(false))
         }
         else {
             console.log('useEffect - css val: off', selectedCatStatus)
@@ -74,7 +87,6 @@ const NavHeader = () => {
         // -- When mouse is clicked on iframe
         //    close side menu. Because iframe doesn't have onClick event--
         // 
-
         window.focus()
         window.addEventListener("blur", () => {
             setTimeout(() => {
@@ -87,8 +99,11 @@ const NavHeader = () => {
 
         document.addEventListener('click', mouseListener)
 
-        return () => document.removeEventListener('click', mouseListener)
+        return () => {
+            document.removeEventListener('click', mouseListener)
+        }
     }, [])
+
 
 
     // console.log('---- NavHeader::selectedCat: ', selectedCat[1], selectedCatStatus)
