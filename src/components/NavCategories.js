@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { setSelectedCat, setSelectedCatStatus } from '../slices/categorySlice'
+import { setSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
-import { setCourses } from '../slices/courseSlice'
+import { setCourses, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import { setChapters, getChapters } from '../slices/chapterSlice'
 import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
@@ -53,6 +53,13 @@ const NavCategoreis = () => {
         },
 
     })
+    const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
+        method: 'GET',
+        url: `/api/courses-enrolled-status/${user?.id}`,
+        headers: {
+            'Content-Type': 'Application/Json'
+        },
+    })
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
@@ -97,13 +104,18 @@ const NavCategoreis = () => {
         dispatch(setChapters(null))
 
     }
+    useEffect(() => {
+        if (user && user.id) {
 
+        }
+    }, [user])
     useEffect(() => {
         if (categories != null) {
 
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
-                .map(([key, value_cat]) => [value_cat.id, value_cat.title])
+                .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description])
+            dispatch(setCat(_sortedCat))
             setSortedCat(_sortedCat)
             // console.log('-----_sortedCat----:', _sortedCat)
             if (pathCatID && courseID && chapterID) {
@@ -116,6 +128,10 @@ const NavCategoreis = () => {
         // console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 
+    useEffect(() => {
+        console.log('NaveCategores-useEffect-courses:', coursesEnrolled)
+        dispatch(setCoursesEnrolledStatus(coursesEnrolled))
+    }, [coursesEnrolled])
     /*
     // //-- Detect Window is refreshed. --
     useEffect(() => {
