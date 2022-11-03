@@ -1,10 +1,122 @@
-.add_course__form {}
-
-.add_course__form form {
-    display: flex;
-    flex-direction: column;
+.add_course__form {
+    width: 100%;
 }
 
+.add_course__form form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+    /* border: 1px dashed pink; */
+}
+
+.add_course__form form div {
+    /* flex: 1 1; */
+    width: inherit;
+    box-sizing: border-box;
+}
+
+input {
+    margin: 5px 0;
+}
+
+input[type=text] {
+    outline: none;
+    border-style: none;
+    padding: 10px 20px;
+    outline: none;
+    border-radius: 3px;
+    max-width: 100%;
+    width: 100%;
+    /* margin-top: 5px; */
+}
+
+input:focus {
+    box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+}
+
+textarea:focus {
+    box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+}
+
+textarea {
+    outline: none;
+    border-style: none;
+    border-radius: 3px;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: 5px 0;
+    resize: vertical;
+}
+
+.input_file {
+    display: flex;
+    align-items: center;
+}
+
+.input_file>label {
+    padding: 8.5px;
+    color: rgb(69, 69, 69);
+    font-weight: 300;
+    font-size: 1rem;
+    background-color: rgb(189, 189, 189);
+    margin-right: 2px;
+    border-radius: 3px 0 0 3px;
+}
+
+input[type=file] {
+    /* margin: 5px 0; */
+    width: 100%;
+    max-width: 100%;
+    background-color: rgba(255, 255, 255, 0.797);
+    border: none;
+    border-radius: 0 3px 3px 0;
+    color: #000;
+}
+
+input[type=file]:hover {
+    box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+    -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
+}
+
+
+
+input[type=file]::file-selector-button {
+
+    background-color: rgb(189, 189, 189);
+    color: #000;
+    border: 0px;
+    border-right: 1px solid #e5e5e5;
+    padding: 10px 15px;
+    margin-right: 20px;
+
+    transition: .5s;
+}
+
+
+
+input[type=file]::file-selector-button:hover {
+    background-color: rgb(139, 138, 138);
+    border: 0px;
+    border-right: 1px solid #e5e5e5;
+}
+
+button {
+    margin: 7px 0;
+    padding: 10px;
+    background-color: rgb(226, 88, 88);
+    color: white;
+    border: 0;
+    border-radius: 3px;
+}
+
+button:hover {}
 
 @media screen and (min-width:600px) {
     .add_course__form form {

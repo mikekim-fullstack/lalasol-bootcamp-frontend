@@ -94,10 +94,11 @@ const AddCourseScreen = () => {
                         // console.log('add_courseScreen-cat:', cat)
                         return <div key={cat[0]}>
                             <div className='categories' >
-                                <div>
-                                    <span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}
+                                <div className='title'>
+                                    <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
+                                    <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
                                 </div>
-                                <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
+                                {selCatID[index] && <AddCourse />}
                             </div>
                             <div className='courses'>
                                 {
@@ -107,7 +108,7 @@ const AddCourseScreen = () => {
                                     })
                                 }
                             </div>
-                            {selCatID[index] && <AddCourse />}
+
 
                         </div>
 

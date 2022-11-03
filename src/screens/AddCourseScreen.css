@@ -12,31 +12,44 @@
 .add_course__screen_content {
     /* margin: 100px 0px; */
     padding-top: var(--nav-height);
+
 }
 
 .add_course__screen_content .categories {
+    display: block;
+    /* border: 1px dashed pink; */
     margin-top: 20px;
     text-align: left;
     background-color: rgb(3, 153, 165);
     color: white;
     padding: 10px;
+
+}
+
+.add_course__screen_content .categories .add {
+    margin: 10px;
+}
+
+.add_course__screen_content .categories .title {
+
+    /* border: 1px dashed pink; */
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.add_course__screen_content .categories>span {
+.add_course__screen_content .categories .title span {
     font-weight: 500;
     color: bisque;
 }
 
-.add_course__screen_content .categories>svg {
+.add_course__screen_content .categories .title svg {
     fill: white;
     cursor: pointer;
     /* border: 1px dashed pink; */
 }
 
-.add_course__screen_content .categories>svg:hover {
+.add_course__screen_content .categories .title>svg:hover {
     transform: scale(1.2);
 }
 
