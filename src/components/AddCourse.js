@@ -1,31 +1,82 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import './AddCourse.css'
-const AddCourse = ({ showLabel }) => {
+const AddCourse = ({ showLabel, category_id, teacher_id, handleSuccessUploading }) => {
+    const navigate = useNavigate()
+    const [inputData, setInputData] = useState({
+        category: category_id,
+        teacher: teacher_id,
+        title: '',
+        description: '',
+        course_image: '',
+        course_no: 1,
+    })
+    const [uploadSuccess, setUploadSuccess] = useState(false)
+    const fileRef = useRef(null)
+    const onSubmitAddCourseForm = (e) => {
+        e.preventDefault()
+        let formData = new FormData()
+        // 
+        // Object.entries(inputData).forEach((input, index) => console.log(input, index))
+        Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
+        // console.log('onSubmitAddCourseForm--:', formData)
+        axios({
+            method: 'POST',
+            url: axios.defaults.baseURL + '/api/courses-create/',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+        })
+            .then(res => {
+                // --- Reset input fields. ---
+                setInputData({ ...inputData, title: '', description: '' })
+                fileRef.current.value = "";//Resets the file name of the file input 
+                setUploadSuccess(true)
+                handleSuccessUploading(true)
+                // window.location.reload()
+            })
+            .catch(res => { setUploadSuccess(false); console.log('onSubmitAddCourseForm--error: ', res.response.data); })
+        // axios.post(axios.defaults.baseURL + '/api/courses-create/',
+        //     formData,
+        //     {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     })
+        //     .then(res => console.log(res))
+        //     .catch(res => console.log('onSubmitAddCourseForm--error: ', res.response.data))
+    }
+    const onHandleInputChange = (e) => {
+        if (e.target.name == 'course_image') {
+            setInputData({ ...inputData, [e.target.name]: e.target.files[0] })
+        }
+        else {
+            setInputData({ ...inputData, [e.target.name]: e.target.value })
+        }
+    }
     return (
         <div className='add_course__form'>
-            <form>
-                <div className='input'>
-                    {showLabel && <label>Title</label>}
-                    <input required type='text' name='add_course' placeholder='Enter Title*' />
+            <form onSubmit={onSubmitAddCourseForm}>
+                <div className='group-1'>
+                    <div className='input'>
+                        {showLabel && <label>Title</label>}
+                        <input onChange={onHandleInputChange} value={inputData?.title} required type='text' name='title' placeholder='Enter Title*' />
+                    </div>
+                    <div>
+                        {showLabel && <label>Description</label>}
+                        <textarea onChange={onHandleInputChange} value={inputData?.description} row='1' required name='description' placeholder='Enter Description*' />
+                    </div>
                 </div>
-                <div>
-                    {showLabel && <label>Description</label>}
-                    <textarea required name='add_course' placeholder='Enter Description*' />
-                </div>
-                <div className='input_file'>
-                    <label>Image</label>
-                    <input required name='add_course' type='file' accept="image/*" />
-                </div>
-                {/* <label className="file">
-                    <input type="file" id="file" aria-label="File browser example" />
-                    <span class="file-custom"></span>
-                </label> */}
+                <div className='group-2'>
+                    <div className='input_file'>
+                        <input onChange={onHandleInputChange} ref={fileRef} required name='course_image' type='file' accept="image/*" />
+                        <label>*Image</label>
+                    </div>
 
-                {/* <div>
-                    <label>Course Number</label>
-                    <input type='number' min='0' placeholder='Enter Course Number' />
-                </div> */}
-                <button type='submit'>Add</button>
+                    <button type='submit'>Add</button>
+                </div>
             </form>
         </div>
     )

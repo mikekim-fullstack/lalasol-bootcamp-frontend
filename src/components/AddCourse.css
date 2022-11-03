@@ -10,11 +10,21 @@
     /* border: 1px dashed pink; */
 }
 
-.add_course__form form div {
-    /* flex: 1 1; */
-    width: inherit;
-    box-sizing: border-box;
+.add_course__form form .group-1,
+.add_course__form form .group-2 {
+    width: 100%;
+    /* border: 1px dashed pink;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap; */
 }
+
+/* .add_course__form form .group-1 input {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+} */
 
 input {
     margin: 5px 0;
@@ -52,6 +62,7 @@ textarea {
     max-width: 100%;
     margin: 5px 0;
     resize: vertical;
+    min-height: 2.3rem;
 }
 
 .input_file {
@@ -64,22 +75,24 @@ textarea {
     color: rgb(69, 69, 69);
     font-weight: 300;
     font-size: 1rem;
-    background-color: rgb(189, 189, 189);
-    margin-right: 2px;
-    border-radius: 3px 0 0 3px;
+    background-color: rgb(231, 231, 231);
+
+    border-radius: 0 3px 3px 0;
 }
 
-input[type=file] {
+.add_course__form input[type=file] {
     /* margin: 5px 0; */
     width: 100%;
     max-width: 100%;
     background-color: rgba(255, 255, 255, 0.797);
     border: none;
-    border-radius: 0 3px 3px 0;
+    margin-right: 2px;
+    border-radius: 3px 0 0 3px;
+
     color: #000;
 }
 
-input[type=file]:hover {
+.add_course__form input[type=file]:hover {
     box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
@@ -87,12 +100,12 @@ input[type=file]:hover {
 
 
 
-input[type=file]::file-selector-button {
+.add_course__form input[type=file]::file-selector-button {
 
-    background-color: rgb(189, 189, 189);
+    background-color: rgb(232, 232, 232);
     color: #000;
     border: 0px;
-    border-right: 1px solid #e5e5e5;
+    border-right: 1px solid #b6b6b6;
     padding: 10px 15px;
     margin-right: 20px;
 
@@ -101,25 +114,42 @@ input[type=file]::file-selector-button {
 
 
 
-input[type=file]::file-selector-button:hover {
+.add_course__form input[type=file]::file-selector-button:hover {
     background-color: rgb(139, 138, 138);
     border: 0px;
     border-right: 1px solid #e5e5e5;
 }
 
-button {
+.add_course__form button {
     margin: 7px 0;
     padding: 10px;
     background-color: rgb(226, 88, 88);
     color: white;
     border: 0;
     border-radius: 3px;
+    width: 100%;
+    max-width: 100%;
+    height: 2.5rem;
 }
 
-button:hover {}
+.add_course__form button:hover {
+    background-color: rgb(198, 52, 52);
+}
+
+.add_course__form button:active {
+    background-color: rgb(174, 34, 34);
+}
 
 @media screen and (min-width:600px) {
     .add_course__form form {
         flex-direction: row;
+    }
+
+    .add_course__form button {
+        height: 3.2rem;
+    }
+
+    .add_course__form form .group-1 {
+        margin-right: 10px;
     }
 }

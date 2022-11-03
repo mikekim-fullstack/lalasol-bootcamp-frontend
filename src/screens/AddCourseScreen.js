@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
-import { setCourses, getCourses, getCoursesEnrolledStatus } from '../slices/courseSlice'
+import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import { setChapters, getChapters } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
@@ -23,6 +23,7 @@ const AddCourseScreen = () => {
 
 
     const [selCatID, setSelCatID] = useState([])
+    const [isUpdatedCourse, setIsUpdatedCourse] = useState(false)
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -79,11 +80,34 @@ const AddCourseScreen = () => {
         // console.log('add_courseScreen-cat:', _selCatID, cat[0], index)
     }
 
+    const handleSuccessUploading = (status) => {
+        setIsUpdatedCourse(status)
+    }
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
         if (categories)
             setSelCatID(new Array(categories.length).fill(false))
-    }, [categories])
+    }, [categories, isUpdatedCourse, coursesEnrolled])
+
+    useEffect(() => {
+        if (isUpdatedCourse) {
+            axios({
+                method: 'GET',
+                url: `/api/courses-enrolled-status/${user?.id}`,
+                headers: {
+                    'Content-Type': 'Application/Json'
+                },
+            })
+                .then(res => {
+                    dispatch(setCoursesEnrolledStatus(res.data))
+                    setIsUpdatedCourse(false)
+                    // console.log('----- successfully course uploaded', res.data)
+
+                })
+                .catch(error => console.log(error.response.data))
+        }
+        // console.log('-----useEffect-isUpdatedCourse ----:', isUpdatedCourse)
+    }, [isUpdatedCourse])
     return (
 
         <div className='add_course__screen'>
@@ -98,7 +122,7 @@ const AddCourseScreen = () => {
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
                                     <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
                                 </div>
-                                {selCatID[index] && <AddCourse />}
+                                {selCatID[index] && <AddCourse category_id={cat[0]} teacher_id={1} handleSuccessUploading={handleSuccessUploading} />}
                             </div>
                             <div className='courses'>
                                 {
