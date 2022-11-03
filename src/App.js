@@ -19,6 +19,7 @@ import LoginScreen from './screens/LoginScreen'
 import axios from 'axios'
 import { useSelector, useDispatch } from 'react-redux'
 import { login, getUser } from './slices/userSlices';
+import AddCourseScreen from './screens/AddCourseScreen'
 
 // process.env.REACT_API_DEBUG
 process.env.REACT_APP_DEBUG == 'true' ?
@@ -42,6 +43,7 @@ function App() {
           <NavHeader />
           <Routes>
             <Route path='/' element={<HomeScreen />} />
+            <Route path='/add-course' element={<AddCourseScreen />} />
             <Route path='/profile' element={<ProfileScreen />} />
             <Route path='/chapter/:chapter_id/:user_id/' element={<ChapterScreen />} />
             <Route path='/quiz/:quiz_id' element={<QuizScreen />} />

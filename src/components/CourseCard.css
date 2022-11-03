@@ -1,8 +1,10 @@
-.course__outline {
+.course__card_outline {
     transition: all 0.3s ease;
+    margin: 4px;
+
 }
 
-.course__outline:hover {
+.course__card_outline:hover {
     box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.05);
     -webkit-box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.05);
     -moz-box-shadow: 0px 0px 0px 8px rgba(0, 0, 0, 0.05);
@@ -19,6 +21,7 @@
     border-radius: 5px;
     cursor: pointer;
     background-color: white;
+
 
 }
 
@@ -48,4 +51,11 @@
 .course__card .svg_image_gray {
     /* border: 2px dashed pink; */
     filter: grayscale(1);
+}
+
+@media screen and (min-width:600px) {
+    .course__card_outline {
+        margin: 8px;
+    }
+
 }

@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+
 import { getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus } from '../slices/courseSlice'
 import { setChapters, getChapters } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
-import './HomeScreen.css'
+import './AddCourseScreen.css'
 import CourseCard from '../components/CourseCard'
+import AddCourse from '../components/AddCourse'
 
-const HomeScreen = () => {
+const AddCourseScreen = () => {
+
     const dispatch = useDispatch()
     const user = useSelector(getUser)
     const categories = useSelector(getCats)
@@ -18,8 +21,11 @@ const HomeScreen = () => {
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
 
-    // console.log('---HomeScreen ---categories: ', categories)
-    // console.log('---HomeScreen ---courses: ', coursesEnrolled)
+
+    const [selCatID, setSelCatID] = useState([])
+
+    // console.log('---add_courseScreen ---categories: ', categories)
+    // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
@@ -54,15 +60,7 @@ const HomeScreen = () => {
     const handleCourseClick = async (e, cat, course) => {
         const catId = course.category
         const courseid = course.id
-        // console.log('handleCourseClick: ', cat, catId, courseid)
 
-        // const _sortedCat = sortedCat[e.target.name]
-        // console.log('handleSelectCategoryClick: ', _sortedCat)
-
-        // -- For letting the submenu(sideBar) to only show the subject lists not showing 
-        //    previous items of selected subject. --
-        // const catId = _sortedCat[0]
-        // const catTitle = _sortedCat[1]
         await fetchEnrolledCourses(user.id, catId)
 
         dispatch(setSelectedCat(cat))
@@ -74,44 +72,43 @@ const HomeScreen = () => {
         dispatch(setPathCourseID(courseid))
         dispatch(setSelectedCatStatus(true))
     }
+    const handleAddCourse = (e, cat, index) => {
+        const _selCatID = [...selCatID]
+        _selCatID[index] = !_selCatID[index]
+        setSelCatID([..._selCatID])
+        // console.log('add_courseScreen-cat:', _selCatID, cat[0], index)
+    }
+
+    useEffect(() => {
+        // console.log('categories', categories, categories.length, selCatID)
+        if (categories)
+            setSelCatID(new Array(categories.length).fill(false))
+    }, [categories])
     return (
 
-        <div className='home__screen'>
-            <div className='home__screen_content'>
-                <h1>All Courses</h1>
+        <div className='add_course__screen'>
+            <div className='add_course__screen_content'>
+                <h1>Add Courses</h1>
                 {
-                    categories && categories.map((cat) => {
-                        // console.log('HomeScreen-cat:', cat)
+                    categories && categories.map((cat, index) => {
+                        // console.log('add_courseScreen-cat:', cat)
                         return <div key={cat[0]}>
                             <div className='categories' >
-                                <span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}
+                                <div>
+                                    <span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}
+                                </div>
+                                <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
                             </div>
                             <div className='courses'>
                                 {
                                     coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
                                         // console.log('course: ', course)
-                                        return <CourseCard id='id_course_card' key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />
+                                        return <CourseCard key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />
                                     })
                                 }
                             </div>
-                            {/* <div className='courses'>
-                                {
-                                    coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
-                                        // console.log('course: ', course)
-                                        return <div key={course.id}
-                                            className={`course_outline`}
-                                            onClick={(e) => handleCourseClick(e, cat, course)}>
-                                            <div className={`course_card`}>
-                                                <div className='image'>
-                                                    <img width='36px' height='36px' className={course.enrolled ? '' : 'svg_image_gray'} src={axios.defaults.baseURL + course.course_image}></img>
-                                                </div>
-                                                <div className='title'><span>{course.title}</span></div>
-                                            </div>
+                            {selCatID[index] && <AddCourse />}
 
-                                        </div>
-                                    })
-                                }
-                            </div> */}
                         </div>
 
                     })
@@ -122,4 +119,4 @@ const HomeScreen = () => {
     )
 }
 
-export default HomeScreen
+export default AddCourseScreen

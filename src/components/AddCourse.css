@@ -1,0 +1,13 @@
+.add_course__form {}
+
+.add_course__form form {
+    display: flex;
+    flex-direction: column;
+}
+
+
+@media screen and (min-width:600px) {
+    .add_course__form form {
+        flex-direction: row;
+    }
+}

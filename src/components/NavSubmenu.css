@@ -125,7 +125,7 @@
     transform: scale(1.07);
 }
 
-.settings {
+.add_course {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -139,16 +139,16 @@
     transition: all 0.2s ease;
 }
 
-.settings:hover {
+.add_course:hover {
     background-color: rgb(28, 28, 28);
     border-left: 10px solid green;
 }
 
-.settings>svg {
+.add_course>svg {
     fill: white;
 }
 
-.settings>span {
+.add_course>span {
     font-size: 1.1rem;
     color: white;
     text-transform: uppercase;
