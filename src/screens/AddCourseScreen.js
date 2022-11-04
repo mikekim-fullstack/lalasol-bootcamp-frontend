@@ -128,7 +128,7 @@ const AddCourseScreen = () => {
                                 {
                                     coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
                                         // console.log('course: ', course)
-                                        return <CourseCard key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />
+                                        return <CourseCard key={course.id} cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
                                     })
                                 }
                             </div>

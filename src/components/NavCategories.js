@@ -102,18 +102,8 @@ const NavCategoreis = () => {
                 updateCategory(pathCatID, _selectedCat[0])
             }
             console.log('-- pathCatID', pathCatID, typeof (pathCatID), ', end')
+
             // -- Initially after user login, by default select the first category. ---
-            // if (selectedCat == null) {
-            //     // console.log('useEffect- selectedCat: ', selectedCat, pathCatID, _sortedCat[0])
-            //     const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
-            //     console.log('-- pathCatID', pathCatID, typeof (pathCatID), ', ', _selectedCat, _sortedCat[0])
-
-
-
-            //     // selectCategory(_sortedCat[0], false)
-            // }
-
-
             if (typeof (pathCatID) == 'undefined') {
                 console.log('No pathCatId: ')
                 selectCategory(_sortedCat[0], false)
