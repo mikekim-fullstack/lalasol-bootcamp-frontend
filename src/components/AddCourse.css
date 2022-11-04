@@ -1,5 +1,6 @@
 .add_course__form {
     width: 100%;
+
 }
 
 .add_course__form form {
@@ -8,6 +9,7 @@
     flex-direction: column;
     margin-right: 20px;
     /* border: 1px dashed pink; */
+    transition: all 3s ease;
 }
 
 .add_course__form form .group-1,

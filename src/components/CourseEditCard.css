@@ -1,5 +1,5 @@
 .course__edit_card_outline {
-    transition: all 0.3s ease;
+
     margin: 4px;
 
 }
@@ -21,8 +21,6 @@
     border-radius: 5px;
     cursor: pointer;
     background-color: white;
-
-
 }
 
 .course__edit_card:hover {}

@@ -80,7 +80,7 @@ const AddCourseScreen = () => {
         const catEle = document.getElementById('add_category_' + index)
         _selCatID[index] ? catEle.style.background = 'rgb(0, 96, 99)' : catEle.style.background = 'rgb(0, 46, 49)'
 
-        console.log('add_courseScreen-cat:', _selCatID, cat[0], index, catEle, _selCatID[index])
+        // console.log('add_courseScreen-cat:', _selCatID, cat[0], index, catEle, _selCatID[index])
     }
 
     const handleSuccessUploading = (status) => {
