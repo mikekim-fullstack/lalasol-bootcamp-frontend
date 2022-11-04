@@ -9,7 +9,7 @@ import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathC
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './AddCourseScreen.css'
-import CourseCard from '../components/CourseCard'
+import CourseEditCard from '../components/CourseEditCard'
 import AddCourse from '../components/AddCourse'
 
 const AddCourseScreen = () => {
@@ -77,7 +77,10 @@ const AddCourseScreen = () => {
         const _selCatID = [...selCatID]
         _selCatID[index] = !_selCatID[index]
         setSelCatID([..._selCatID])
-        // console.log('add_courseScreen-cat:', _selCatID, cat[0], index)
+        const catEle = document.getElementById('add_category_' + index)
+        _selCatID[index] ? catEle.style.background = 'rgb(0, 96, 99)' : catEle.style.background = 'rgb(0, 46, 49)'
+
+        console.log('add_courseScreen-cat:', _selCatID, cat[0], index, catEle, _selCatID[index])
     }
 
     const handleSuccessUploading = (status) => {
@@ -117,9 +120,10 @@ const AddCourseScreen = () => {
                     categories && categories.map((cat, index) => {
                         // console.log('add_courseScreen-cat:', cat)
                         return <div key={cat[0]}>
-                            <div className='categories' >
+                            <div className='categories' id={`add_category_${index}`} style={{ backgroundColor: 'rgb(0, 46, 49)' }}>
                                 <div className='title'>
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
+                                    {/*-- + sign --*/}
                                     <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
                                 </div>
                                 {selCatID[index] && <AddCourse category_id={cat[0]} teacher_id={1} handleSuccessUploading={handleSuccessUploading} />}
@@ -128,7 +132,7 @@ const AddCourseScreen = () => {
                                 {
                                     coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
                                         // console.log('course: ', course)
-                                        return <CourseCard key={course.id} cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
+                                        return <CourseEditCard key={course.id} cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
                                     })
                                 }
                             </div>
