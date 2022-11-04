@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { setSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
+import { setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
 import { setCourses, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import { setChapters, getChapters } from '../slices/chapterSlice'
@@ -9,32 +9,6 @@ import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
 import axios from 'axios'
 import { Sync } from '@mui/icons-material'
-/*
- const dispatch = useDispatch()
-    const selectedCat = useSelector(getSelectedCat)
-    const courses = useSelector(getCourses)
-    const chapters = useSelector(getChapters)
-    const pathCourseID = useSelector(getPathCourseID)
-    const pathChapterID = useSelector(getPathChapterID)
-    const user = useSelector(getUser)
-
-
-    const fetchChapters = async (course_id) => {
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
-            .then(res => {
-                console.log('fetchChapters: ', res.data)
-                dispatch(setChapters(res.data))
-                // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
-                // else navigate('screen404')
-                // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
-            })
-            // .then(res=>{
-            //     console.log('chapter Viewed: ', res.data)
-            // })
-            .catch(err => console.log('error: ', err))
-    }
-
-*/
 
 const NavCategoreis = () => {
     const [pathCatID, courseID, chapterID] = useSelector(getPathID)
@@ -44,6 +18,7 @@ const NavCategoreis = () => {
     const [sortedCat, setSortedCat] = useState(null)
     const dispatch = useDispatch()
     const chapters = useSelector(getChapters)
+    const selectedCat = useSelector(getSelectedCat)
 
     const [categories, catError, catLoading] = useAxios({
         method: 'GET',
@@ -87,9 +62,9 @@ const NavCategoreis = () => {
         dispatch(setPathCatID(catId))
 
     }
-    const handleSelectCategoryClick = async (e) => {
-        const _sortedCat = sortedCat[e.target.name]
-        console.log('handleSelectCategoryClick: ', _sortedCat)
+    const selectCategory = async (_sortedCat, openSideMenu = true) => {
+        // const _sortedCat = sortedCat[cat_id]
+        // console.log('handleSelectCategoryClick: ', _sortedCat)
 
         // -- For letting the submenu(sideBar) to only show the subject lists not showing 
         //    previous items of selected subject. --
@@ -98,10 +73,13 @@ const NavCategoreis = () => {
         await fetchEnrolledCourses(user.id, catId)
 
         dispatch(setSelectedCat(_sortedCat))
-        dispatch(setSelectedCatStatus(true))
+        openSideMenu && dispatch(setSelectedCatStatus(true))
         dispatch(resetPathAll())
         dispatch(setPathCatID(catId))
         dispatch(setChapters(null))
+    }
+    const handleSelectCategoryClick = (e) => {
+        selectCategory(sortedCat[e.target.name])
 
     }
     useEffect(() => {
@@ -119,9 +97,32 @@ const NavCategoreis = () => {
             setSortedCat(_sortedCat)
             // console.log('-----_sortedCat----:', _sortedCat)
             if (pathCatID && courseID && chapterID) {
-                const selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
+                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
                 // console.log('-----_sortedCat----:', _sortedCat, selectedCat)
-                updateCategory(pathCatID, selectedCat[0])
+                updateCategory(pathCatID, _selectedCat[0])
+            }
+            console.log('-- pathCatID', pathCatID, typeof (pathCatID), ', end')
+            // -- Initially after user login, by default select the first category. ---
+            // if (selectedCat == null) {
+            //     // console.log('useEffect- selectedCat: ', selectedCat, pathCatID, _sortedCat[0])
+            //     const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
+            //     console.log('-- pathCatID', pathCatID, typeof (pathCatID), ', ', _selectedCat, _sortedCat[0])
+
+
+
+            //     // selectCategory(_sortedCat[0], false)
+            // }
+
+
+            if (typeof (pathCatID) == 'undefined') {
+                console.log('No pathCatId: ')
+                selectCategory(_sortedCat[0], false)
+            }
+            else if (selectedCat == null) {
+
+                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)[0]
+                selectCategory(_selectedCat, false)
+                console.log('Yes pathCatId: ', _selectedCat)
             }
 
         }
@@ -132,6 +133,11 @@ const NavCategoreis = () => {
         // console.log('NaveCategores-useEffect-courses:', coursesEnrolled)
         dispatch(setCoursesEnrolledStatus(coursesEnrolled))
     }, [coursesEnrolled])
+
+    useEffect(() => {
+
+        console.log('selectedCat: ', selectedCat)
+    }, [selectedCat])
     /*
     // //-- Detect Window is refreshed. --
     useEffect(() => {

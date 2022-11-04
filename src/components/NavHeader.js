@@ -112,9 +112,8 @@ const NavHeader = () => {
         <nav className='nav__header'>
             <div className='nav__container'>
                 <div className='nav__menu'>
-                    {/* {selectedCat && <svg onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg>} */}
-                    {/* <svg className={'active'} onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg> */}
                     <svg className={selectedCat && 'active'} onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg>
+                    {/* <svg className={'active'} onClick={handleSubmenu} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.5 17.275v-1h17v1Zm0-4.775v-1h17v1Zm0-4.775v-1h17v1Z" /></svg> */}
                     <span className='logo'>
                         <Link onClick={handleHome} to='/'>LaLaSol</Link>
                         {selectedCat && selectedCat[1] && <span className='cat' dangerouslySetInnerHTML={{ __html: selectedCat[1].replace(' ', '&nbsp;') }}></span>}
