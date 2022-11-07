@@ -4,7 +4,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
 import { setCourses, setCoursesEnrolledStatus } from '../slices/courseSlice'
-import { setChapters, getChapters } from '../slices/chapterSlice'
+import { setChapters, getChapters, setChapterCategory } from '../slices/chapterSlice'
 import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
 import axios from 'axios'
@@ -35,6 +35,18 @@ const NavCategoreis = () => {
             'Content-Type': 'Application/Json'
         },
     })
+
+    const fetchChapterCateory = async () => {
+        await axios({
+            method: 'GET',
+            url: axios.defaults.baseURL + '/api/chapter-category/',
+            headers: {
+                'Content-Type': 'Application/Json'
+            }
+        })
+            .then(res => dispatch(setChapterCategory(res.data)))
+            .catch(e => console.log('fetchChapterCategory-Error:', e.response.data))
+    }
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
@@ -116,6 +128,7 @@ const NavCategoreis = () => {
             }
 
         }
+        fetchChapterCateory()
         console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 

@@ -11,6 +11,7 @@ import { getUser, logout } from '../slices/userSlices'
 
 
 const NavHeader = () => {
+
     const dispatch = useDispatch()
     const user = useSelector(getUser)
     const navigate = useNavigate()

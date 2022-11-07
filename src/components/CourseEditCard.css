@@ -54,6 +54,7 @@
 @media screen and (min-width:600px) {
     .course__edit_card_outline {
         margin: 8px;
+        border-radius: 2px;
     }
 
 }

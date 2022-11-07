@@ -4,7 +4,7 @@ import './NavSubmenu.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getSelectedCat, setCat, setSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses } from '../slices/courseSlice'
-import { setChapters, getChapters } from '../slices/chapterSlice'
+import { setChapters, getChapters, setChapterCategory } from '../slices/chapterSlice'
 import { setPathCourseID, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -246,11 +246,10 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const pathChapterID = useSelector(getPathChapterID)
     const user = useSelector(getUser)
 
-
     const fetchChapters = async (course_id) => {
         await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
             .then(res => {
-                // console.log('fetchChapters: ', res.data)
+                console.log('fetchChapters: ', res.data)
                 dispatch(setChapters(res.data))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')

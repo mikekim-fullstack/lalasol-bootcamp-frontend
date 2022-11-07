@@ -1,0 +1,26 @@
+.chapter_editor__component {
+
+    border-top: 1px dashed gray;
+
+}
+
+.chapter_editor__component .form {
+    margin: 20px;
+}
+
+.chapter_editor__component button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+}
+
+@media screen and (min-width:768px) {
+
+    .chapter_editor__component {
+        /* padding-top: 42.5px; */
+        /* border-radius: 0 8px 8px 0; */
+        height: 100%;
+        /* flex: 1 1; */
+        /* border: 1px dashed rgb(228, 12, 48); */
+    }
+}
