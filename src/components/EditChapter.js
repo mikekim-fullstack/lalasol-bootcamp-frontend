@@ -4,7 +4,7 @@ import { getClickedChapter, setClickedChapter } from '../slices/chapterSlice'
 import axios from 'axios'
 import './EditChapter.css'
 
-const EditChapter = ({ createChapter }) => {
+const EditChapter = ({ createChapter, handleSubmitForm }) => {
     const titleRef = useRef(null)
     const subTitleRef = useRef(null)
     const descriptionRef = useRef(null)
@@ -20,17 +20,17 @@ const EditChapter = ({ createChapter }) => {
             url: axios.defaults.baseURL + ''
         })
     }
-    const handleSubmitForm = (e) => {
-        e.preventDefault()
-        console.log('handleSubmitForm - ', e.target.innerText.toLowerCase())
-        if (e.target.innerText.toLowerCase() == 'update') {
+    // const handleSubmitForm = (e) => {
+    //     e.preventDefault()
+    //     console.log('handleSubmitForm - ', e.target.innerText.toLowerCase())
+    //     if (e.target.innerText.toLowerCase() == 'update') {
 
 
-        }
-        else if (e.target.innerText.toLowerCase() == 'create') {
+    //     }
+    //     else if (e.target.innerText.toLowerCase() == 'create') {
 
-        }
-    }
+    //     }
+    // }
 
     useEffect(() => {
         // clickedChapter && setInputData({

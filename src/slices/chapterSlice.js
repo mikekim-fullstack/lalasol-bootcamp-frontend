@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const chapterSlice = createSlice({
-    initialState: { data: null, clickedData: null, category: null },
+    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null },
     name: 'chapters',
     reducers: {
         setChapters: (state, action) => {
@@ -19,11 +19,15 @@ const chapterSlice = createSlice({
 
         },
         setClickedChapter: (state, action) => {
-            state.clickedData = action.payload
+            state.clickedChapter = action.payload
             // console.log('slice - setClickedChapter: ', action.payload)
         },
         setChapterCategory: (state, action) => {
             state.category = action.payload
+        },
+        setClickedContent: (state, action) => {
+            state.clickedContent = action.payload
+            // console.log('slice - setClickedChapter: ', action.payload)
         },
 
     }
@@ -32,7 +36,7 @@ const chapterSlice = createSlice({
 
 export default chapterSlice.reducer
 
-export const { setChapters, setClickedChapter, setChapterCategory } = chapterSlice.actions
+export const { setChapters, setClickedChapter, setClickedContent, setChapterCategory } = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {
     if (state.chapters?.data) {
@@ -43,8 +47,9 @@ export const getChapter = (state, id) => {
     }
     return null
 }
-export const getClickedChapter = (state) => state.chapters.clickedData
+export const getClickedChapter = (state) => state.chapters.clickedChapter
 export const getChapterCategory = (state) => state.chapters.category
+export const getClickedContent = (state) => state.chapters.clickedContent
 
 
 

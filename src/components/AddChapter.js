@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { getClickedChapter, setClickedChapter, getChapterCategory } from '../slices/chapterSlice'
+import { getClickedChapter, setClickedChapter, setClickedContent, getClickedContent, getChapterCategory } from '../slices/chapterSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
 const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
+
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
@@ -12,10 +13,40 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     const [createChapter, setCreateChapter] = useState(false)
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
-    const [clickedContent, setClickedContent] = useState(null)
+
+    const contentFileRef = useRef(null)
+    const selectionRef = useRef(null)
+
+    const [contentChoice, setContentChoice] = useState(null)
+    // const [clickedContent, setClickedContent] = useState(null)
+    const clickedContent = useSelector(getClickedContent)
+
+    const initSelectContent = (_clickedContent) => {
+        console.log('init-click Content:', _clickedContent,)
+        dispatch(setClickedContent(_clickedContent))
+
+        const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
+        console.log('contentListsEle: ', contentListsEle)
+        if (contentListsEle) {
+            const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+            contentListsEle.style['box-shadow'] = shadowColor
+            contentListsEle.style['-webkit-box-shadow'] = shadowColor
+            contentListsEle.style['-moz-box-shadow'] = shadowColor
+            setPreviousClickedContent(contentListsEle)
+        }
+        dispatch(setClickedContent(_clickedContent))
+        /**
+         * selectionRef.current.value is for initial value of select tag
+         */
+        if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
+
+        setContentChoice([_clickedContent.chapter_category, chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title])
+
+
+    }
 
     const initSelectChapter = (_clickedChapter) => {
-        console.log('init-clickCht:', _clickedChapter,)
+        console.log('init-click Chapter:', _clickedChapter, ', clickedContent:', clickedContent)
         dispatch(setClickedChapter(_clickedChapter))
 
         const chapterListsEle = document.querySelector('.add_chapter__component .chapter_lists')
@@ -28,8 +59,9 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             setPreviousClickedChapter(chapterListsEle)
         }
 
-        // console.log('init-clickCht:', clickedChapter, chapterListsEle?.style)
+
     }
+
     const fetchChapters = async () => {
         setCreateChapter(false)
         await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${course.id}`)
@@ -43,6 +75,17 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                 setChapterLists(_sortedData)
             })
             .catch(err => console.log('error: ', err))
+    }
+    const handleSubmitForm = (e) => {
+        e.preventDefault()
+        console.log('handleSubmitForm - ', e.target.innerText.toLowerCase(), ', contentFileRef: ', contentFileRef.current.files)
+        if (e.target.innerText.toLowerCase() == 'update') {
+
+
+        }
+        else if (e.target.innerText.toLowerCase() == 'create') {
+
+        }
     }
 
     const handleClickChapter = (e, chapterId) => {
@@ -105,9 +148,14 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             clickedEle.style['-moz-box-shadow'] = shadowColor
             setPreviousClickedContent(clickedEle)
         }
-        //  
-        // setCreateChapter(false)
-        setClickedContent(content)
+
+        dispatch(setClickedContent(content))
+        /**
+         * selectionRef.current.value is for initial value of select tag
+         */
+        if (selectionRef?.current) selectionRef.current.value = content.chapter_category
+
+        setContentChoice([content.chapter_category, chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0].title])
         console.log('clickContent:', content)
     }
 
@@ -141,6 +189,11 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         // chapterLists?.length > 0 && console.log('useEffect- chapterLists: ', chapterLists, chapterLists[0])
     }, [chapterLists])
 
+    useEffect(() => {
+        console.log('useEffect - clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
+        !createChapter && clickedChapter?.content?.length > 0 && initSelectContent(clickedChapter?.content[0])
+    }, [clickedChapter])
+
 
     console.log('chapterID', clickedChapter?.id, chapterCategory.filter(cat => cat.id == 1)[0].title)
 
@@ -161,7 +214,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             {/* ---------------------- 2. Details of Chapter------------------------- */}
             <div className='chapter_detail'>
                 {/* {console.log('createChapter: ', createChapter)} */}
-                {(chapterLists?.length > 0 || createChapter) && < EditChapter createChapter={createChapter} />}
+                {(chapterLists?.length > 0 || createChapter) && < EditChapter createChapter={createChapter} handleSubmitForm={handleSubmitForm} />}
             </div>
 
             {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
@@ -182,8 +235,24 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             <div className='content_detail'>
                 <h3>Content details</h3>
                 <div>{clickedContent?.id}</div>
+                {/* --------------- */}
+                {clickedContent && <div className="select-container">
+                    {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id)}
+                    {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
+                    <select ref={selectionRef} onChange={e => setContentChoice([e.target.value, chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0].title])}  >
+                        {chapterCategory.map((chapterCat) => (
+                            <option key={chapterCat.id} value={chapterCat.id} name={chapterCat.title}>{chapterCat.title}</option>
+                        ))}
+                    </select>
+                </div>}
+                <input ref={contentFileRef} type='file' />
+                {contentChoice && console.log('contentChoice: ', contentChoice)}
+                {/* {contentChoice && contentChoice[1].contains('PDF File') && <input ref={contentFileRef} type='file' accept="application/pdf"/>}
+                {contentChoice && contentChoice[1].contains('HTML File') && <input ref={contentFileRef} type='file' accept="application/"/>} */}
+
+                {/* --------------- */}
             </div>
-        </div>
+        </div >
     )
 }
 
