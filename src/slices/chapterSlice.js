@@ -45,10 +45,10 @@ const chapterSlice = createSlice({
             state.clickedContent = action.payload
             // console.log('slice - setClickedChapter: ', action.payload)
         },
-        // setContentAction: (state, action) => {
-        //     state.contentActionList = action.payload
-        //     // console.log('slice - setClickedChapter: ', action.payload)
-        // },
+        setContentAction: (state, action) => {
+            state.contentActionList = action.payload
+            // console.log('slice - setClickedChapter: ', action.payload)
+        },
         resetContentAction: (state, action) => {
             // state.clickedContent = action.payload
             // console.log('slice - setClickedChapter: ', action.payload)
@@ -108,7 +108,7 @@ const chapterSlice = createSlice({
             })
         },
         updateContentActionById: (state, action) => {
-            // {id:'', type:'', data:''}
+            // {id:'',catId='', type:'', data:''}
             // action.payload.id, action.payload.action
             // action: delete, updated,created
             state.contentActionList = state.contentActionList.map(item => {
@@ -118,6 +118,8 @@ const chapterSlice = createSlice({
                     item.url = ''
                     item.text = ''
                     item[action.payload.type] = action.payload.data
+                    // console.log('action.payload.catId: ', action.payload.catId)
+                    item.chapter_category = action.payload.catId
                 }
                 return item
             })
@@ -140,6 +142,7 @@ export const { setChapters, setClickedChapter,
     setClickedContent, setChapterCategory,
     resetContentAction, updateContentActionById,
     deleteContentAction, createContentAction,
+    setContentAction,
 } = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {

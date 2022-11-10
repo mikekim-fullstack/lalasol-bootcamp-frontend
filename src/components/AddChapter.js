@@ -5,7 +5,7 @@ import {
     getClickedChapter, setClickedChapter, setClickedContent,
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
-    createContentAction, updateContentActionById,
+    createContentAction, updateContentActionById, setContentAction
 } from '../slices/chapterSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
@@ -34,6 +34,13 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
         // dispatch(setClickedContent(_clickedContent))
         console.log('initSelectContent: ', _clickedContent)
+        /**
+                 * Show filename in input file
+                 */
+        // const inputFileLabel = document.getElementById('fileinput_label')
+        // console.log('inputFileLabel: ', inputFileLabel)
+        // if (inputFileLabel && _clickedContent?.file) inputFileLabel.innerHTML = _clickedContent.file.split('/').pop()
+
 
         const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
         console.log('contentListsEle: ', contentListsEle)
@@ -50,10 +57,8 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
          * selectionRef.current.value is for initial value of select tag
          */
         if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
-        console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
-        // setContentChoice([_clickedContent.chapter_category, chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title])
+        // console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
-
 
     }
 
@@ -70,7 +75,6 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             chapterListsEle.style['-moz-box-shadow'] = shadowColor
             setPreviousClickedChapter(chapterListsEle)
         }
-
 
     }
 
@@ -135,9 +139,24 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     const handleClickContent = (e, content) => {//clickedChapter?.content
 
-        // const clickCht = chapterLists.filter((chapter) => chapter.id == contentId)
+        /**
+         * Show filename in input file
+         */
+        const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
+        const linkInput = document.querySelector('input_url')
+        if (urlFilter && urlFilter[0]?.title.includes('Link')) {
 
-        // clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+            console.log('-----clickContent:', content, urlFilter, ', linkInput', linkInput)
+            if (linkInput) {
+                linkInput.innerHTML = content.url
+                linkInput.style.display = 'unset'
+            }
+        }
+        // else {
+        //     linkInput.innerHTML = ''
+        //     linkInput.style.display = 'none'
+        // }
+
 
         const contentListsEle = document.querySelectorAll('.add_chapter__component .content_lists_item')
         let clickedEle = null
@@ -169,7 +188,13 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
         setInputContent({ url: content.url, file: content.file, text: content.text })
-        console.log('clickContent:', content)
+
+
+
+        // const inputFileLabel = document.getElementById('fileinput_label')
+        // if (inputFileLabel) inputFileLabel.innerHTML = content.file.split('/').pop()
+
+        // dispatch(deleteContentAction(6)) // for test
     }
 
 
@@ -195,12 +220,16 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             e.target.nextSibling.innerHTML = e.target.files[0].name
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'file', data: e.target.files[0] }))
         }
-        else {
+        else if (type == 'url') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'url', data: e.target.value }))
         }
     }
-
+    /**
+     * -------------------------------------------------------------------------------------
+     */
     useEffect(() => {
         setClickedChapter(null)
 
@@ -211,7 +240,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     useEffect(() => {
         setClickedChapter(null)
-        dispatch(resetContentAction())
+        dispatch(setContentAction([]))
         chapterLists?.length > 0 && initSelectChapter(chapterLists[0])
         // chapterLists?.length > 0 && console.log('useEffect- chapterLists: ', chapterLists, chapterLists[0])
         console.log('useEffect - 2. AddChapter->chapterLists: setClickedChapter')
@@ -224,9 +253,9 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         if (!createChapter && clickedChapter?.content?.length > 0) {
 
             // test to delete item in contentAction
-            dispatch(deleteContentAction(8))
-            dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
-            dispatch(updateContentActionById({ id: 16, type: 'url', data: 'https:www.youtube.com' }))
+            // dispatch(deleteContentAction(8))
+            // dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
+            // dispatch(updateContentActionById({ catId: 1, id: 16, type: 'url', data: 'https:www.youtube.com' }))
 
             /** --2. Initialize Content with first one.-- */
             contentAction.length > 0 && initSelectContent(contentAction[0])
@@ -234,15 +263,19 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     }, [clickedChapter])
 
+    useEffect(() => {
+        console.log('useEffect --- contentAction.action updated')
+    }, [contentAction?.action])
 
-    // useEffect(() => {
-    //     const tmp = contentFileRef?.current
-    //     if (tmp) {
-    //         // tmp.files[0].name = 'a'
-    //     }
-    //     console.log('useEffect - tmp:', tmp, tmp?.files)
-    //     // contentFileRef && contentFileRef.current.files[0].name
-    // }, [contentFileRef?.current])
+    useEffect(() => {
+        const tmp = contentLinkRef?.current
+        if (tmp) {
+            // tmp.files[0].name = 'a'
+        }
+        console.log('useEffect - contentLinkRef:', tmp, tmp?.url)
+        // contentFileRef && contentFileRef.current.files[0].name
+    }, [contentLinkRef?.current])
+
     console.log('contentAction', contentAction)
 
 
@@ -268,7 +301,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             <div className='content_lists'>
                 <h3>Content lists</h3>
                 <div className='content_lists_body'>
-                    {console.log('content_lists_body: ', contentAction)}
+                    {/* {console.log('content_lists_body: ', contentAction)} */}
                     {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => {
                         if (content.action != 'deleted') {
 
@@ -281,15 +314,6 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                         : <div></div>
                     }
                 </div>
-                {/* <div className='content_lists_body'>
-                    {!createChapter && clickedChapter?.content?.length > 0 ? clickedChapter.content.map((content, index) => (
-                        <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                            {index + 1}/{clickedChapter.content.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
-                        </div>
-                    ))
-                        : <div></div>
-                    }
-                </div> */}
             </div>
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
             <div className='content_detail'>
@@ -297,7 +321,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                 <div>{clickedContent?.id}</div>
                 {/* --------------- */}
                 {clickedContent && <div className="select-container">
-                    {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)}
+                    {/* {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)} */}
                     {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
                     <select ref={selectionRef} value={contentChoice ? contentChoice.id : 0} onChange={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])}  >
                         {chapterCategory.map((chapterCat) => (
@@ -305,12 +329,17 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                         ))}
                     </select>
                 </div>}
-                {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))}
+                {/* {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))} */}
                 {/* <input ref={contentFileRef} type='file' /> */}
                 {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
                 {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
-                {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
-                {contentChoice && contentChoice.title.includes('Link') && <input ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} />}
+                {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                    <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : clickedContent?.file?.split('/').pop() || 'Choose File'}</label>
+
+                </div>}
+                {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />}
+                {/* {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
+                {/* <input className='input_url' style={{ display: 'unset' }} ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} /> */}
 
                 {/* --------------- */}
             </div>
