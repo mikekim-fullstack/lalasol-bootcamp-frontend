@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const chapterSlice = createSlice({
-    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null },
+    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: [] },
     name: 'chapters',
     reducers: {
         setChapters: (state, action) => {
@@ -19,14 +19,114 @@ const chapterSlice = createSlice({
 
         },
         setClickedChapter: (state, action) => {
+            if (action.payload == null) return
             state.clickedChapter = action.payload
-            // console.log('slice - setClickedChapter: ', action.payload)
+            /** --1. Populate content array to store the status of action for content history-- */
+            const contentList = []
+            if (action.payload?.content.length > 0) {
+
+                for (const contentItem of action.payload?.content) {
+                    console.log('contentItem: ', contentItem)
+                    const item = {}
+                    Object.keys(contentItem).map(key => {
+                        if (key != 'created_date') item[key] = contentItem[key]
+                    })
+                    item['action'] = ''
+                    contentList.push(item)
+                }
+                state.contentActionList = contentList
+            }
+            console.log('slice - setClickedChapter: ', action.payload.content, ', ', contentList)
         },
         setChapterCategory: (state, action) => {
             state.category = action.payload
         },
         setClickedContent: (state, action) => {
             state.clickedContent = action.payload
+            // console.log('slice - setClickedChapter: ', action.payload)
+        },
+        // setContentAction: (state, action) => {
+        //     state.contentActionList = action.payload
+        //     // console.log('slice - setClickedChapter: ', action.payload)
+        // },
+        resetContentAction: (state, action) => {
+            // state.clickedContent = action.payload
+            // console.log('slice - setClickedChapter: ', action.payload)
+            /** --1. Populate content array to store the status of action for content history-- */
+            const contentList = []
+            if (state.clickedChapter?.content.length > 0) {
+
+                for (const contentItem of state.clickedChapter?.content) {
+                    // console.log('contentItem: ', contentItem)
+                    const item = {}
+                    Object.keys(contentItem).map(key => {
+                        if (key != 'created_date') item[key] = contentItem[key]
+                    })
+                    item['action'] = ''
+                    contentList.push(item)
+                }
+                state.contentActionList = contentList
+            }
+        },
+
+        createContentAction: (state, action) => {
+
+            // -- action.payload { catId:'', createrId:'', type:'', data:'', } --
+            const newItem = {}
+            newItem['id'] = 0
+            newItem['chapter_category'] = action.payload.catId
+            newItem['creater'] = action.payload.createrId
+            newItem['text'] = null
+            newItem['file'] = null
+            newItem['url'] = null
+            newItem['action'] = 'created'
+            newItem['content_no'] = 0
+            newItem[action.payload.type] = action.payload.data
+
+            // -- Find max id and max content_no, and then increase value by one. --
+            // console.log('----Slice createContentAction----', state.contentActionList)
+            if (state.contentActionList) {
+                // console.log('----Slice createContentAction----')
+                let maxId = 0
+                let maxNo = 0
+                state.contentActionList.forEach(item => {
+                    maxId = item.id >= maxId ? item.id : maxId
+                    maxNo = item.content_no >= maxNo ? item.content_no : maxNo
+                })
+                newItem['id'] = maxId + 1
+                newItem['content_no'] = maxNo + 1
+            }
+            state.contentActionList.push(newItem)
+        },
+        deleteContentAction: (state, action) => {
+            // state.contentActionList = state.contentActionList.filter(item => item.id != action.payload)
+            state.contentActionList = state.contentActionList.map(item => {
+                if (item.id == action.payload) {
+                    item.action = 'deleted'
+                }
+                return item
+            })
+        },
+        updateContentActionById: (state, action) => {
+            // {id:'', type:'', data:''}
+            // action.payload.id, action.payload.action
+            // action: delete, updated,created
+            state.contentActionList = state.contentActionList.map(item => {
+                if (item.id == action.payload.id) {
+                    item.action = 'updated'
+                    item.file = ''
+                    item.url = ''
+                    item.text = ''
+                    item[action.payload.type] = action.payload.data
+                }
+                return item
+            })
+            // if (item) {
+            //     console.log('slice - updateContentActionById: ', item, ', input:', action.payload)
+            //     item.action = 'updated'
+            //     item[action.payload.type] = action.payload.data
+
+            // }
             // console.log('slice - setClickedChapter: ', action.payload)
         },
 
@@ -36,7 +136,11 @@ const chapterSlice = createSlice({
 
 export default chapterSlice.reducer
 
-export const { setChapters, setClickedChapter, setClickedContent, setChapterCategory } = chapterSlice.actions
+export const { setChapters, setClickedChapter,
+    setClickedContent, setChapterCategory,
+    resetContentAction, updateContentActionById,
+    deleteContentAction, createContentAction,
+} = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {
     if (state.chapters?.data) {
@@ -50,6 +154,8 @@ export const getChapter = (state, id) => {
 export const getClickedChapter = (state) => state.chapters.clickedChapter
 export const getChapterCategory = (state) => state.chapters.category
 export const getClickedContent = (state) => state.chapters.clickedContent
+export const getContentAction = (state) => state.chapters.contentActionList
+export const getContentActionById = (state, id) => state.chapters.contentActionList.filter(item => item.id == id)
 
 
 

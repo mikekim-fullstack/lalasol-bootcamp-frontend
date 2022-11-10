@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { getClickedChapter, setClickedChapter, setClickedContent, getClickedContent, getChapterCategory } from '../slices/chapterSlice'
+import {
+    getClickedChapter, setClickedChapter, setClickedContent,
+    getClickedContent, getChapterCategory, resetContentAction,
+    getContentAction, getContentActionById, deleteContentAction,
+    createContentAction, updateContentActionById,
+} from '../slices/chapterSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
 const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
@@ -9,25 +14,31 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
+    const contentAction = useSelector(getContentAction)
+
     const [chapterLists, setChapterLists] = useState(null)
     const [createChapter, setCreateChapter] = useState(false)
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
+    const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
+
 
     const contentFileRef = useRef(null)
+    const contentLinkRef = useRef(null)
     const selectionRef = useRef(null)
 
     const [contentChoice, setContentChoice] = useState(null)
-    // const [clickedContent, setClickedContent] = useState(null)
     const clickedContent = useSelector(getClickedContent)
 
     const initSelectContent = (_clickedContent) => {
-        console.log('init-click Content:', _clickedContent,)
-        dispatch(setClickedContent(_clickedContent))
+
+        // dispatch(setClickedContent(_clickedContent))
+        console.log('initSelectContent: ', _clickedContent)
 
         const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
         console.log('contentListsEle: ', contentListsEle)
         if (contentListsEle) {
+            console.log(' --- contentListsEle: ---')
             const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
             contentListsEle.style['box-shadow'] = shadowColor
             contentListsEle.style['-webkit-box-shadow'] = shadowColor
@@ -39,8 +50,9 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
          * selectionRef.current.value is for initial value of select tag
          */
         if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
-
-        setContentChoice([_clickedContent.chapter_category, chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title])
+        console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
+        // setContentChoice([_clickedContent.chapter_category, chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title])
+        setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
 
 
     }
@@ -155,7 +167,8 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
          */
         if (selectionRef?.current) selectionRef.current.value = content.chapter_category
 
-        setContentChoice([content.chapter_category, chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0].title])
+        setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
+        setInputContent({ url: content.url, file: content.file, text: content.text })
         console.log('clickContent:', content)
     }
 
@@ -175,27 +188,76 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         setPreviousClickedChapter(null)
     }
 
+
+    const handleOnChangeInput = (e, type) => {
+
+        if (type == 'file') {
+            console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
+            setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
+            e.target.nextSibling.innerHTML = e.target.files[0].name
+        }
+        else {
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+        }
+    }
+
     useEffect(() => {
         setClickedChapter(null)
 
         fetchChapters()
 
-        console.log('AddChapter-useEffect: fetchChapters', ', course_id:', course.id)
+        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', course.id)
     }, [course.id])
 
     useEffect(() => {
         setClickedChapter(null)
+        dispatch(resetContentAction())
         chapterLists?.length > 0 && initSelectChapter(chapterLists[0])
         // chapterLists?.length > 0 && console.log('useEffect- chapterLists: ', chapterLists, chapterLists[0])
+        console.log('useEffect - 2. AddChapter->chapterLists: setClickedChapter')
     }, [chapterLists])
 
+    /** -- When clicked on the chapter trigger this useEffect.-- */
     useEffect(() => {
-        console.log('useEffect - clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
-        !createChapter && clickedChapter?.content?.length > 0 && initSelectContent(clickedChapter?.content[0])
+        console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
+
+        if (!createChapter && clickedChapter?.content?.length > 0) {
+
+
+            // initSelectContent(clickedChapter.content[0])
+            // /** --1. Populate content array to store the status of action for content history-- */
+            // const contentList = []
+            // for (const contentItem of clickedChapter?.content) {
+            //     const item = {}
+            //     Object.keys(contentItem).map(key => {
+            //         if (key != 'created_date') item[key] = contentItem[key]
+            //     })
+            //     item['action'] = ''
+            //     contentList.push(item)
+            // }
+            // dispatch(setContentAction(contentList))
+
+            // test to delete item in contentAction
+            dispatch(deleteContentAction(8))
+            dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
+            dispatch(updateContentActionById({ id: 16, type: 'url', data: 'https:www.youtube.com' }))
+
+            /** --2. Initialize Content with first one.-- */
+            contentAction.length > 0 && initSelectContent(contentAction[0])
+        }
+
     }, [clickedChapter])
 
 
-    console.log('chapterID', clickedChapter?.id, chapterCategory.filter(cat => cat.id == 1)[0].title)
+    // useEffect(() => {
+    //     const tmp = contentFileRef?.current
+    //     if (tmp) {
+    //         // tmp.files[0].name = 'a'
+    //     }
+    //     console.log('useEffect - tmp:', tmp, tmp?.files)
+    //     // contentFileRef && contentFileRef.current.files[0].name
+    // }, [contentFileRef?.current])
+    console.log('contentAction', contentAction)
 
 
     return (
@@ -209,7 +271,6 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                     </div>
                 })}
                 <div className='btn' onClick={handleCreateChapter} >Create Chapter</div>
-
             </div>
             {/* ---------------------- 2. Details of Chapter------------------------- */}
             <div className='chapter_detail'>
@@ -221,7 +282,16 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             <div className='content_lists'>
                 <h3>Content lists</h3>
                 <div className='content_lists_body'>
-                    {/* {console.log('content_lists_body: ', clickedChapter)} */}
+                    {console.log('content_lists_body: ', contentAction)}
+                    {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => (
+                        <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                            {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                        </div>
+                    ))
+                        : <div></div>
+                    }
+                </div>
+                {/* <div className='content_lists_body'>
                     {!createChapter && clickedChapter?.content?.length > 0 ? clickedChapter.content.map((content, index) => (
                         <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
                             {index + 1}/{clickedChapter.content.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
@@ -229,7 +299,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                     ))
                         : <div></div>
                     }
-                </div>
+                </div> */}
             </div>
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
             <div className='content_detail'>
@@ -237,18 +307,20 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                 <div>{clickedContent?.id}</div>
                 {/* --------------- */}
                 {clickedContent && <div className="select-container">
-                    {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id)}
+                    {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)}
                     {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
-                    <select ref={selectionRef} onChange={e => setContentChoice([e.target.value, chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0].title])}  >
+                    <select ref={selectionRef} value={contentChoice ? contentChoice.id : 0} onChange={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])}  >
                         {chapterCategory.map((chapterCat) => (
                             <option key={chapterCat.id} value={chapterCat.id} name={chapterCat.title}>{chapterCat.title}</option>
                         ))}
                     </select>
                 </div>}
-                <input ref={contentFileRef} type='file' />
-                {contentChoice && console.log('contentChoice: ', contentChoice)}
-                {/* {contentChoice && contentChoice[1].contains('PDF File') && <input ref={contentFileRef} type='file' accept="application/pdf"/>}
-                {contentChoice && contentChoice[1].contains('HTML File') && <input ref={contentFileRef} type='file' accept="application/"/>} */}
+                {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))}
+                {/* <input ref={contentFileRef} type='file' /> */}
+                {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
+                {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
+                {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
+                {contentChoice && contentChoice.title.includes('Link') && <input ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} />}
 
                 {/* --------------- */}
             </div>
