@@ -223,20 +223,6 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
         if (!createChapter && clickedChapter?.content?.length > 0) {
 
-
-            // initSelectContent(clickedChapter.content[0])
-            // /** --1. Populate content array to store the status of action for content history-- */
-            // const contentList = []
-            // for (const contentItem of clickedChapter?.content) {
-            //     const item = {}
-            //     Object.keys(contentItem).map(key => {
-            //         if (key != 'created_date') item[key] = contentItem[key]
-            //     })
-            //     item['action'] = ''
-            //     contentList.push(item)
-            // }
-            // dispatch(setContentAction(contentList))
-
             // test to delete item in contentAction
             dispatch(deleteContentAction(8))
             dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
@@ -283,11 +269,15 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                 <h3>Content lists</h3>
                 <div className='content_lists_body'>
                     {console.log('content_lists_body: ', contentAction)}
-                    {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => (
-                        <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                            {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
-                        </div>
-                    ))
+                    {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => {
+                        if (content.action != 'deleted') {
+
+                            return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                                {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                            </div>
+                        }
+                    }
+                    )
                         : <div></div>
                     }
                 </div>
