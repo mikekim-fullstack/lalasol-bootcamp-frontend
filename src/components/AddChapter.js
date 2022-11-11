@@ -30,6 +30,10 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     const [contentChoice, setContentChoice] = useState(null)
     const clickedContent = useSelector(getClickedContent)
 
+    const getFileName = (filePath) => {
+        const onlyFileName = filePath?.split('/').pop()
+        return onlyFileName?.replace(/_.*\./, ".")
+    }
     const initSelectContent = (_clickedContent) => {
 
         // dispatch(setClickedContent(_clickedContent))
@@ -280,70 +284,111 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
 
     return (
-        <div className='add_chapter__component'>
-            {/* --------------------- 1. Lists of Chapters-------------------------- */}
-            <div className='chapter_list_view'>
-                <h3><span>{course.title}:</span> Chapters</h3>
-                {chapterLists && chapterLists.map((chapter) => {
-                    return <div key={chapter.id} className='chapter_lists' onClick={e => handleClickChapter(e, chapter.id)}>
-                        {chapter.title}
-                    </div>
-                })}
-                <div className='btn' onClick={handleCreateChapter} >Create Chapter</div>
-            </div>
-            {/* ---------------------- 2. Details of Chapter------------------------- */}
-            <div className='chapter_detail'>
-                {/* {console.log('createChapter: ', createChapter)} */}
-                {(chapterLists?.length > 0 || createChapter) && < EditChapter createChapter={createChapter} handleSubmitForm={handleSubmitForm} />}
-            </div>
-
-            {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
-            <div className='content_lists'>
-                <h3>Content lists</h3>
-                <div className='content_lists_body'>
-                    {/* {console.log('content_lists_body: ', contentAction)} */}
-                    {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => {
-                        if (content.action != 'deleted') {
-
-                            return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                                {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
-                            </div>
-                        }
-                    }
-                    )
-                        : <div></div>
-                    }
+        <div className='add_chapter__view'>
+            <div className='add_chapter__component'>
+                {/* --------------------- 1. Lists of Chapters-------------------------- */}
+                <div className='chapter_list_view'>
+                    <h3><span>{course.title}:</span> Chapters</h3>
+                    {chapterLists && chapterLists.map((chapter) => {
+                        return <div key={chapter.id} className='chapter_lists' onClick={e => handleClickChapter(e, chapter.id)}>
+                            {chapter.title}
+                        </div>
+                    })}
+                    <div className='btn' onClick={handleCreateChapter} >Create Chapter</div>
                 </div>
-            </div>
-            {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
-            <div className='content_detail'>
-                <h3>Content details</h3>
-                <div>{clickedContent?.id}</div>
-                {/* --------------- */}
-                {clickedContent && <div className="select-container">
-                    {/* {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)} */}
-                    {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
-                    <select ref={selectionRef} value={contentChoice ? contentChoice.id : 0} onChange={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])}  >
-                        {chapterCategory.map((chapterCat) => (
-                            <option key={chapterCat.id} value={chapterCat.id} name={chapterCat.title}>{chapterCat.title}</option>
-                        ))}
-                    </select>
-                </div>}
-                {/* {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))} */}
-                {/* <input ref={contentFileRef} type='file' /> */}
-                {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
-                {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
-                {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
-                    <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : clickedContent?.file?.split('/').pop() || 'Choose File'}</label>
+                {/* ---------------------- 2. Details of Chapter------------------------- */}
+                <div className='chapter_detail'>
+                    {/* {console.log('createChapter: ', createChapter)} */}
+                    {(chapterLists?.length > 0 || createChapter) && < EditChapter createChapter={createChapter} handleSubmitForm={handleSubmitForm} />}
+                </div>
 
-                </div>}
-                {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />}
-                {/* {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
-                {/* <input className='input_url' style={{ display: 'unset' }} ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} /> */}
+                {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
+                <div className='content_lists'>
+                    <h3>Content lists</h3>
+                    <div className='content_lists_body'>
+                        {/* {console.log('content_lists_body: ', contentAction)} */}
+                        {!createChapter && contentAction?.length > 0 ? contentAction?.map((content, index) => {
+                            if (content.action != 'deleted') {
 
-                {/* --------------- */}
+                                return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                                    {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                                </div>
+                            }
+                        }
+                        )
+                            : <div></div>
+                        }
+                    </div>
+                </div>
+                {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
+                <div className='content_detail'>
+                    <h3>Content details</h3>
+                    <div>{clickedContent?.id}</div>
+                    {/* --------------- */}
+                    {clickedContent && <div className="select-container">
+                        {/* {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)} */}
+                        {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
+                        <select ref={selectionRef} value={contentChoice ? contentChoice.id : 0} onChange={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])}  >
+                            {chapterCategory.map((chapterCat) => (
+                                <option key={chapterCat.id} value={chapterCat.id} name={chapterCat.title}>{chapterCat.title}</option>
+                            ))}
+                        </select>
+                    </div>}
+                    {/* {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))} */}
+                    {/* <input ref={contentFileRef} type='file' /> */}
+                    {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
+                    {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
+                    {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                        <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+
+                    </div>}
+                    {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />}
+                    {/* {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
+                    {/* <input className='input_url' style={{ display: 'unset' }} ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} /> */}
+
+
+                </div>
+
+            </div >
+            {/* -------Preview-------- */}
+            <div>
+
+                {contentAction && contentAction.map(content => {
+                    switch (content.chapter_category) {
+                        case 1: // html file
+                            return <div className='iframe_container_file_1' >
+
+                                <iframe
+                                    // id='iframe_file'
+                                    frameBorder="0"
+                                    border='0'
+                                    // width="1024"
+                                    width='100%'
+                                    // scrolling="no"
+                                    className='iframe__view'
+                                    src={axios.defaults.baseURL + content.file}
+                                    title="description">
+
+                                </iframe>
+                            </div>
+                        case 5:// youtube link
+                            return <div className='iframe_container_youtube'>
+                                <iframe
+                                    frameBorder="0"
+                                    border='0'
+                                    scrolling="no"
+                                    className='iframe__view'
+                                    src={`https://www.youtube.com/embed/${content.url.split('/').pop()}`}
+                                    title="YouTube video player"
+
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
+                                </iframe>
+                            </div>
+
+                    }
+                })}
             </div>
-        </div >
+        </div>
     )
 }
 

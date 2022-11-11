@@ -69,6 +69,7 @@ const ChapterScreen = () => {
                 setYoutube(content.url)
                 break;
             case TYPE_HTML_File:
+                // console.log('resolveBlockMixedActivity(content.file): ', content.file, resolveBlockMixedActivity(content.file))
                 setFilePath(resolveBlockMixedActivity(content.file))
 
                 // //--- If the html file code injects into div then call fetchFile. ---
@@ -88,7 +89,7 @@ const ChapterScreen = () => {
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
                     const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
-                    // console.log('fetchChapterContent: ', res.data.content)
+                    console.log('fetchChapterContent: ', res.data.content)
                     previousContentIndex.current = 0
                     setCurrentContentIndex(0)
                     setChapterContentLength(sortedChapterContent.length)
