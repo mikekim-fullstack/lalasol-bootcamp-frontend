@@ -10,6 +10,7 @@ import {
 import './AddChapter.css'
 import EditChapter from './EditChapter'
 import { ContentCutTwoTone } from '@mui/icons-material'
+import PreviewContent from './PreviewContent'
 const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     const dispatch = useDispatch()
@@ -27,13 +28,24 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     const contentFileRef = useRef(null)
     const contentLinkRef = useRef(null)
     const selectionRef = useRef(null)
+    const titleRef = useRef(null)
+    const imageRef = useRef(null)
+    const paragraphRef = useRef(null)
+    const codeRef = useRef(null)
 
     const [contentChoice, setContentChoice] = useState(null)
     const clickedContent = useSelector(getClickedContent)
 
+    /**
+     * Remove hash tag in file path
+     */
     const getFileName = (filePath) => {
-        const onlyFileName = filePath?.split('/').pop()
-        return onlyFileName?.replace(/_.*\./, ".")
+        console.log('getFileName - filePath', filePath)
+        if (filePath && filePath.includes('/')) {
+            const onlyFileName = filePath?.split('/').pop()
+            return onlyFileName?.replace(/_.*\./, ".")
+        }
+        return ''
     }
     const initSelectContent = (_clickedContent) => {
 
@@ -192,7 +204,14 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         if (selectionRef?.current) selectionRef.current.value = content.chapter_category
 
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
-        setInputContent({ url: content.url, file: content.file, text: content.text })
+        setInputContent({
+            url: content.url,
+            file: content.file,
+            text: content.text,
+            title: content.title,
+            image: content.image,
+            code: content.code,
+        })
 
 
 
@@ -218,44 +237,33 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         setPreviousClickedChapter(null)
     }
 
-    const loadLocalFile = (files) => {
 
-        // // Loop through the FileList and render image files as thumbnails.
-        // for (let i = 0, f; f = files[i]; i++) {
-
-        //   // Only process image files.
-        //   if (!f.type.match('image.*')) {
-        //     continue;
-        //   }
-
-        //   let reader = new FileReader();
-
-        //   // Closure to capture the file information.
-        //   reader.onload = (function(theFile) {
-        //     return function(e) {
-        //       // Render thumbnail.
-        //       let span = document.createElement('span');
-        //       span.innerHTML = ['<img class="thumb" src="', e.target.result,
-        //                         '" title="', escape(theFile.name), '"/>'].join('');
-        //       document.getElementById('list').insertBefore(span, null);
-        //     };
-        //   })(f);
-
-        //   // Read in the image file as a data URL.
-        //   reader.readAsDataURL(f);
-        // }
-    }
     const handleOnChangeInput = (e, type) => {
 
         if (type == 'file') {
-            console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
+            // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             e.target.nextSibling.innerHTML = e.target.files[0].name
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'file', data: e.target.files[0] }))
         }
+        else if (type == 'image') {
+            console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
+            setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'image', data: e.target.files[0] }))
+            e.target.nextSibling.innerHTML = e.target.files[0].name
+        }
         else if (type == 'url') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'url', data: e.target.value }))
+        }
+        else if (type == 'title') {
+            // console.log('e.target.name-title: ', e.target.name, e.target.value)
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'title', data: e.target.value }))
+        }
+        else if (type == 'text') {
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: e.target.value }))
         }
     }
     /**
@@ -308,6 +316,40 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     }, [contentLinkRef?.current])
 
     console.log('contentAction', contentAction)
+    // --------------------------------------------------
+    const genContentDetailEle = (contentId) => {
+        if (contentChoice?.title?.includes('PDF File'))
+            return <div>
+                <input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                <label className='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+            </div>
+
+        if (contentChoice?.title?.includes('HTML File'))
+            return <div>
+                <input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+            </div>
+        if (contentChoice?.title?.includes('Image File')) {
+            const sel = contentAction.filter(content => content.id == contentId)[0]
+            console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
+            return <div>
+                <input ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInput(e, 'image')} />
+                <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label>
+            </div>
+        }
+        if (contentChoice.title.includes('Link'))
+            return <input className='input_url' ref={contentLinkRef} name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />
+
+        if (contentChoice.title.includes('Title')) {
+
+            return <input className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
+        } if (contentChoice.title.includes('Paragraph'))
+            // console.log('clickedContent.text: ', clickedContent.text)
+            return <input className='input_paragraph' ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+        if (contentChoice.title.includes('Code'))
+            return <textarea className='input_code' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+    }
+    // --------------------------------------------------
 
 
     return (
@@ -364,7 +406,8 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                     {/* {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))} */}
                     {/* <input ref={contentFileRef} type='file' /> */}
                     {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
-                    {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
+                    {contentChoice && genContentDetailEle(clickedContent?.id)}
+                    {/* {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
                     {contentChoice && contentChoice.title.includes('HTML File') &&
                         <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
                             <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
@@ -373,7 +416,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                         <div><input ref={contentFileRef} type='file' accept="image/*" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
                             <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
                         </div>}
-                    {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />}
+                    {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
                     {/* {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
                     {/* <input className='input_url' style={{ display: 'unset' }} ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} /> */}
 
@@ -382,47 +425,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
             </div >
             {/* -------Preview-------- */}
-            <div>
-
-                {contentAction && contentAction.map(content => {
-                    switch (content.chapter_category) {
-                        case 1: // html file
-                            return <div className='iframe_container_file_1' >
-
-                                <iframe
-                                    // id='iframe_file'
-                                    frameBorder="0"
-                                    border='0'
-                                    // width="1024"
-                                    width='100%'
-                                    // scrolling="no"
-                                    className='iframe__view'
-                                    src={axios.defaults.baseURL + content.file}
-                                    title="description">
-
-                                </iframe>
-                            </div>
-                        case 5:// youtube link
-                            return <div className='iframe_container_youtube'>
-                                <iframe
-                                    frameBorder="0"
-                                    border='0'
-                                    scrolling="no"
-                                    className='iframe__view'
-                                    src={`https://www.youtube.com/embed/${content.url.split('/').pop()}`}
-                                    title="YouTube video player"
-
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
-                                </iframe>
-                            </div>
-                        case 15:// Image File
-                            console.log('case - content.action', content.action, content.file)
-                            return <img src={content.action == 'updated' ? URL.createObjectURL(content.file) : content.file} />
-                        default:
-                            <div></div>
-                    }
-                })}
-            </div>
+            <PreviewContent contentAction={contentAction} />
         </div>
     )
 }

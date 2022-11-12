@@ -1,0 +1,31 @@
+.content__preview {
+    text-rendering: optimizeLegibility;
+    color: #25265e;
+    /* background-color: #f9fafc; */
+    background-color: rgb(247, 249, 251);
+    max-width: 750px;
+    margin: auto;
+    border: 1px dashed pink;
+
+
+}
+
+.content__preview .main_title {
+    line-height: 54px;
+    margin-bottom: 20px;
+    font-family: EuclidCircularBold, Arial, Helvetica, sans-serif;
+    font-size: 36px;
+    /* font-weight: 200; */
+    /* border: 1px dashed pink; */
+}
+
+.content__preview .main_paragraph {
+
+    font-family: EuclidCircularMedium, Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 28px;
+    font-size: 18px;
+    text-align: left;
+    /* border: 1px dashed pink; */
+}

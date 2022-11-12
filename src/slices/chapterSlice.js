@@ -117,8 +117,11 @@ const chapterSlice = createSlice({
                     item.file = ''
                     item.url = ''
                     item.text = ''
+                    item.image = ''
+                    item.code = ''
+                    item.title = ''
                     item[action.payload.type] = action.payload.data
-                    // console.log('action.payload.catId: ', action.payload.catId)
+                    console.log('slice -- action.payload.type: ', action.payload.type)
                     item.chapter_category = action.payload.catId
                 }
                 return item

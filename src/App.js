@@ -21,6 +21,17 @@ import { useSelector, useDispatch } from 'react-redux'
 import { login, getUser } from './slices/userSlices';
 import AddCourseScreen from './screens/AddCourseScreen'
 
+import './fonts/Euclid Circular A Light.ttf'
+import './fonts/Euclid Circular A Bold Italic.ttf'
+import './fonts/Euclid Circular A Bold.ttf'
+import './fonts/Euclid Circular A Italic.ttf'
+import './fonts/Euclid Circular A Light Italic.ttf'
+import './fonts/Euclid Circular A Medium Italic.ttf'
+import './fonts/Euclid Circular A Medium.ttf'
+import './fonts/Euclid Circular A Regular.ttf'
+import './fonts/Euclid Circular A SemiBold.ttf'
+import './fonts/Euclid Circular A SemiBold Italic.ttf'
+
 // process.env.REACT_API_DEBUG
 process.env.REACT_APP_DEBUG == 'true' ?
   axios.defaults.baseURL = 'http://127.0.0.1:8000'
