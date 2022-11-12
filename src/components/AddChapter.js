@@ -9,6 +9,7 @@ import {
 } from '../slices/chapterSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
+import { ContentCutTwoTone } from '@mui/icons-material'
 const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     const dispatch = useDispatch()
@@ -217,7 +218,33 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         setPreviousClickedChapter(null)
     }
 
+    const loadLocalFile = (files) => {
 
+        // // Loop through the FileList and render image files as thumbnails.
+        // for (let i = 0, f; f = files[i]; i++) {
+
+        //   // Only process image files.
+        //   if (!f.type.match('image.*')) {
+        //     continue;
+        //   }
+
+        //   let reader = new FileReader();
+
+        //   // Closure to capture the file information.
+        //   reader.onload = (function(theFile) {
+        //     return function(e) {
+        //       // Render thumbnail.
+        //       let span = document.createElement('span');
+        //       span.innerHTML = ['<img class="thumb" src="', e.target.result,
+        //                         '" title="', escape(theFile.name), '"/>'].join('');
+        //       document.getElementById('list').insertBefore(span, null);
+        //     };
+        //   })(f);
+
+        //   // Read in the image file as a data URL.
+        //   reader.readAsDataURL(f);
+        // }
+    }
     const handleOnChangeInput = (e, type) => {
 
         if (type == 'file') {
@@ -338,10 +365,14 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                     {/* <input ref={contentFileRef} type='file' /> */}
                     {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
                     {contentChoice && contentChoice.title.includes('PDF File') && <div><input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} /><label className='fileinput_label'>Choose file</label></div>}
-                    {contentChoice && contentChoice.title.includes('HTML File') && <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
-                        <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
-
-                    </div>}
+                    {contentChoice && contentChoice.title.includes('HTML File') &&
+                        <div><input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                            <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+                        </div>}
+                    {contentChoice && contentChoice.title.includes('Image File') &&
+                        <div><input ref={contentFileRef} type='file' accept="image/*" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                            <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+                        </div>}
                     {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} onChange={e => handleOnChangeInput(e, 'url')} />}
                     {/* {contentChoice && contentChoice.title.includes('Link') && <input className='input_url' ref={contentLinkRef} type='text' defaultValue={clickedContent.url} value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />} */}
                     {/* <input className='input_url' style={{ display: 'unset' }} ref={contentLinkRef} type='text' value={inputContent.url} name='url' onChange={e => handleOnChangeInput(e, 'text')} /> */}
@@ -384,7 +415,11 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
                                 </iframe>
                             </div>
-
+                        case 15:// Image File
+                            console.log('case - content.action', content.action, content.file)
+                            return <img src={content.action == 'updated' ? URL.createObjectURL(content.file) : content.file} />
+                        default:
+                            <div></div>
                     }
                 })}
             </div>
