@@ -345,12 +345,24 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             return <input className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
         } if (contentChoice.title.includes('Paragraph'))
             // console.log('clickedContent.text: ', clickedContent.text)
-            return <input className='input_paragraph' ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <textarea className='input_paragraph' ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+
         if (contentChoice.title.includes('Code'))
             return <textarea className='input_code' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+
+        if (contentChoice.title.includes('Note'))
+            return <textarea className='input_note' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+
+        if (contentChoice.title.includes('Break Line')) {
+            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
+            // setInputContent({ ...inputContent, ['break']: 1 })
+
+            return <label >Break Line</label>
+        }
     }
     // --------------------------------------------------
-
+    // dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
+    // setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])
 
     return (
         <div className='add_chapter__view'>
