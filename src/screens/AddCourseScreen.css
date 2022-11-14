@@ -43,14 +43,16 @@
     color: bisque;
 }
 
-.add_course__screen_content .categories .title svg {
+.add_course__screen_content .categories .svg_icon svg {
     fill: white;
     cursor: pointer;
+    margin-left: 5px;
     /* border: 1px dashed pink; */
 }
 
-.add_course__screen_content .categories .title>svg:hover {
+.add_course__screen_content .categories .svg_icon>svg:hover {
     transform: scale(1.2);
+    fill: cyan;
 }
 
 .add_course__screen_content .courses {

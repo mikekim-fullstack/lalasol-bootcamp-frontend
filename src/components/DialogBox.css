@@ -1,0 +1,98 @@
+.dialogbox__view {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+
+}
+
+.dialogbox__view .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* background: #ffef4a; */
+    background: rgb(24, 22, 57);
+
+
+
+    border-radius: 7px;
+    border: 1px solid rgb(172, 129, 136);
+}
+
+.dialogbox__view .content .close {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    /* border: 1px solid #e5e5e5; */
+    margin-top: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.dialogbox__view .content svg {
+    fill: white;
+}
+
+.dialogbox__view .content .message-group {
+    padding: 0px 40px 20px 40px;
+    /* border: 1px solid pink; */
+}
+
+.dialogbox__view .content .message {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: normal;
+}
+
+.dialogbox__view .content .item-name {
+    color: rgb(200, 119, 132);
+    font-size: 1.4rem;
+    font-weight: 400;
+}
+
+.dialogbox__view .btn-group {
+    background-color: rgb(190, 188, 215);
+
+    width: 100%;
+    padding: 20px 40px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    border-radius: 0 0 6px 6px;
+}
+
+.dialogbox__view .btn-group button {
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100px;
+
+}
+
+.dialogbox__view .btn-group .btn-ok {
+    background-color: rgb(226, 66, 66);
+}
+
+.dialogbox__view .btn-group .btn-ok:hover {
+    background-color: rgb(149, 33, 33);
+}
+
+.dialogbox__view .btn-group .btn-cancel {
+    background-color: rgb(44, 137, 44);
+    margin-left: 10px;
+}
+
+.dialogbox__view .btn-group .btn-cancel:hover {
+    background-color: rgb(29, 94, 29);
+}

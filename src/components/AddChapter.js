@@ -97,7 +97,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
     const fetchChapters = async () => {
         setCreateChapter(false)
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${course.id}`)
+        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${course?.id}`)
             .then(res => {
                 console.log('fetchChapters: ', res.data)
                 const _sortedData = res.data
@@ -274,8 +274,8 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
         fetchChapters()
 
-        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', course.id)
-    }, [course.id])
+        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', course?.id)
+    }, [course?.id])
 
     useEffect(() => {
         setClickedChapter(null)
@@ -301,6 +301,13 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
         }
 
     }, [clickedChapter])
+    useEffect(() => {
+        // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
+        if (contentChoice?.title.includes('Break Line')) {
+            console.log('useEffect --- contentChoice.title')
+            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
+        }
+    }, [contentChoice?.title])
 
     useEffect(() => {
         console.log('useEffect --- contentAction.action updated')
@@ -345,13 +352,13 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             return <input className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
         } if (contentChoice.title.includes('Paragraph'))
             // console.log('clickedContent.text: ', clickedContent.text)
-            return <textarea className='input_paragraph' ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <textarea className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
 
         if (contentChoice.title.includes('Code'))
-            return <textarea className='input_code' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <textarea className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
 
         if (contentChoice.title.includes('Note'))
-            return <textarea className='input_note' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <textarea className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
 
         if (contentChoice.title.includes('Break Line')) {
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
@@ -369,7 +376,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
             <div className='add_chapter__component'>
                 {/* --------------------- 1. Lists of Chapters-------------------------- */}
                 <div className='chapter_list_view'>
-                    <h3><span>{course.title}:</span> Chapters</h3>
+                    <h3><span>{course?.title}:</span> Chapters</h3>
                     {chapterLists && chapterLists.map((chapter) => {
                         return <div key={chapter.id} className='chapter_lists' onClick={e => handleClickChapter(e, chapter.id)}>
                             {chapter.title}
@@ -437,7 +444,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
             </div >
             {/* -------Preview-------- */}
-            <PreviewContent contentAction={contentAction} />
+            <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} />
         </div>
     )
 }

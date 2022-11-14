@@ -13,6 +13,7 @@ import '../components/CourseEditCard.css'
 import CourseEditCard from '../components/CourseEditCard'
 import AddCourse from '../components/AddCourse'
 import AddChapter from '../components/AddChapter'
+import DialogBox from '../components/DialogBox'
 
 const AddCourseScreen = () => {
 
@@ -27,7 +28,12 @@ const AddCourseScreen = () => {
     const [selCatID, setSelCatID] = useState([])
     const [isUpdatedCourse, setIsUpdatedCourse] = useState(false)
     const [clickedCourseInfo, setClickedCourseInfo] = useState({ catId: null, courseId: null, foundCard: null, course: null })
-
+    const [dialogDeleteCourse, setDialogDeleteCourse] = useState({
+        message: "",
+        isLoading: false,
+        itemName: "",
+        course: null,
+    });
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -62,6 +68,35 @@ const AddCourseScreen = () => {
      * @param {*} cat 
      * @param {*} index 
      */
+    const handleDeleteCourse = (e, cat, index) => {
+        setDialogDeleteCourse({
+            message: "Are you sure you want to delete?",
+            isLoading: true,
+            itemName: clickedCourseInfo?.course?.title + ' Course',
+            course: clickedCourseInfo?.course,
+        });
+        console.log('handleDeleteCourse', clickedCourseInfo.course)
+    }
+    const successfullyDeleted = (res, messageData) => {
+        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        // setClickedCourseInfo(null)
+        setIsUpdatedCourse(true)
+    }
+    const handleDeleteCourseResponse = (choose, messageData) => {
+        if (choose) {
+            //   setProducts(products.filter((p) => p.id !== idProductRef.current));
+            // -- Delete course by dispatch it to server. --
+            axios({
+                method: 'DELETE',
+                url: axios.defaults.baseURL + '/api/course-delete/' + messageData.course.id
+            })
+                .then(res => successfullyDeleted(res, messageData))
+                .catch(err => console.log(err.reponse.data))
+            console.log('delete course', messageData.course)
+        } else {
+        }
+        setDialogDeleteCourse({ message: "", isLoading: false, itemName: '', course: null });
+    };
     const handleAddCourse = (e, cat, index) => {
         /** -- [setCatID] stores boolean showing which category clicked(true) in array [true, false, ...]. --*/
         const _selCatID = [...selCatID]
@@ -114,7 +149,7 @@ const AddCourseScreen = () => {
         dispatch(setClickedChapter(null))
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
         setClickedCourseInfo({ catId, courseId, foundCard, course })
-        // console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
+        console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
     }
     const handleSuccessUploading = (status) => {
         setIsUpdatedCourse(status)
@@ -144,6 +179,8 @@ const AddCourseScreen = () => {
         }
         // console.log('-----useEffect-isUpdatedCourse ----:', isUpdatedCourse)
     }, [isUpdatedCourse])
+
+    console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo)
     return (
 
         <div className='add_course__screen'>
@@ -158,8 +195,16 @@ const AddCourseScreen = () => {
                             <div className='categories' id={`add_category_${catId}_${index}`} style={{ backgroundColor: 'rgb(0, 46, 49)' }}>
                                 <div className='title'>
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
-                                    {/*-- + sign --*/}
-                                    <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>
+                                    <div className='svg_icon'>
+                                        {/* -- delete sign -- */}
+                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleDeleteCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
+                                        {/* -- edit sign -- */}
+                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
+                                        {/*-- add expend + sign --*/}
+                                        {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
+                                        {/* close add - sign */}
+                                        {selCatID[index] && <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
+                                    </div>
                                 </div>
                                 {selCatID[index] && <AddCourse category_id={catId} teacher_id={1} handleSuccessUploading={handleSuccessUploading} />}
                             </div>
@@ -186,7 +231,13 @@ const AddCourseScreen = () => {
                                 }
                             </div>
 
-
+                            {dialogDeleteCourse.isLoading && <DialogBox
+                                dialogData={dialogDeleteCourse}
+                                // message={dialogDeleteCourse.message}
+                                // itemName={dialogDeleteCourse.itemName}
+                                onDialog={handleDeleteCourseResponse}
+                            />
+                            }
                         </div>
 
                     })
