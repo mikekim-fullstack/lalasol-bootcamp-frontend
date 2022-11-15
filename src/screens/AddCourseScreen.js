@@ -11,16 +11,17 @@ import axios from 'axios'
 import './AddCourseScreen.css'
 import '../components/CourseEditCard.css'
 import CourseEditCard from '../components/CourseEditCard'
-import AddCourse from '../components/AddCourse'
+import AddUpdateCourse from '../components/AddUpdateCourse'
 import AddChapter from '../components/AddChapter'
 import DialogBox from '../components/DialogBox'
+import { current } from '@reduxjs/toolkit'
 
 const AddCourseScreen = () => {
 
     const dispatch = useDispatch()
     const user = useSelector(getUser)
     const categories = useSelector(getCats)
-    // const courses = useSelector(getCourses)
+    const courses = useSelector(getCourses)
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
 
@@ -34,6 +35,7 @@ const AddCourseScreen = () => {
         itemName: "",
         course: null,
     });
+    const [lastCourseNum, setLastCourseNum] = useState([])
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -51,8 +53,11 @@ const AddCourseScreen = () => {
         )
             .then(res => {
                 // console.log('--fetchEnrolledCourses:', res.data)
-                dispatch(setCourses(res.data))
-                console.log('done')
+                // console.log('--fetchEnrolledCourses:', res.data.sort((a, b) => a.course_no >= b.course ? -1 : 1))
+                const _courses = [...res.data]
+                const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                dispatch(setCourses(_sortedCourses, res.data))
+                console.log('done:', _sortedCourses)
             })
             .catch(err => console.log('error: ', err))
     }
@@ -97,6 +102,19 @@ const AddCourseScreen = () => {
         }
         setDialogDeleteCourse({ message: "", isLoading: false, itemName: '', course: null });
     };
+    const handleUpdateCourse = (e, cat, index) => {
+        /** -- [setCatID] stores boolean showing which category clicked(true) in array [true, false, ...]. --*/
+        const _selCatID = [...selCatID]
+        _selCatID[index] = !_selCatID[index]
+        setSelCatID([..._selCatID])
+
+        /** -- Change color targeting the clicked category + sign. -- */
+        const catid = cat[0]
+        const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
+        _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+
+        // console.log('add_courseScreen-cat:', _selCatID, cat, index, catEle, _selCatID[index])
+    }
     const handleAddCourse = (e, cat, index) => {
         /** -- [setCatID] stores boolean showing which category clicked(true) in array [true, false, ...]. --*/
         const _selCatID = [...selCatID]
@@ -105,11 +123,19 @@ const AddCourseScreen = () => {
 
         /** -- Change color targeting the clicked category + sign. -- */
         const catid = cat[0]
-        const catEle = document.getElementById('add_category_' + catid + '_' + index)
+        const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
         _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
 
+        // const sortedCourses = [...courses]
+        // sortedCourses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+        // // courses && courses.forEeach(course => {
+        //     console.log('course-no', course)
+        // })
+        Object.keys(courses).map((key) => {
+            console.log(courses[key].course_no, courses[key].title)
+        })
 
-        // console.log('add_courseScreen-cat:', _selCatID, cat, index, catEle, _selCatID[index])
+        console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, catEle, _selCatID[index],)
     }
 
 
@@ -156,6 +182,7 @@ const AddCourseScreen = () => {
     }
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
+        console.log('--fetchEnrolledCourses:', courses)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
         if (categories)
             setSelCatID(new Array(categories.length).fill(false))
     }, [categories, isUpdatedCourse, coursesEnrolled])
@@ -170,9 +197,18 @@ const AddCourseScreen = () => {
                 },
             })
                 .then(res => {
+                    // setLastCourseNum
+                    const data = [...res.data]
+
+                    // categories.forEach(element => {
+                    //     data.filter((course) => course.category == catId)
+                    // .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+
+                    // });
+
                     dispatch(setCoursesEnrolledStatus(res.data))
                     setIsUpdatedCourse(false)
-                    // console.log('----- successfully course uploaded', res.data)
+                    console.log('----- setCoursesEnrolledStatus', res.data)
 
                 })
                 .catch(error => console.log(error.response.data))
@@ -183,8 +219,8 @@ const AddCourseScreen = () => {
     console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo)
     return (
 
-        <div className='add_course__screen'>
-            <div className='add_course__screen_content'>
+        <div className='add_update_course__screen'>
+            <div className='add_update_course__screen_content'>
                 <h1>Add Courses</h1>
                 {
                     categories && categories.map((cat, index) => {
@@ -192,33 +228,36 @@ const AddCourseScreen = () => {
                         const catId = cat[0]
                         const catTitle = cat[2]
                         return <div key={catId}>
-                            <div className='categories' id={`add_category_${catId}_${index}`} style={{ backgroundColor: 'rgb(0, 46, 49)' }}>
+                            <div className='categories' id={`add_update_category_${catId}_${index}`} style={{ backgroundColor: 'rgb(0, 46, 49)' }}>
                                 <div className='title'>
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
                                     <div className='svg_icon'>
                                         {/* -- delete sign -- */}
                                         {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleDeleteCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
                                         {/* -- edit sign -- */}
-                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
+                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleUpdateCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                                         {/*-- add expend + sign --*/}
                                         {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
                                         {/* close add - sign */}
                                         {selCatID[index] && <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                                     </div>
                                 </div>
-                                {selCatID[index] && <AddCourse category_id={catId} teacher_id={1} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && <AddUpdateCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
                             </div>
                             <div className='courses'>
                                 {
-                                    coursesEnrolled && coursesEnrolled.filter((course) => course.category == catId).map((course) => {
-                                        // console.log('course: ', course)
-                                        return (
-                                            <div key={course.id}>
-                                                <CourseEditCard cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
+                                    coursesEnrolled && coursesEnrolled
+                                        .filter((course) => course.category == catId)
+                                        .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                                        .map((course) => {
+                                            // console.log('course: ', course)
+                                            return (
+                                                <div key={course.id}>
+                                                    <CourseEditCard cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
 
-                                            </div>
-                                        )
-                                    })
+                                                </div>
+                                            )
+                                        })
 
                                 }
                             </div>

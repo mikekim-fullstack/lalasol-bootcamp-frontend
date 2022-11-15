@@ -61,8 +61,13 @@ const NavCategoreis = () => {
         )
             .then(res => {
                 // console.log('--fetchEnrolledCourses:', res.data)
-                dispatch(setCourses(res.data))
-                console.log('done')
+                const _courses = [...res.data]
+                const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                dispatch(setCourses(_sortedCourses))
+                // console.log('done:', _sortedCourses)
+
+                // dispatch(setCourses(res.data))
+                console.log('done-NavCategories:', _sortedCourses)
             })
             .catch(err => console.log('error: ', err))
     }
@@ -104,10 +109,10 @@ const NavCategoreis = () => {
 
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
-                .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description])
+                .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence }])
+            console.log('-----_sortedCat----:', _sortedCat)
             dispatch(setCat(_sortedCat))
             setSortedCat(_sortedCat)
-            // console.log('-----_sortedCat----:', _sortedCat)
             if (pathCatID && courseID && chapterID) {
                 const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
                 // console.log('-----_sortedCat----:', _sortedCat, selectedCat)
@@ -133,7 +138,7 @@ const NavCategoreis = () => {
     }, [categories])
 
     useEffect(() => {
-        // console.log('NaveCategores-useEffect-courses:', coursesEnrolled)
+        // console.log('NavCategores-useEffect-courses:', coursesEnrolled)
         dispatch(setCoursesEnrolledStatus(coursesEnrolled))
     }, [coursesEnrolled])
 

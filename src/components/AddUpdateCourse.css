@@ -1,9 +1,9 @@
-.add_course__form {
+.add_update_course__form {
     width: 100%;
 
 }
 
-.add_course__form form {
+.add_update_course__form form {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -12,8 +12,8 @@
     transition: all 3s ease;
 }
 
-.add_course__form form .group-1,
-.add_course__form form .group-2 {
+.add_update_course__form form .group-1,
+.add_update_course__form form .group-2 {
     width: 100%;
     /* border: 1px dashed pink;
     display: flex;
@@ -22,7 +22,7 @@
     flex-wrap: wrap; */
 }
 
-/* .add_course__form form .group-1 input {
+/* .add_update_course__form form .group-1 input {
     width: 100%;
     max-width: 100%;
     flex: 1;
@@ -82,7 +82,7 @@ textarea {
     border-radius: 0 3px 3px 0;
 }
 
-.add_course__form input[type=file] {
+.add_update_course__form input[type=file] {
     /* margin: 5px 0; */
     width: 100%;
     max-width: 100%;
@@ -94,7 +94,7 @@ textarea {
     color: #000;
 }
 
-.add_course__form input[type=file]:hover {
+.add_update_course__form input[type=file]:hover {
     box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
@@ -102,7 +102,7 @@ textarea {
 
 
 
-.add_course__form input[type=file]::file-selector-button {
+.add_update_course__form input[type=file]::file-selector-button {
 
     background-color: rgb(232, 232, 232);
     color: #000;
@@ -116,13 +116,13 @@ textarea {
 
 
 
-.add_course__form input[type=file]::file-selector-button:hover {
+.add_update_course__form input[type=file]::file-selector-button:hover {
     background-color: rgb(139, 138, 138);
     border: 0px;
     border-right: 1px solid #e5e5e5;
 }
 
-.add_course__form button {
+.add_update_course__form button {
     margin: 7px 0;
     padding: 10px;
     background-color: rgb(226, 88, 88);
@@ -134,24 +134,24 @@ textarea {
     height: 2.5rem;
 }
 
-.add_course__form button:hover {
+.add_update_course__form button:hover {
     background-color: rgb(198, 52, 52);
 }
 
-.add_course__form button:active {
+.add_update_course__form button:active {
     background-color: rgb(174, 34, 34);
 }
 
 @media screen and (min-width:600px) {
-    .add_course__form form {
+    .add_update_course__form form {
         flex-direction: row;
     }
 
-    .add_course__form button {
+    .add_update_course__form button {
         height: 3.2rem;
     }
 
-    .add_course__form form .group-1 {
+    .add_update_course__form form .group-1 {
         margin-right: 10px;
     }
 }

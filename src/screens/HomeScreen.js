@@ -35,7 +35,7 @@ const HomeScreen = () => {
             .then(res => {
                 // console.log('--fetchEnrolledCourses:', res.data)
                 dispatch(setCourses(res.data))
-                console.log('done')
+                console.log('done-homescreen')
             })
             .catch(err => console.log('error: ', err))
     }
@@ -88,10 +88,13 @@ const HomeScreen = () => {
                             </div>
                             <div className='courses'>
                                 {
-                                    coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
-                                        // console.log('course: ', course)
-                                        return <CourseCard id='id_course_card' key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />
-                                    })
+                                    coursesEnrolled && coursesEnrolled
+                                        .filter((course) => course.category == cat[0])
+                                        .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                                        .map((course) => {
+                                            // console.log('course: ', course)
+                                            return <CourseCard id='id_course_card' key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />
+                                        })
                                 }
                             </div>
                             {/* <div className='courses'>
