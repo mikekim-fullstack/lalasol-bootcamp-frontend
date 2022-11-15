@@ -3,7 +3,7 @@ import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
-import { setCourses, setCoursesEnrolledStatus } from '../slices/courseSlice'
+import { setCourses, setCoursesEnrolledStatus, } from '../slices/courseSlice'
 import { setChapters, getChapters, setChapterCategory } from '../slices/chapterSlice'
 import { getUser } from '../slices/userSlices'
 import useAxios from '../useAxios'
@@ -45,7 +45,7 @@ const NavCategoreis = () => {
             }
         })
             .then(res => dispatch(setChapterCategory(res.data)))
-            .catch(e => console.log('fetchChapterCategory-Error:', e.response.data))
+            .catch(e => console.log('fetchChapterCategory-Error:', e))
     }
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
@@ -137,9 +137,48 @@ const NavCategoreis = () => {
         console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
     }, [categories])
 
+    const getSortedCourseID = (catID) => {
+        const course_list_sequence = categories.filter(cat => cat[0] == catID)[0][4].course_list_sequence
+        if (course_list_sequence == null) return null
+        const courseIDKey = Object.keys(course_list_sequence).sort((a, b) => course_list_sequence[a] > course_list_sequence[b] ? 1
+            :
+            course_list_sequence[a] < course_list_sequence[b] ? -1 : 0)
+        return courseIDKey // output: sorted keys in array sequence. e.g. courseIDKey[0]=='courseid'
+    }
+
     useEffect(() => {
-        // console.log('NavCategores-useEffect-courses:', coursesEnrolled)
-        dispatch(setCoursesEnrolledStatus(coursesEnrolled))
+        console.log('NavCategores-useEffect-coursesEnrolled:', coursesEnrolled, ', categories: ', categories)
+        /*
+        const _coursesEnrolled = []
+        categories?.sort((a, b) => a.id > b.id ? 1 : a.id < a.id ? -1 : 0)
+            .forEach(cat => {
+                // const r = getSortedCourseID(cat.id)
+                const seq = cat.course_list_sequence
+                console.log('catID:', cat.id, ', seq: ', seq)
+                let keyCourseID = null
+                if (seq) {
+                    keyCourseID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                    console.log('keyCourseID: ', keyCourseID)
+                }
+                if (seq != null && keyCourseID != null) {
+                    for (let i = 0; i < keyCourseID.length; i++) {
+
+                        const res = coursesEnrolled.filter(course => (course.category == cat.id && course.id == Number(keyCourseID[i])))[0]
+                        console.log('newCourse: ', res)
+                        _coursesEnrolled.push(res)
+                    }
+
+                }
+                else {
+                    const res = coursesEnrolled.filter(course => (course.category == cat.id))
+                    res.forEach(course => _coursesEnrolled.push(course))
+
+                }
+            })
+            console.log('_coursesEnrolled: ', _coursesEnrolled)
+            */
+        // dispatch(setCoursesEnrolledStatus(coursesEnrolled))
+        dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': coursesEnrolled }))
     }, [coursesEnrolled])
 
     useEffect(() => {

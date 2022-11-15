@@ -40,6 +40,7 @@ const AddCourseScreen = () => {
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
 
+
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
@@ -182,7 +183,7 @@ const AddCourseScreen = () => {
     }
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
-        console.log('--fetchEnrolledCourses:', courses)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
+        console.log('--fetchEnrolledCourses:', courses, ', categories: ', categories, categories?.filter(cat => cat[0] == 1)[0][4].course_list_sequence)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
         if (categories)
             setSelCatID(new Array(categories.length).fill(false))
     }, [categories, isUpdatedCourse, coursesEnrolled])
@@ -206,7 +207,7 @@ const AddCourseScreen = () => {
 
                     // });
 
-                    dispatch(setCoursesEnrolledStatus(res.data))
+                    dispatch(setCoursesEnrolledStatus({ 'courses': res.data, 'categories': categories }))
                     setIsUpdatedCourse(false)
                     console.log('----- setCoursesEnrolledStatus', res.data)
 
@@ -248,7 +249,7 @@ const AddCourseScreen = () => {
                                 {
                                     coursesEnrolled && coursesEnrolled
                                         .filter((course) => course.category == catId)
-                                        .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                                        // .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
                                         .map((course) => {
                                             // console.log('course: ', course)
                                             return (
