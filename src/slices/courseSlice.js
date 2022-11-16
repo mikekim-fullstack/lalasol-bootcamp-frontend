@@ -19,6 +19,8 @@ const courseSlice = createSlice({
             const _categories = [...action.payload?.categories]
 
 
+            const courses = action.payload?.courses.filter(course => course)
+            console.log('---- setCoursesEnrolledStatus---- ', courses)
             const _coursesEnrolled = []
             const _sorted = _categories.sort((a, b) => (a.id > b.id) ? 1 : ((a.id < a.id) ? -1 : 0))
             // console.log('_sorted: ', _sorted)
@@ -34,21 +36,22 @@ const courseSlice = createSlice({
                 if (seq != null && keyCourseID != null) {
                     for (let i = 0; i < keyCourseID.length; i++) {
 
-                        const res = action.payload?.courses.filter(course => (course.category == cat.id && course.id == Number(keyCourseID[i])))[0]
+                        const res = courses.filter(course => (course?.category == cat.id && course.id == Number(keyCourseID[i])))[0]
                         // console.log('cat.id', cat.id, 'orderedCourse: ', res)
                         _coursesEnrolled.push(res)
                     }
 
                 }
                 if (seq == null || Object.keys(seq).length == 0) {
-                    const res = action.payload?.courses.filter(course => (course.category == cat.id))
+                    const res = courses.filter(course => (course?.category == cat.id))
                     // console.log('cat.id', cat.id, 'no order seq: ', res)
                     res?.forEach(course => _coursesEnrolled.push(course))
 
                 }
             })
-            // console.log('courseSlice _coursesEnrolled: ', _coursesEnrolled)
-            state.enrolledData = _coursesEnrolled
+            const _filteredCourses = _coursesEnrolled.filter(course => course)
+            console.log('courseSlice _coursesEnrolled: ', _filteredCourses)
+            state.enrolledData = _filteredCourses
         },
     }
 })

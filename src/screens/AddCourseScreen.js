@@ -40,6 +40,7 @@ const AddCourseScreen = () => {
     });
     const [isEditMode, setIsEditMode] = useState(false)
     const [isAddMode, setIsAddMode] = useState(false)
+    const [previousIndex, setPreviousIndex] = useState(null)
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -132,7 +133,6 @@ const AddCourseScreen = () => {
     }
     const successfullyDeleted = (res, messageData) => {
         setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
-        // setClickedCourseInfo(null)
         setIsUpdatedCourse(true)
     }
     const handleDeleteCourseResponse = (choose, messageData) => {
@@ -182,6 +182,7 @@ const AddCourseScreen = () => {
         const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
         _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
 
+        setPreviousIndex(index)
         setIsAddMode(false)
         setIsEditMode(true)
         // console.log('add_courseScreen-cat:', _selCatID, cat, index, catEle, _selCatID[index])
@@ -242,10 +243,25 @@ const AddCourseScreen = () => {
         setIsAddMode(false)
     }
 
+
     const handleCourseClick = async (e, cat, course) => {
         const catId = course.category
         const courseId = course.id
 
+        /** -- Change color targeting the clicked category + sign. -- */
+
+        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        const _selCatID = selCatID.map(sel => false)
+        setSelCatID([..._selCatID])
+
+        // const catid = cat[0]
+        // const catEle = document.getElementById('add_update_category_' + catid + '_' + previousIndex)
+        // _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+        // console.log('previousIndex=', previousIndex, _selCatID)
+
+        console.log('previousIndex=', previousIndex)
+        setIsEditMode(false)
+        setIsAddMode(false)
         /** Reset previous outline to nothing */
         if (clickedCourseInfo.foundCard) {
             clickedCourseInfo.foundCard.style['box-shadow'] = ''
@@ -280,9 +296,12 @@ const AddCourseScreen = () => {
         setClickedCourseInfo({ catId, courseId, foundCard, course })
         console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
     }
-    const handleSuccessUploading = (status, courseID, catID, teacherID) => {
+    const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
+        const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
+        console.log('handleSuccessUpdated: ', currentCourse)
         setIsEditMode(false)
         setIsAddMode(false)
+        setClickedCourseInfo({ ...clickedCourseInfo, course: currentCourse })
         if (status) {
             const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
             const seqCatData = { "course_list_sequence": {} }
@@ -303,37 +322,67 @@ const AddCourseScreen = () => {
             }
             console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
             updateCourseSequenceInCategory(catID, seqCatData)
-            // axios({
-            //     method: 'PATCH',
-            //     url: axios.defaults.baseURL + '/api/course-category-detail/' + catID,
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     data: JSON.stringify(seqCatData)
-            // })
-            //     .then(res => {
-            //         // -- Updating categories needed. --
-            //         axios({
-            //             method: 'GET',
-            //             url: '/api/course-category/',
-            //             headers: {
-            //                 'Content-Type': 'Application/Json'
-            //             },
 
-            //         }).then(res => {
-            //             dispatch(setAllCategories(res.data))
-            //             console.log('Refresh /api/course-category/:', res.data)
-            //         }).catch(err => console.log('error: - /api/course-category/', err))
-            //         console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
-            //     })
-            //     .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
         }
         setIsUpdatedCourse(status)
+
+    }
+    const handleSuccessUploading = (status, courseID, catID, teacherID) => {
+
+        // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
+        console.log('....handleSuccessUpdated: ', previousIndex)
+        /** -- Change color targeting the clicked category + sign. -- */
+        if (previousIndex != null) {
+            const _selCatID = [...selCatID]
+            _selCatID[previousIndex] = false
+            setSelCatID([..._selCatID])
+
+            const catEle = document.getElementById('add_update_category_' + catID + '_' + previousIndex)
+            _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+            console.log('previousIndex=', previousIndex, _selCatID)
+        }
+
+        /** Reset previous outline to nothing */
+        if (clickedCourseInfo.foundCard) {
+            clickedCourseInfo.foundCard.style['box-shadow'] = ''
+            clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
+            clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
+        }
+        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        setIsUpdatedCourse(true)
+
+        if (status) {
+            const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
+            const seqCatData = { "course_list_sequence": {} }
+            let maxVal = -1
+            if (addedCat?.course_list_sequence) {
+                // -- Copy all current courseID:order into seqCatData{}. --
+                Object.keys(addedCat.course_list_sequence)
+                    .forEach(key => {
+                        const val = Number(addedCat.course_list_sequence[key])
+                        seqCatData.course_list_sequence[key] = Number(val)
+                        maxVal = (maxVal > val) ? maxVal : val
+                    })
+                // -- Add new key:value pair which is created by new one. --
+                seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
+            }
+            else {
+                seqCatData.course_list_sequence[String(courseID)] = Number(1)
+            }
+            console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
+            updateCourseSequenceInCategory(catID, seqCatData)
+
+        }
+        setIsUpdatedCourse(status)
+        setIsEditMode(false)
+        setIsAddMode(false)
+        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        // setIsUpdatedCourse(true)
     }
 
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
-        console.log('--fetchEnrolledCourses:', courses, ', categories: ', categories, categories?.filter(cat => cat[0] == 1)[0][4].course_list_sequence)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
+        // console.log('--fetchEnrolledCourses:', courses, ', categories: ', categories, categories?.filter(cat => cat[0] == 1)[0][4].course_list_sequence)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
         if (categories)
             setSelCatID(new Array(categories.length).fill(false))
     }, [categories, isUpdatedCourse, coursesEnrolled])
@@ -378,7 +427,7 @@ const AddCourseScreen = () => {
                                     </div>
                                 </div>
                                 {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
-                                {selCatID[index] && isEditMode && <UpdateCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUploading} />}
                             </div>
                             <div className='courses'>
                                 {
