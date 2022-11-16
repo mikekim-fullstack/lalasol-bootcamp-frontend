@@ -15,7 +15,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
             {contentAction && contentAction.map(content => {
                 switch (content.chapter_category) {
                     case 1: // html file
-                        console.log('case - content.action - html', content, axios.defaults.baseURL + content.file)
+                        // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
                         return <div className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
                             <iframe
@@ -49,7 +49,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
                             </iframe>
                         </div>
                     case 8:// main title
-                        console.log('case - content.action - main title', content, content.title)
+                        // console.log('case - content.action - main title', content, content.title)
                         return <h1 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
                     case 9:// sub title 1
                         return <h2 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_1'>{content.title}</h2>
@@ -62,7 +62,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
                     // return <p className='main_paragraph'>{content.text}</p>
                     case 12: // Break line
                         {
-                            console.log('case - content.action -break', content)
+                            // console.log('case - content.action -break', content)
                             return <hr style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
                         }
                     case 13:// Code Block

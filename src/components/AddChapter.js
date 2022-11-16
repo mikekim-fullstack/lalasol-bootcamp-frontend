@@ -50,7 +50,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
     const initSelectContent = (_clickedContent) => {
 
         // dispatch(setClickedContent(_clickedContent))
-        console.log('initSelectContent: ', _clickedContent)
+        console.log('>>>>----initSelectContent: ', _clickedContent)
         /**
                  * Show filename in input file
                  */
@@ -444,7 +444,7 @@ const AddChapter = ({ catTitle, userId, catId, course, teacherId }) => {
 
             </div >
             {/* -------Preview-------- */}
-            <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} />
+            {clickedContent?.id && <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} />}
         </div>
     )
 }

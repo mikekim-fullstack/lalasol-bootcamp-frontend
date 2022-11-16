@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import axios from 'axios'
-import './AddUpdateCourse.css'
-const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handleSuccessUploading }) => {
+import './AddCourse.css'
+const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSuccessUploading }) => {
     const navigate = useNavigate()
     const [inputData, setInputData] = useState({
         category: category_id,
@@ -16,14 +16,14 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
     })
     const [uploadSuccess, setUploadSuccess] = useState(false)
     const fileRef = useRef(null)
-    const onSubmitAddUpdateCourseForm = (e) => {
+    const onSubmitAddCourseForm = (e) => {
         e.preventDefault()
         // setInputData({...inputData, course_no:})
         let formData = new FormData()
         // 
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
-        console.log('------------- onSubmitAddUpdateCourseForm--:', formData)
+        console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/courses-create/',
@@ -41,11 +41,11 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
 
                 setUploadSuccess(true)
                 handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
-                console.log('onSubmitAddUpdateCourseForm:', res)
+                console.log('onSubmitAddCourseForm:', res)
 
             })
 
-            .catch(res => { setUploadSuccess(false); console.log('onSubmitAddUpdateCourseForm--error: ', res.response.data); })
+            .catch(res => { setUploadSuccess(false); console.log('onSubmitAddCourseForm--error: ', res.response.data); })
         // axios.post(axios.defaults.baseURL + '/api/courses-create/',
         //     formData,
         //     {
@@ -54,7 +54,7 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
         //         }
         //     })
         //     .then(res => console.log(res))
-        //     .catch(res => console.log('onSubmitAddUpdateCourseForm--error: ', res.response.data))
+        //     .catch(res => console.log('onSubmitAddCourseForm--error: ', res.response.data))
     }
     console.log('category_id: ', category_id)
     const onHandleInputChange = (e) => {
@@ -66,8 +66,8 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
         }
     }
     return (
-        <div className='add_update_course__form'>
-            <form onSubmit={onSubmitAddUpdateCourseForm}>
+        <div className='add_course__form'>
+            <form onSubmit={onSubmitAddCourseForm}>
                 <div className='group-1'>
                     <div className='input'>
                         {showLabel && <label>Title</label>}
@@ -91,4 +91,4 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
     )
 }
 
-export default AddUpdateCourse
+export default AddCourse

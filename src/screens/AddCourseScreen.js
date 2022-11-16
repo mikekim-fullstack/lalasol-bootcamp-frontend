@@ -11,7 +11,8 @@ import axios from 'axios'
 import './AddCourseScreen.css'
 import '../components/CourseEditCard.css'
 import CourseEditCard from '../components/CourseEditCard'
-import AddUpdateCourse from '../components/AddUpdateCourse'
+import AddCourse from '../components/AddCourse'
+import UpdateCourse from '../components/UpdateCourse'
 import AddChapter from '../components/AddChapter'
 import DialogBox from '../components/DialogBox'
 import { current } from '@reduxjs/toolkit'
@@ -37,7 +38,8 @@ const AddCourseScreen = () => {
         course: null,
         catId: null,
     });
-    const [lastCourseNum, setLastCourseNum] = useState([])
+    const [isEditMode, setIsEditMode] = useState(false)
+    const [isAddMode, setIsAddMode] = useState(false)
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -180,6 +182,8 @@ const AddCourseScreen = () => {
         const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
         _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
 
+        setIsAddMode(false)
+        setIsEditMode(true)
         // console.log('add_courseScreen-cat:', _selCatID, cat, index, catEle, _selCatID[index])
     }
     const handleAddCourse = (e, cat, index) => {
@@ -192,7 +196,8 @@ const AddCourseScreen = () => {
         const catid = cat[0]
         const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
         _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
-
+        setIsEditMode(false)
+        setIsAddMode(true)
         // const sortedCourses = [...courses]
         // sortedCourses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
         // // courses && courses.forEeach(course => {
@@ -224,7 +229,18 @@ const AddCourseScreen = () => {
         // }
         // console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
     }
+    const handleClickCloseCourse = (e, cat, index) => {
+        const _selCatID = [...selCatID]
+        _selCatID[index] = false//!_selCatID[index]
+        setSelCatID([..._selCatID])
 
+        /** -- Change color targeting the clicked category + sign. -- */
+        const catid = cat[0]
+        const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
+        _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+        setIsEditMode(false)
+        setIsAddMode(false)
+    }
 
     const handleCourseClick = async (e, cat, course) => {
         const catId = course.category
@@ -265,6 +281,8 @@ const AddCourseScreen = () => {
         console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
     }
     const handleSuccessUploading = (status, courseID, catID, teacherID) => {
+        setIsEditMode(false)
+        setIsAddMode(false)
         if (status) {
             const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
             const seqCatData = { "course_list_sequence": {} }
@@ -333,7 +351,7 @@ const AddCourseScreen = () => {
             fetchAllCourses()
         }
     }, [allCategories])
-    console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo)
+    console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo, ',coursesEnrolled:', coursesEnrolled)
     return (
 
         <div className='add_update_course__screen'>
@@ -356,18 +374,18 @@ const AddCourseScreen = () => {
                                         {/*-- add expend + sign --*/}
                                         {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
                                         {/* close add - sign */}
-                                        {selCatID[index] && <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
+                                        {selCatID[index] && <svg onClick={e => handleClickCloseCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                                     </div>
                                 </div>
-                                {selCatID[index] && <AddUpdateCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && isEditMode && <UpdateCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
                             </div>
                             <div className='courses'>
                                 {
                                     coursesEnrolled && coursesEnrolled
-                                        .filter((course) => course.category == catId)
-                                        // .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
-                                        .map((course) => {
-                                            // console.log('course: ', course)
+                                        ?.filter((course) => course.category == catId)
+                                        ?.map((course) => {
+                                            // console.log('catId:', catId, ', course: ', course)
                                             return (
                                                 <div key={course.id}>
                                                     <CourseEditCard cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />

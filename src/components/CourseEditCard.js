@@ -5,6 +5,7 @@ import axios from 'axios'
 const CourseEditCard = ({ cat, course, handleCourseClick, isTeacher }) => {
     return (
         <div
+            draggable
             className={`course__edit_card_outline`}
             onClick={(e) => handleCourseClick(e, cat, course)}>
             <div className={`course__edit_card`}>
