@@ -178,9 +178,9 @@ const AddCourseScreen = () => {
         setSelCatID([..._selCatID])
 
         /** -- Change color targeting the clicked category + sign. -- */
-        const catid = cat[0]
-        const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
-        _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+        // const catid = cat[0]
+        // const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
+        // _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
 
         setPreviousIndex(index)
         setIsAddMode(false)
@@ -194,9 +194,9 @@ const AddCourseScreen = () => {
         setSelCatID([..._selCatID])
 
         /** -- Change color targeting the clicked category + sign. -- */
-        const catid = cat[0]
-        const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
-        _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+        // const catid = cat[0]
+        // const catEle = document.getElementById('add_update_category_' + catid + '_' + index)
+        // _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
         setIsEditMode(false)
         setIsAddMode(true)
         // const sortedCourses = [...courses]
@@ -208,7 +208,7 @@ const AddCourseScreen = () => {
             console.log(courses[key].course_no, courses[key].title)
         })
 
-        console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, catEle, _selCatID[index],)
+        console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, _selCatID[index],)
 
         // const courseID = 91
         // const addedCat = allCategories?.filter(cat => cat.id == 1)[0]
@@ -297,34 +297,36 @@ const AddCourseScreen = () => {
         console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
     }
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
-        const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
-        console.log('handleSuccessUpdated: ', currentCourse)
-        setIsEditMode(false)
-        setIsAddMode(false)
-        setClickedCourseInfo({ ...clickedCourseInfo, course: currentCourse })
+        // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
+        console.log('....handleSuccessUpdated: ', previousIndex)
+        /** -- Change color targeting the clicked category + sign. -- */
+        if (previousIndex != null) {
+            const _selCatID = [...selCatID]
+            _selCatID[previousIndex] = false
+            setSelCatID([..._selCatID])
+
+            const catEle = document.getElementById('add_update_category_' + catID + '_' + previousIndex)
+            _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+            console.log('previousIndex=', previousIndex, _selCatID)
+        }
+
+        /** Reset previous outline to nothing */
+        if (clickedCourseInfo.foundCard) {
+            clickedCourseInfo.foundCard.style['box-shadow'] = ''
+            clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
+            clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
+        }
+        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        // setIsUpdatedCourse(true)
+
         if (status) {
             const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
-            const seqCatData = { "course_list_sequence": {} }
-            let maxVal = -1
-            if (addedCat?.course_list_sequence) {
-                // -- Copy all current courseID:order into seqCatData{}. --
-                Object.keys(addedCat.course_list_sequence)
-                    .forEach(key => {
-                        const val = Number(addedCat.course_list_sequence[key])
-                        seqCatData.course_list_sequence[key] = Number(val)
-                        maxVal = (maxVal > val) ? maxVal : val
-                    })
-                // -- Add new key:value pair which is created by new one. --
-                seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
-            }
-            else {
-                seqCatData.course_list_sequence[String(courseID)] = Number(1)
-            }
-            console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
-            updateCourseSequenceInCategory(catID, seqCatData)
+            updateCourseSequenceInCategory(catID, addedCat?.course_list_sequence)
 
         }
         setIsUpdatedCourse(status)
+        setIsEditMode(false)
+        setIsAddMode(false)
 
     }
     const handleSuccessUploading = (status, courseID, catID, teacherID) => {
@@ -427,7 +429,7 @@ const AddCourseScreen = () => {
                                     </div>
                                 </div>
                                 {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
-                                {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
                             <div className='courses'>
                                 {

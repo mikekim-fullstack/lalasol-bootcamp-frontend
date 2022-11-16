@@ -45,7 +45,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
 
             })
 
-            .catch(res => { setUploadSuccess(false); console.log('onSubmitAddCourseForm--error: ', res.response.data); })
+            .catch(res => { setUploadSuccess(false); console.log('onSubmitAddCourseForm--error: ', res); })
         // axios.post(axios.defaults.baseURL + '/api/courses-create/',
         //     formData,
         //     {
