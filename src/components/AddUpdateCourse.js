@@ -23,7 +23,7 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
         // 
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
-        // console.log('onSubmitAddUpdateCourseForm--:', formData)
+        console.log('------------- onSubmitAddUpdateCourseForm--:', formData)
         axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/courses-create/',
@@ -36,10 +36,15 @@ const AddUpdateCourse = ({ showLabel, category_id, teacher_id, course_no, handle
                 // --- Reset input fields. ---
                 setInputData({ ...inputData, title: '', description: '' })
                 fileRef.current.value = "";//Resets the file name of the file input 
+
+
+
                 setUploadSuccess(true)
-                handleSuccessUploading(true)
-                // window.location.reload()
+                handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
+                console.log('onSubmitAddUpdateCourseForm:', res)
+
             })
+
             .catch(res => { setUploadSuccess(false); console.log('onSubmitAddUpdateCourseForm--error: ', res.response.data); })
         // axios.post(axios.defaults.baseURL + '/api/courses-create/',
         //     formData,

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
-import { getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
+import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import { setChapters, getChapters, setClickedChapter } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
@@ -21,6 +21,7 @@ const AddCourseScreen = () => {
     const dispatch = useDispatch()
     const user = useSelector(getUser)
     const categories = useSelector(getCats)
+    const allCategories = useSelector(getAllCategories)
     const courses = useSelector(getCourses)
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
@@ -34,13 +35,56 @@ const AddCourseScreen = () => {
         isLoading: false,
         itemName: "",
         course: null,
+        catId: null,
     });
     const [lastCourseNum, setLastCourseNum] = useState([])
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
 
+    const fetchAllCourses = async () => {
+        await axios({
+            method: 'GET',
+            url: `/api/courses-enrolled-status/${user?.id}`,
+            headers: {
+                'Content-Type': 'Application/Json'
+            },
+        })
+            .then(res => {
 
+                console.log('----- setCoursesEnrolledStatus', res.data, categories)
+                dispatch(setCoursesEnrolledStatus({ 'categories': allCategories, 'courses': res.data }))
+                setIsUpdatedCourse(false)
+
+            })
+            .catch(error => console.log('error-/api/courses-enrolled-status/: ', user?.id, error))
+    }
+    const updateCourseSequenceInCategory = async (catID, seqCatData) => {
+        axios({
+            method: 'PATCH',
+            url: axios.defaults.baseURL + '/api/course-category-detail/' + catID,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify(seqCatData)
+        })
+            .then(res => {
+                // -- Updating categories needed. --
+                axios({
+                    method: 'GET',
+                    url: '/api/course-category/',
+                    headers: {
+                        'Content-Type': 'Application/Json'
+                    },
+
+                }).then(res => {
+                    dispatch(setAllCategories(res.data))
+                    console.log('Refresh /api/course-category/:', res.data)
+                }).catch(err => console.log('error: - /api/course-category/', err))
+                console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
+            })
+            .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
+    }
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
@@ -74,12 +118,13 @@ const AddCourseScreen = () => {
      * @param {*} cat 
      * @param {*} index 
      */
-    const handleDeleteCourse = (e, cat, index) => {
+    const handleDeleteCourse = (e, catId, index) => {
         setDialogDeleteCourse({
             message: "Are you sure you want to delete?",
             isLoading: true,
             itemName: clickedCourseInfo?.course?.title + ' Course',
             course: clickedCourseInfo?.course,
+            catId: catId,
         });
         console.log('handleDeleteCourse', clickedCourseInfo.course)
     }
@@ -96,12 +141,33 @@ const AddCourseScreen = () => {
                 method: 'DELETE',
                 url: axios.defaults.baseURL + '/api/course-delete/' + messageData.course.id
             })
-                .then(res => successfullyDeleted(res, messageData))
+                .then(res => {
+
+                    // -- Remove map(deletedCourseID:orderNumber) from course_list_sequence. ---
+                    const seqCatData = { "course_list_sequence": {} }
+                    const courseID = messageData.course.id
+                    const selectedCat = allCategories?.filter(cat => cat.id == messageData.catId)[0]
+                    if (selectedCat?.course_list_sequence) {
+                        // -- Copy all current courseID:order into seqCatData{}. --
+                        Object.keys(selectedCat.course_list_sequence)
+                            .forEach(key => {
+                                if (courseID != key) {
+
+                                    const val = Number(selectedCat.course_list_sequence[key])
+                                    seqCatData.course_list_sequence[key] = Number(val)
+                                }
+                            })
+                        updateCourseSequenceInCategory(messageData.catId, seqCatData)
+                    }
+
+                    successfullyDeleted(res, messageData)
+
+                })
                 .catch(err => console.log(err.reponse.data))
             console.log('delete course', messageData.course)
         } else {
         }
-        setDialogDeleteCourse({ message: "", isLoading: false, itemName: '', course: null });
+        setDialogDeleteCourse({ message: "", isLoading: false, itemName: '', course: null, catId: null });
     };
     const handleUpdateCourse = (e, cat, index) => {
         /** -- [setCatID] stores boolean showing which category clicked(true) in array [true, false, ...]. --*/
@@ -137,6 +203,26 @@ const AddCourseScreen = () => {
         })
 
         console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, catEle, _selCatID[index],)
+
+        // const courseID = 91
+        // const addedCat = allCategories?.filter(cat => cat.id == 1)[0]
+        // const seqCatData = { "course_list_sequence": {} }
+        // let maxVal = -1
+        // if (addedCat?.course_list_sequence) {
+        //     // -- Copy all current courseID:order into seqCatData{}. --
+        //     Object.keys(addedCat.course_list_sequence)
+        //         .forEach(key => {
+        //             const val = Number(addedCat.course_list_sequence[key])
+        //             seqCatData.course_list_sequence[key] = Number(val)
+        //             maxVal = (maxVal > val) ? maxVal : val
+        //         })
+        //     // -- Add new key:value pair which is created by new one. --
+        //     seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
+        // }
+        // else {
+        //     seqCatData.course_list_sequence[String(courseID)] = Number(1)
+        // }
+        // console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
     }
 
 
@@ -178,9 +264,55 @@ const AddCourseScreen = () => {
         setClickedCourseInfo({ catId, courseId, foundCard, course })
         console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
     }
-    const handleSuccessUploading = (status) => {
+    const handleSuccessUploading = (status, courseID, catID, teacherID) => {
+        if (status) {
+            const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
+            const seqCatData = { "course_list_sequence": {} }
+            let maxVal = -1
+            if (addedCat?.course_list_sequence) {
+                // -- Copy all current courseID:order into seqCatData{}. --
+                Object.keys(addedCat.course_list_sequence)
+                    .forEach(key => {
+                        const val = Number(addedCat.course_list_sequence[key])
+                        seqCatData.course_list_sequence[key] = Number(val)
+                        maxVal = (maxVal > val) ? maxVal : val
+                    })
+                // -- Add new key:value pair which is created by new one. --
+                seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
+            }
+            else {
+                seqCatData.course_list_sequence[String(courseID)] = Number(1)
+            }
+            console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
+            updateCourseSequenceInCategory(catID, seqCatData)
+            // axios({
+            //     method: 'PATCH',
+            //     url: axios.defaults.baseURL + '/api/course-category-detail/' + catID,
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     data: JSON.stringify(seqCatData)
+            // })
+            //     .then(res => {
+            //         // -- Updating categories needed. --
+            //         axios({
+            //             method: 'GET',
+            //             url: '/api/course-category/',
+            //             headers: {
+            //                 'Content-Type': 'Application/Json'
+            //             },
+
+            //         }).then(res => {
+            //             dispatch(setAllCategories(res.data))
+            //             console.log('Refresh /api/course-category/:', res.data)
+            //         }).catch(err => console.log('error: - /api/course-category/', err))
+            //         console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
+            //     })
+            //     .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
+        }
         setIsUpdatedCourse(status)
     }
+
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
         console.log('--fetchEnrolledCourses:', courses, ', categories: ', categories, categories?.filter(cat => cat[0] == 1)[0][4].course_list_sequence)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
@@ -188,35 +320,19 @@ const AddCourseScreen = () => {
             setSelCatID(new Array(categories.length).fill(false))
     }, [categories, isUpdatedCourse, coursesEnrolled])
 
+    // useEffect(() => {
+    //     if (isUpdatedCourse) {
+    //         fetchAllCourses()
+    //     }
+    //     // console.log('-----useEffect-isUpdatedCourse ----:', isUpdatedCourse)
+    // }, [isUpdatedCourse])
+
     useEffect(() => {
-        if (isUpdatedCourse) {
-            axios({
-                method: 'GET',
-                url: `/api/courses-enrolled-status/${user?.id}`,
-                headers: {
-                    'Content-Type': 'Application/Json'
-                },
-            })
-                .then(res => {
-                    // setLastCourseNum
-                    const data = [...res.data]
-
-                    // categories.forEach(element => {
-                    //     data.filter((course) => course.category == catId)
-                    // .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
-
-                    // });
-
-                    dispatch(setCoursesEnrolledStatus({ 'courses': res.data, 'categories': categories }))
-                    setIsUpdatedCourse(false)
-                    console.log('----- setCoursesEnrolledStatus', res.data)
-
-                })
-                .catch(error => console.log(error.response.data))
+        console.log('useEffect - allCategories', allCategories)
+        if (allCategories) {
+            fetchAllCourses()
         }
-        // console.log('-----useEffect-isUpdatedCourse ----:', isUpdatedCourse)
-    }, [isUpdatedCourse])
-
+    }, [allCategories])
     console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo)
     return (
 
@@ -234,7 +350,7 @@ const AddCourseScreen = () => {
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
                                     <div className='svg_icon'>
                                         {/* -- delete sign -- */}
-                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleDeleteCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
+                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleDeleteCourse(e, catId, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
                                         {/* -- edit sign -- */}
                                         {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleUpdateCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                                         {/*-- add expend + sign --*/}

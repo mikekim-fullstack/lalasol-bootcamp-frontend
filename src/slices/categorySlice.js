@@ -1,9 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const categorySlice = createSlice({
-    initialState: { cats: null, selectedCat: null, status: null },//{selectedId,lists}
+    initialState: { allCats: null, cats: null, selectedCat: null, status: null },//{selectedId,lists}
     name: 'category',
     reducers: {
+        setAllCategories: (state, action) => {
+            state.allCats = action.payload
+            // console.log('categorySlice-state.cat: ', state.cats)
+        },
         setCat: (state, action) => {
             state.cats = action.payload
             // console.log('categorySlice-state.cat: ', state.cats)
@@ -25,8 +29,9 @@ const categorySlice = createSlice({
 })
 export default categorySlice.reducer
 
-export const { setCat, setSelectedCat, setSelectedCatStatus } = categorySlice.actions
+export const { setAllCategories, setCat, setSelectedCat, setSelectedCatStatus } = categorySlice.actions
 
+export const getAllCategories = state => state.category.allCats
 export const getCats = state => state.category.cats
 export const getSelectedCat = (state) => {
     // console.log('-slice: getSelectedCat;', state.category.selectedCat)

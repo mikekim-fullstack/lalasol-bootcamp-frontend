@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
+import { setAllCategories, setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
 import { setCourses, setCoursesEnrolledStatus, } from '../slices/courseSlice'
 import { setChapters, getChapters, setChapterCategory } from '../slices/chapterSlice'
@@ -106,7 +106,7 @@ const NavCategoreis = () => {
     }, [user])
     useEffect(() => {
         if (categories != null) {
-
+            dispatch(setAllCategories(categories))
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence }])
@@ -148,6 +148,10 @@ const NavCategoreis = () => {
 
     useEffect(() => {
         console.log('NavCategores-useEffect-coursesEnrolled:', coursesEnrolled, ', categories: ', categories)
+        // if (categories == null) return
+        // const tmp = [...categories]
+        // const sss = tmp?.sort((a, b) => a.id > b.id ? 1 : a.id < a.id ? -1 : 0)
+        // console.log('tmp:', sss)
         /*
         const _coursesEnrolled = []
         categories?.sort((a, b) => a.id > b.id ? 1 : a.id < a.id ? -1 : 0)
@@ -178,7 +182,8 @@ const NavCategoreis = () => {
             console.log('_coursesEnrolled: ', _coursesEnrolled)
             */
         // dispatch(setCoursesEnrolledStatus(coursesEnrolled))
-        dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': coursesEnrolled }))
+        if (categories && coursesEnrolled)
+            dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': coursesEnrolled }))
     }, [coursesEnrolled])
 
     useEffect(() => {
