@@ -244,7 +244,7 @@ const AddCourseScreen = () => {
     }
 
 
-    const handleCourseClick = async (e, cat, course) => {
+    const handleClickCourse = async (e, cat, course) => {
         const catId = course.category
         const courseId = course.id
 
@@ -259,7 +259,7 @@ const AddCourseScreen = () => {
         // _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
         // console.log('previousIndex=', previousIndex, _selCatID)
 
-        console.log('previousIndex=', previousIndex)
+        // console.log('previousIndex=', previousIndex)
         setIsEditMode(false)
         setIsAddMode(false)
         /** Reset previous outline to nothing */
@@ -294,7 +294,7 @@ const AddCourseScreen = () => {
         dispatch(setClickedChapter(null))
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
         setClickedCourseInfo({ catId, courseId, foundCard, course })
-        console.log('handleCourseClick: ', catId, courseId, e.target, foundCard, (course__edit_card_outline))
+        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId,)// e.target, foundCard, (course__edit_card_outline))
     }
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
         // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
@@ -307,7 +307,7 @@ const AddCourseScreen = () => {
 
             const catEle = document.getElementById('add_update_category_' + catID + '_' + previousIndex)
             _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
-            console.log('previousIndex=', previousIndex, _selCatID)
+            // console.log('previousIndex=', previousIndex, _selCatID)
         }
 
         /** Reset previous outline to nothing */
@@ -341,7 +341,7 @@ const AddCourseScreen = () => {
 
             const catEle = document.getElementById('add_update_category_' + catID + '_' + previousIndex)
             _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
-            console.log('previousIndex=', previousIndex, _selCatID)
+            // console.log('previousIndex=', previousIndex, _selCatID)
         }
 
         /** Reset previous outline to nothing */
@@ -402,18 +402,19 @@ const AddCourseScreen = () => {
             fetchAllCourses()
         }
     }, [allCategories])
-    console.log('AddCourseScreen --- clickedCourseInfo', clickedCourseInfo, ',coursesEnrolled:', coursesEnrolled)
+    console.log('<<< Refresh - AddCourseScreen: clickedCourseInfo', clickedCourseInfo, ',coursesEnrolled:', coursesEnrolled)
     return (
 
         <div className='add_update_course__screen'>
             <div className='add_update_course__screen_content'>
-                <h1>Add Courses</h1>
+                <h1>Seup Course</h1>
                 {
                     categories && categories.map((cat, index) => {
                         // console.log('add_courseScreen-cat:', cat)
                         const catId = cat[0]
                         const catTitle = cat[2]
                         return <div key={catId}>
+                            {/* -- Show all course Bars for  each categories for delete, edit and add course. -- */}
                             <div className='categories' id={`add_update_category_${catId}_${index}`} style={{ backgroundColor: 'rgb(0, 46, 49)' }}>
                                 <div className='title'>
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
@@ -431,6 +432,7 @@ const AddCourseScreen = () => {
                                 {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
                                 {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
+                            {/* -- Under categories it shows all courses in card. -- */}
                             <div className='courses'>
                                 {
                                     coursesEnrolled && coursesEnrolled
@@ -439,28 +441,24 @@ const AddCourseScreen = () => {
                                             // console.log('catId:', catId, ', course: ', course)
                                             return (
                                                 <div key={course.id}>
-                                                    <CourseEditCard cat={cat} course={course} isTeacher={true} handleCourseClick={handleCourseClick} />
-
+                                                    <CourseEditCard cat={cat} course={course} isTeacher={true} handleClickCourse={handleClickCourse} />
                                                 </div>
                                             )
                                         })
-
                                 }
                             </div>
+                            {/** * When the course card clicked, this div element populates for adding and modifying chapter. */}
                             <div>
-                                { /** Whenn the course card clicked, this div element populates for adding and modifying chapter. */
+                                {
                                     (catId == clickedCourseInfo.catId) && (<div >
                                         {/* <h1>{clickedCourseInfo.catId}, {clickedCourseInfo.courseId}</h1> */}
                                         <AddChapter catTitle={catTitle} userId={user.id} catId={clickedCourseInfo.catId} course={clickedCourseInfo.course} teacherId={1} />
                                     </div>)
                                 }
                             </div>
-
+                            {/** When delete button clicked on course it pops up */}
                             {dialogDeleteCourse.isLoading && <DialogBox
-                                dialogData={dialogDeleteCourse}
-                                // message={dialogDeleteCourse.message}
-                                // itemName={dialogDeleteCourse.itemName}
-                                onDialog={handleDeleteCourseResponse}
+                                dialogData={dialogDeleteCourse} onDialog={handleDeleteCourseResponse}
                             />
                             }
                         </div>

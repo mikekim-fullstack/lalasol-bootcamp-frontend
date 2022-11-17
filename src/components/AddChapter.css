@@ -1,4 +1,137 @@
-.add_chapter__component {
+.add_chapter__view>h2 {
+    /* border: 1px dashed pink; */
+    margin: 0;
+    /* background-color: rgb(62, 56, 91);
+    color: white; */
+    padding: 10px 0;
+    ;
+}
+
+.add_chapter__view .chapters_view {
+    box-sizing: border-box;
+    margin-bottom: 5px;
+}
+
+.add_chapter__view .chapters_view .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px;
+    background-color: rgb(19, 17, 28);
+    color: white;
+
+}
+
+.add_chapter__view .chapters_view .title .t1 {
+    display: inline-block;
+    border: 1px solid rgb(150, 150, 150);
+    background-color: rgb(127, 127, 127);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.add_chapter__view .chapters_view .title .t2 {
+    display: inline-block;
+    border-bottom: 2px solid rgb(57, 57, 96);
+    margin-left: 5px;
+}
+
+.add_chapter__view .chapters_view .title .svg_icon svg {
+    fill: white;
+    cursor: pointer;
+    margin-left: 5px;
+    /* border: 1px dashed pink; */
+}
+
+.add_chapter__component .chapter_list_view {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    overflow-x: scroll;
+    background-color: rgb(19, 17, 28);
+    box-sizing: border-box;
+    /* border: 5px solid rgb(30, 67, 131); */
+
+
+    border-radius: 0;
+
+    padding: 5px 10px 10px 10px;
+    color: white;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* .add_chapter__component .chapter_list_view h3 {
+    margin: 0;
+    padding: 10px 15px;
+}
+
+.add_chapter__component .chapter_list_view span {
+    color: rgb(236, 133, 244);
+} */
+
+
+.add_chapter__view .content_view .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px;
+    background-color: rgb(19, 17, 28);
+    color: white;
+
+}
+
+.add_chapter__view .content_view .title .t1 {
+    display: inline-block;
+    border: 1px solid rgb(150, 150, 150);
+    background-color: rgb(127, 127, 127);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.add_chapter__view .content_view .title .t2 {
+    display: inline-block;
+    border-bottom: 2px solid rgb(57, 57, 96);
+    margin-left: 5px;
+}
+
+.add_chapter__view .content_view .title .svg_icon svg {
+    fill: white;
+    cursor: pointer;
+    margin-left: 5px;
+    /* border: 1px dashed pink; */
+}
+
+
+.add_chapter__component .chapter_lists {
+    margin: 7px 10px;
+    box-sizing: border-box;
+
+    padding: 10px 20px;
+    background-color: rgb(105, 0, 210);
+    border-radius: 5px;
+    color: white;
+    /* width: 100%; */
+    max-width: 100%;
+    align-self: stretch;
+}
+
+.add_chapter__component .chapter_lists:hover {
+    background-color: rgb(79, 1, 157);
+    /* color: gray; */
+
+    box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0px 0px 0px 2px rgb(142, 150, 165);
+    -moz-box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+}
+
+
+.add_chapter__component .content_view {
     /* background-color: rgb(140, 111, 111);
      */
     /* border: 1px dashed pink; */
@@ -18,53 +151,6 @@
     flex-direction: column;
 }
 
-.add_chapter__component .chapter_list_view {
-
-    background-color: rgb(19, 17, 28);
-    box-sizing: border-box;
-    /* border: 5px solid rgb(30, 67, 131); */
-
-
-    border-radius: 8px 8px 0 0;
-
-    padding: 5px 10px 10px 10px;
-    color: white;
-    max-width: 100%;
-    width: 100%;
-}
-
-.add_chapter__component .chapter_list_view h3 {
-    margin: 0;
-    padding: 10px 15px;
-}
-
-.add_chapter__component .chapter_list_view span {
-    color: rgb(236, 133, 244);
-}
-
-
-
-.add_chapter__component .chapter_lists {
-    margin: 7px 10px;
-    box-sizing: border-box;
-
-    padding: 10px 20px;
-    background-color: rgb(23, 51, 101);
-    border-radius: 5px;
-    color: rgb(161, 160, 171);
-    /* width: 100%; */
-    max-width: 100%;
-}
-
-.add_chapter__component .chapter_lists:hover {
-    background-color: rgb(17, 38, 75);
-    color: white;
-
-    box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
-    -webkit-box-shadow: 0px 0px 0px 2px rgba(30, 67, 131, 1);
-    -moz-box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
-    border-radius: 5px;
-}
 
 
 
@@ -139,12 +225,12 @@ input[type=file] {
         justify-content: space-between; */
     }
 
-    .add_chapter__component .chapter_list_view {
+    /* .add_chapter__component .chapter_list_view {
         width: 100%;
         border-radius: 8px 0 0 8px;
         align-self: stretch;
 
-    }
+    } */
 
     .add_chapter__component .chapter_detail {
         width: 100%;
