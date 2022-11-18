@@ -75,7 +75,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
                     </div>
                     <div>
                         {showLabel && <label>Description</label>}
-                        <textarea onChange={onHandleInputChange} value={inputData?.description} row='1' required name='description' placeholder='Enter Description*' />
+                        <textarea onChange={onHandleInputChange} value={inputData?.description} rows='1' required name='description' placeholder='Enter Description*' />
                     </div>
                 </div>
                 <div className='group-2'>

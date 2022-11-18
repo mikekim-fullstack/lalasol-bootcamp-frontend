@@ -452,7 +452,7 @@ const AddCourseScreen = () => {
                                 {
                                     (catId == clickedCourseInfo.catId) && (<div >
                                         {/* <h1>{clickedCourseInfo.catId}, {clickedCourseInfo.courseId}</h1> */}
-                                        <AddChapter catTitle={catTitle} userId={user.id} catId={clickedCourseInfo.catId} course={clickedCourseInfo.course} teacherId={1} />
+                                        <AddChapter catTitle={catTitle} userId={user.id} clickedCourseInfo={clickedCourseInfo} teacherId={1} />
                                     </div>)
                                 }
                             </div>

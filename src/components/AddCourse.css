@@ -29,17 +29,18 @@
 } */
 
 input {
-    margin: 5px 0;
+    margin: 0.3rem 0;
 }
 
 input[type=text] {
     outline: none;
     border-style: none;
-    padding: 10px 20px;
+    padding: 0.63rem 1.4rem;
     outline: none;
     border-radius: 3px;
     max-width: 100%;
     width: 100%;
+    font-size: 0.8rem;
     /* margin-top: 5px; */
 }
 
@@ -59,12 +60,14 @@ textarea {
     outline: none;
     border-style: none;
     border-radius: 3px;
-    padding: 10px 20px;
+    padding: 0.63rem 1.4rem;
     width: 100%;
     max-width: 100%;
-    margin: 5px 0;
+    margin: 0.3rem 0;
     resize: vertical;
-    min-height: 2.3rem;
+
+    min-height: 3.2rem;
+    font-size: 0.8rem;
 }
 
 .input_file {
@@ -73,13 +76,13 @@ textarea {
 }
 
 .input_file>label {
-    padding: 8.5px;
+    padding: 0.53rem;
     color: rgb(69, 69, 69);
     font-weight: 300;
     font-size: 1rem;
     background-color: rgb(231, 231, 231);
 
-    border-radius: 0 3px 3px 0;
+    border-radius: 0 0.2rem 0.2rem 0;
 }
 
 .add_course__form input[type=file] {
@@ -87,9 +90,10 @@ textarea {
     width: 100%;
     max-width: 100%;
     background-color: rgba(255, 255, 255, 0.797);
-    border: none;
+    /* border: none; */
     margin-right: 2px;
-    border-radius: 3px 0 0 3px;
+    border-radius: 0.2rem 0 0 0.2rem;
+
 
     color: #000;
 }
@@ -105,12 +109,13 @@ textarea {
 .add_course__form input[type=file]::file-selector-button {
 
     background-color: rgb(232, 232, 232);
+    font-size: 0.8rem;
     color: #000;
     border: 0px;
     border-right: 1px solid #b6b6b6;
-    padding: 10px 15px;
+    padding: 0.63rem 1.4rem;
     margin-right: 20px;
-
+    border-radius: 0.2rem 0 0 0.2rem;
     transition: .5s;
 }
 
@@ -123,15 +128,18 @@ textarea {
 }
 
 .add_course__form button {
-    margin: 7px 0;
-    padding: 10px;
+    margin: 0.3rem 0;
+    padding: 0.63rem 1.4rem;
+
     background-color: rgb(226, 88, 88);
     color: white;
     border: 0;
     border-radius: 3px;
     width: 100%;
     max-width: 100%;
-    height: 2.5rem;
+    height: 2.3rem;
+    font-size: 0.8rem;
+
 }
 
 .add_course__form button:hover {
