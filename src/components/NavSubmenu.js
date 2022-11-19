@@ -315,10 +315,10 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                     chapters && chapters.length > 0 && chapters.map((chapter, index) => {
                                         return <button onClick={handleSelectedChapter}
                                             key={chapter.id}
-                                            name={` ${chapter.title}, ${chapter.id}`}
+                                            name={` ${chapter.name}, ${chapter.id}`}
                                             // className={`content__subject btn_chapter_selected`}>
                                             className={`content__subject ${pathChapterID == chapter.id && 'btn_selected'}`}>
-                                            {chapter.title}:{chapter.viewed}/{chapter.content.length}
+                                            {chapter.name}:{chapter.viewed}/{chapter.content.length}
                                         </button>
 
                                     })

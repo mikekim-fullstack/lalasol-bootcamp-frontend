@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const courseSlice = createSlice({
-    initialState: { data: null, enrolledData: null },
+    initialState: { data: null, enrolledData: null, clickedCourseData: null },
     name: 'courses',
     reducers: {
         setCourses: (state, action) => {
@@ -53,14 +53,19 @@ const courseSlice = createSlice({
             console.log('courseSlice _coursesEnrolled: ', _filteredCourses)
             state.enrolledData = _filteredCourses
         },
+        setClickedCourse: (state, action) => {
+            state.clickedCourseData = action.payload
+
+        }
     }
 })
 
 
 export default courseSlice.reducer
 
-export const { setCourses, setCoursesEnrolledStatus } = courseSlice.actions
+export const { setCourses, setCoursesEnrolledStatus, setClickedCourse } = courseSlice.actions
 export const getCourses = (state) => state.courses.data
 export const getCoursesEnrolledStatus = (state) => state.courses.enrolledData
+export const getClickedCourse = (state) => state.courses.clickedCourseData
 
 

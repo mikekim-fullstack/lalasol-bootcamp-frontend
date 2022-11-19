@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
-import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
+import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus, setClickedCourse, getClickedCourse } from '../slices/courseSlice'
 import { setChapters, getChapters, setClickedChapter } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
@@ -432,6 +432,11 @@ const AddCourseScreen = () => {
                                 {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
                                 {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
+                            {/** When delete button clicked on course it pops up */}
+                            {dialogDeleteCourse.isLoading && <DialogBox
+                                dialogData={dialogDeleteCourse} onDialog={handleDeleteCourseResponse}
+                            />
+                            }
                             {/* -- Under categories it shows all courses in card. -- */}
                             <div className='courses'>
                                 {
@@ -456,11 +461,7 @@ const AddCourseScreen = () => {
                                     </div>)
                                 }
                             </div>
-                            {/** When delete button clicked on course it pops up */}
-                            {dialogDeleteCourse.isLoading && <DialogBox
-                                dialogData={dialogDeleteCourse} onDialog={handleDeleteCourseResponse}
-                            />
-                            }
+
                         </div>
 
                     })
