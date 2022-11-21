@@ -26,11 +26,12 @@ const AddCourseScreen = () => {
     const courses = useSelector(getCourses)
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
+    const clickedCourseInfo = useSelector(getClickedCourse)
 
 
     const [selCatID, setSelCatID] = useState([])
     const [isUpdatedCourse, setIsUpdatedCourse] = useState(false)
-    const [clickedCourseInfo, setClickedCourseInfo] = useState({ catId: null, courseId: null, foundCard: null, course: null })
+    // const [clickedCourseInfo, setClickedCourseInfo] = useState({ catId: null, courseId: null, foundCard: null, course: null })
     const [dialogDeleteCourse, setDialogDeleteCourse] = useState({
         message: "",
         isLoading: false,
@@ -62,6 +63,20 @@ const AddCourseScreen = () => {
             })
             .catch(error => console.log('error-/api/courses-enrolled-status/: ', user?.id, error))
     }
+    const fetchAllCategories = async () => {
+        axios({
+            method: 'GET',
+            url: '/api/course-category/',
+            headers: {
+                'Content-Type': 'Application/Json'
+            },
+
+        }).then(res => {
+            dispatch(setAllCategories(res.data))
+            console.log('Refresh /api/course-category/:', res.data)
+        }).catch(err => console.log('error: - /api/course-category/', err))
+
+    }
     const updateCourseSequenceInCategory = async (catID, seqCatData) => {
         axios({
             method: 'PATCH',
@@ -73,18 +88,9 @@ const AddCourseScreen = () => {
         })
             .then(res => {
                 // -- Updating categories needed. --
-                axios({
-                    method: 'GET',
-                    url: '/api/course-category/',
-                    headers: {
-                        'Content-Type': 'Application/Json'
-                    },
-
-                }).then(res => {
-                    dispatch(setAllCategories(res.data))
-                    console.log('Refresh /api/course-category/:', res.data)
-                }).catch(err => console.log('error: - /api/course-category/', err))
+                fetchAllCategories()
                 console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
+
             })
             .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
     }
@@ -132,7 +138,8 @@ const AddCourseScreen = () => {
         console.log('handleDeleteCourse', clickedCourseInfo.course)
     }
     const successfullyDeleted = (res, messageData) => {
-        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
         setIsUpdatedCourse(true)
     }
     const handleDeleteCourseResponse = (choose, messageData) => {
@@ -250,7 +257,7 @@ const AddCourseScreen = () => {
 
         /** -- Change color targeting the clicked category + sign. -- */
 
-        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
         const _selCatID = selCatID.map(sel => false)
         setSelCatID([..._selCatID])
 
@@ -293,7 +300,8 @@ const AddCourseScreen = () => {
         }
         dispatch(setClickedChapter(null))
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
-        setClickedCourseInfo({ catId, courseId, foundCard, course })
+        dispatch(setClickedCourse({ catId, courseId, foundCard, course }))
+        // setClickedCourseInfo({ catId, courseId, foundCard, course })
         console.log('handleClickCourse: catid:', catId, 'courseid:', courseId,)// e.target, foundCard, (course__edit_card_outline))
     }
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
@@ -316,7 +324,8 @@ const AddCourseScreen = () => {
             clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
             clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
         }
-        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
+        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
         // setIsUpdatedCourse(true)
 
         if (status) {
@@ -329,6 +338,7 @@ const AddCourseScreen = () => {
         setIsAddMode(false)
 
     }
+
     const handleSuccessUploading = (status, courseID, catID, teacherID) => {
 
         // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
@@ -350,7 +360,8 @@ const AddCourseScreen = () => {
             clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
             clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
         }
-        setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
+        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
         setIsUpdatedCourse(true)
 
         if (status) {
@@ -378,6 +389,7 @@ const AddCourseScreen = () => {
         setIsUpdatedCourse(status)
         setIsEditMode(false)
         setIsAddMode(false)
+        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
         // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
         // setIsUpdatedCourse(true)
     }
@@ -457,7 +469,7 @@ const AddCourseScreen = () => {
                                 {
                                     (catId == clickedCourseInfo.catId) && (<div >
                                         {/* <h1>{clickedCourseInfo.catId}, {clickedCourseInfo.courseId}</h1> */}
-                                        <AddChapter catTitle={catTitle} userId={user.id} clickedCourseInfo={clickedCourseInfo} teacherId={1} />
+                                        <AddChapter catTitle={catTitle} userId={user.id} teacherId={1} />
                                     </div>)
                                 }
                             </div>

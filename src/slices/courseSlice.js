@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const courseSlice = createSlice({
-    initialState: { data: null, enrolledData: null, clickedCourseData: null },
+    initialState: { data: null, enrolledData: null, clickedCourseData: { catId: null, courseId: null, foundCard: null, course: null } },
     name: 'courses',
     reducers: {
         setCourses: (state, action) => {
@@ -54,6 +54,7 @@ const courseSlice = createSlice({
             state.enrolledData = _filteredCourses
         },
         setClickedCourse: (state, action) => {
+            console.log('---- slice - setClickedCourse:', action.payload)
             state.clickedCourseData = action.payload
 
         }

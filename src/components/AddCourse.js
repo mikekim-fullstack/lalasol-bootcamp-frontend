@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import axios from 'axios'
 import './AddCourse.css'
-const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSuccessUploading }) => {
+const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSuccessUpdateChapterSeq }) => {
     const navigate = useNavigate()
     const [inputData, setInputData] = useState({
         category: category_id,
@@ -40,7 +40,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
 
 
                 setUploadSuccess(true)
-                handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
+                handleSuccessUpdateChapterSeq(true)//res.data.id, res.data.category, res.data.teacher)
                 console.log('onSubmitAddCourseForm:', res)
 
             })

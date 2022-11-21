@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
+import { getClickedCourse, setClickedCourse } from '../slices/courseSlice'
 import {
     getClickedChapter, setClickedChapter, setClickedContent,
     getClickedContent, getChapterCategory, resetContentAction,
@@ -13,12 +14,13 @@ import { ContentCutTwoTone } from '@mui/icons-material'
 import PreviewContent from './PreviewContent'
 import AddContent from './AddContent'
 import DialogBox from './DialogBox'
-const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadingChapter, teacherId }) => {
+const AddChapter = ({ catTitle, userId, teacherId }) => {
 
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
+    const clickedCourseInfo = useSelector(getClickedCourse)
 
     const [chapterLists, setChapterLists] = useState(null)
     const [createChapter, setCreateChapter] = useState(false)
@@ -40,28 +42,58 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         chapter: null,
     });
     const [inputData, setInputData] = useState({
-        course: clickedCourseInfo?.course?.id,
+        // course: clickedCourseInfo?.course?.id,
         name: '',
         description: '',
     })
 
 
+    const copyObject = (_clickedCourseItem, objItem) => {
+        // _clickedCourseInfo = {}
+        //catId: null, courseId: null, foundCard: null, course: null
+        console.log('first copyObject: ', _clickedCourseItem, objItem)
+        if (objItem == null) return
+        if (typeof (objItem) == 'object') {
+            Object.keys(objItem).map((key) => {
+                console.log('inside map copyObject: ', key, objItem[key])
+                if (objItem[key] != null && typeof (objItem[key]) == 'object') {
+                    _clickedCourseItem[key] = {}
 
+                    copyObject(_clickedCourseItem[key], objItem[key])
+                }
+                else _clickedCourseItem[key] = objItem[key]
+            })
+
+
+        }
+        else {
+
+            _clickedCourseItem = objItem
+        }
+
+    }
     /** When refresh window it automatically selects the first chapter */
     const initSelectChapter = (_clickedChapter) => {
         console.log('init-click Chapter:', _clickedChapter, ', clickedContent:', clickedContent)
         dispatch(setClickedChapter(_clickedChapter))
 
-        const chapterListsEle = document.querySelector('.add_chapter__component .chapter_lists')
+        /** -- Initially highlight the first chapter and make a sure the rest of chapters aren't highlighted. -- */
+        const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
+        const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
 
-        if (chapterListsEle) {
-            const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-            chapterListsEle.style['box-shadow'] = shadowColor
-            chapterListsEle.style['-webkit-box-shadow'] = shadowColor
-            chapterListsEle.style['-moz-box-shadow'] = shadowColor
-            setPreviousClickedChapter(chapterListsEle)
+        for (let i = 0; i < chapterListsEle.length; i++) {
+            if (i == 0) {
+                chapterListsEle[i].style['box-shadow'] = shadowColor
+                chapterListsEle[i].style['-webkit-box-shadow'] = shadowColor
+                chapterListsEle[i].style['-moz-box-shadow'] = shadowColor
+                setPreviousClickedChapter(chapterListsEle[i])
+            }
+            else {
+                chapterListsEle[i].style['box-shadow'] = ''
+                chapterListsEle[i].style['-webkit-box-shadow'] = ''
+                chapterListsEle[i].style['-moz-box-shadow'] = ''
+            }
         }
-
     }
 
     /** Gell all chapters by userID and courseID from server */
@@ -69,7 +101,7 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         setCreateChapter(false)
         await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
             .then(res => {
-                console.log('fetchChapters: ', res.data)
+                console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourseInfo?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
                 const chapterListData = res.data
                 /** If there is chapter_list_sequence, then sort key by sequence and reproduce chapter array in to _sortedChapters */
                 if (clickedCourseInfo?.course?.chapter_list_sequence && Object.keys(clickedCourseInfo?.course?.chapter_list_sequence).length > 0) {
@@ -79,9 +111,11 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
                     const _sortedcChapters = []
                     for (let i = 0; i < keyChapterID.length; i++) {
 
-                        const res = chapterListData.filter(chapter => (chapter.id == Number(keyChapterID[i])))[0]
-                        // console.log('cat.id', cat.id, 'orderedCourse: ', res)
-                        _sortedcChapters.push(res)
+                        const res = chapterListData.filter(chapter => (chapter.id == Number(keyChapterID[i])))
+                        if (res && res.length == 1) {
+                            // console.log('cat.id', cat.id, 'orderedCourse: ', res)
+                            _sortedcChapters.push(res[0])
+                        }
                     }
                     setChapterLists(_sortedcChapters)
                 }
@@ -169,25 +203,26 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
                 .then(res => {
 
                     // -- Remove map(deletedCourseID:orderNumber) from course_list_sequence. ---
-                    /*
-                    const seqCatData = { "chapter_list_sequence": {} }
-                    const courseID = messageData.chapter.id
-                    const selectedCat = allCategories?.filter(cat => cat.id == messageData.catId)[0]
-                    if (selectedCat?.course_list_sequence) {
-                        // -- Copy all current courseID:order into seqCatData{}. --
-                        Object.keys(selectedCat.course_list_sequence)
+                    const chapterListSequence = clickedCourseInfo?.course?.chapter_list_sequence
+                    const seqChapterData = { "chapter_list_sequence": {} }
+                    let maxVal = -1
+                    if (chapterListSequence) {
+                        // -- Copy all current courseID:order into seqChapterData{}. --
+                        Object.keys(chapterListSequence)
                             .forEach(key => {
-                                if (courseID != key) {
- 
-                                    const val = Number(selectedCat.course_list_sequence[key])
-                                    seqCatData.course_list_sequence[key] = Number(val)
+                                if (messageData.chapter.id != Number(key)) {
+                                    const val = Number(chapterListSequence[key])
+                                    seqChapterData.chapter_list_sequence[key] = Number(val)
                                 }
+
                             })
-                        updateCourseSequenceInCategory(messageData.catId, seqCatData)
+
                     }
- 
-                    successfullyDeleted(res, messageData)
-                    */
+
+                    console.log('  ----Delete chapter seqChapterData---', seqChapterData, ', after deleted chapter: ', res.data)
+                    // --------------------------------------------------------
+                    updateCourseChapterSequence(seqChapterData)
+
                     setClickedChapter(null)
 
                     fetchChapters()
@@ -212,13 +247,13 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         console.log('handleDeleteCourse-clickedChapter', clickedChapter)
     }
     const handleUpdateChapter = (e) => {
-        setInputData({ ...inputData, name: clickedChapter.name, description: clickedChapter.description })
+        setInputData({ name: clickedChapter.name, description: clickedChapter.description })
         setOperateChapter(false)
 
         setClickedUpdateChapter(true)
     }
     const handleAddChapter = (e) => {
-        setInputData({ ...inputData, name: '', description: '' })
+        setInputData({ name: '', description: '' })
 
         setOperateChapter(false)
 
@@ -237,29 +272,43 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
 
 
     //------------------------------------
-    const updateCourseChapterSequence = async (formData) => {
+    const updateCourseChapterSequence = async (chapterSeqData) => {
         await axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/course-update/' + clickedCourseInfo?.course?.id,
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/json'
             },
-            data: formData
+            data: chapterSeqData
         })
             .then(res => {
+                // handleSuccessUpdateChapterSeq(true)
+                dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.courseId, foundCard: clickedCourseInfo.foundCard, course: res.data }))
                 // --- Reset input fields. ---
                 // setInputData({ ...inputData, title: '', description: '' })
                 // fileRef.current.value = "";//Resets the file name of the file input 
 
-
+                // const _clickedCouseInfo = clickedCourseInfo
+                // _clickedCouseInfo.course.chapter_list_sequence = chapterSeqData
+                // const _clickedCourseInfo = {}
+                // copyObject(_clickedCourseInfo)
+                // _clickedCourseInfo.course.chapter_list_sequence = chapterSeqData
+                // dispatch(setClickedCourse(_clickedCourseInfo))
+                setIsChapterUpdated(true)
+                // console.log('_clickedCourseInfo: ', _clickedCourseInfo)
 
                 // setUploadSuccess(true)
-                // handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
-                console.log('onSubmitUpdateCourseForm:', res)
+                //status, courseID, catID, teacherID
+                // handleSuccessUploading(true, clickedCourseInfo?.courseId, clickedCourseInfo?.catId, teacherId)
+
+                console.log('onSubmitUpdateCourseForm:', res.data)
 
             })
 
-            .catch(res => { console.log('onSubmitUpdateCourseForm--error: ', res); })
+            .catch(res => {
+
+                console.log('onSubmitUpdateCourseForm--error: ', res);
+            })
 
     }
     //------------------------------------
@@ -275,6 +324,7 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         let formData = new FormData()
 
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
+        formData.append('course', clickedCourseInfo?.course?.id)
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
         console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({
@@ -287,9 +337,29 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         })
             .then(res => {
                 // --- Reset input fields. ---
-                setInputData({ ...inputData, name: '', description: '' })
+                setInputData({ name: '', description: '' })
 
-                // updateCourseChapterSequence()
+                // --------------------------------------------------------
+                const chapterListSequence = clickedCourseInfo?.course?.chapter_list_sequence
+                const seqChapterData = { "chapter_list_sequence": {} }
+                let maxVal = -1
+                if (chapterListSequence) {
+                    // -- Copy all current courseID:order into seqChapterData{}. --
+                    Object.keys(chapterListSequence)
+                        .forEach(key => {
+                            const val = Number(chapterListSequence[key])
+                            seqChapterData.chapter_list_sequence[key] = Number(val)
+                            maxVal = (maxVal > val) ? maxVal : val
+                        })
+                    // -- Add new key:value pair which is created by new one. --
+                    seqChapterData.chapter_list_sequence[String(res.data.id)] = Number(maxVal + 1)
+                }
+                else {
+                    seqChapterData.chapter_list_sequence[String(res.data.id)] = Number(1)
+                }
+                console.log('  ----seqChapterData---', seqChapterData, ', after added new chapter: ', res.data)
+                // --------------------------------------------------------
+                updateCourseChapterSequence(seqChapterData)
                 // fileRef.current.value = "";//Resets the file name of the file input 
 
 
@@ -321,7 +391,7 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         })
             .then(res => {
                 // --- Reset input fields. ---
-                setInputData({ ...inputData, name: '', description: '' })
+                setInputData({ name: '', description: '' })
 
                 // updateCourseChapterSequence()
                 // fileRef.current.value = "";//Resets the file name of the file input 
@@ -351,7 +421,7 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         fetchChapters()
 
         console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
-    }, [clickedCourseInfo?.course?.id, isChapterUpdated])
+    }, [clickedCourseInfo?.course?.id, isChapterUpdated, clickedCourseInfo?.course?.chapter_list_sequence])
 
     useEffect(() => {
         setIsChapterUpdated(false)
@@ -480,8 +550,41 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
         setClickedUpdateChapter(false)
         setOperateChapter(true)
 
+        //  -- test...
+        let _course = {}
+        const setKey = 'chapter_list_sequence'
+        const setValue = null
+        const objectCourse = clickedCourseInfo.course
+        Object.keys(objectCourse).map(key => {
+            if (typeof (objectCourse[key]) == 'object') {
+                _course[key] = {}
+                // console.log('setkey', setKey, setValue, key, typeof (clickedCourseInfo[key]) == 'object')
 
+                if (key == setKey) {
 
+                    if (typeof (setValue) == 'Object') {
+                        Object.keys(setValue).map(k1 => {
+                            _course[key][k1] = setValue[k1]
+                        })
+
+                    }
+                    else _course[key] = setValue
+                }
+                else
+                    copyObject(_course[key], objectCourse[key])
+
+            }
+            else {
+
+                _course[key] = objectCourse[key]
+            }
+
+        })
+        // dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.course.id, foundCard: clickedCourseInfo.foundCard, course: _course }))
+        // fetchChapters()
+        // copyObject(_course, 'chapter_list_sequence', null)
+        // _course.course.chapter_list_sequence = null
+        console.log('_course: ', _course)
 
     }, [clickedChapter])
 
@@ -549,11 +652,11 @@ const AddChapter = ({ catTitle, userId, clickedCourseInfo, handleSuccessUploadin
 
                     {chapterLists?.length > 0 && <div className='chapter_list_view'>
 
-                        {chapterLists.map((chapter) => {
+                        {chapterLists?.map((chapter) => {
                             return <div key={chapter.id} className='chapter_lists' onClick={e => handleClickChapter(e, chapter.id)}>
                                 <div><svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg></div>
                                 <div >
-                                    {chapter.name}
+                                    {chapter?.name}
                                 </div>
                             </div>
                         })}
