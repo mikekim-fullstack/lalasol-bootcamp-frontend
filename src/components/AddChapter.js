@@ -25,13 +25,18 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const [chapterLists, setChapterLists] = useState(null)
     const [createChapter, setCreateChapter] = useState(false)
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
+    const [isCreateContentMode, setIsCreateContentMode] = useState(null)
 
-    const [isSelectChapter, setIsSelectChapter] = useState([])
+    /** 
+     * -- 
+     * 1. operateChapter: show on and off for + and - sign 
+     * 2. clickedAddChapter: When add(+sign) clicked set it to true
+     * 3. clickedUpdateChapter: When update(pen sign) clicked set it to true
+     *  */
     const [clickedAddChapter, setClickedAddChapter] = useState(false)
     const [clickedUpdateChapter, setClickedUpdateChapter] = useState(false)
     const [operateChapter, setOperateChapter] = useState(true)
 
-    // const [contentChoice, setContentChoice] = useState(null)
     const clickedContent = useSelector(getClickedContent)
 
     const [isChapterUpdated, setIsChapterUpdated] = useState(false)
@@ -171,7 +176,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         }
         //  
 
-        console.log('clickCht:', clickCht, chapterId)
+        console.log('handleClickChapter- clickCht:', clickCht, ', chapter id: ', chapterId, ', chapterLists: ', chapterLists)
     }
 
 
@@ -264,7 +269,6 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const handleClickCloseChapter = (e) => {
 
         setOperateChapter(true)
-
 
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
@@ -374,6 +378,10 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
             .catch(res => { console.log('onSubmitAddChapterForm--error: ', res); })
 
     }
+    const funcSetCreateMode = (state) => {
+        console.log('funcSetCreateMode: ', state)
+        setIsCreateContentMode(state)
+    }
     const onSubmitUpdateChapterForm = (e) => {
         e.preventDefault()
         let formData = new FormData()
@@ -430,7 +438,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         if (chapterLists?.length > 0) {
 
             initSelectChapter(chapterLists[0])
-            setIsSelectChapter(new Array(chapterLists.length).fill(false))
+            // setIsSelectChapter(new Array(chapterLists.length).fill(false))
         }
 
 
@@ -478,28 +486,28 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
 
     // // --------------------------------------------------
-
-    const mouseOverListener = (e) => {
-        // console.log('mouseover', isAddMode)
-        if (clickedAddChapter) document.getElementById('id_edit_chapter').innerText = 'Add Chapter'
-        else document.getElementById('id_edit_chapter').innerText = 'Close Edit Chapter'
-    }
-    const mouseLeaveListener = (e) => {
-        // console.log('mouseover', isAddMode)
-        document.getElementById('id_edit_chapter').innerText = 'Chapter Modifier'
-    }
-    const id_plus_sign = document.getElementById('id_plus_sign')
-    useEffect(() => {
-        console.log('id_plus_sign: ', id_plus_sign)
-        id_plus_sign?.addEventListener('mouseover', mouseOverListener)
-        id_plus_sign?.addEventListener('mouseleave', mouseLeaveListener)
-        return () => {
-            id_plus_sign?.removeEventListener('mouseover', mouseOverListener)
-            id_plus_sign?.removeEventListener('mouseleave', mouseLeaveListener)
+    /*
+        const mouseOverListener = (e) => {
+            // console.log('mouseover', isAddMode)
+            if (clickedAddChapter) document.getElementById('id_edit_chapter').innerText = 'Add Chapter'
+            else document.getElementById('id_edit_chapter').innerText = 'Close Edit Chapter'
         }
-
-    }, [id_plus_sign])
-
+        const mouseLeaveListener = (e) => {
+            // console.log('mouseover', isAddMode)
+            document.getElementById('id_edit_chapter').innerText = 'Chapter Modifier'
+        }
+        const id_plus_sign = document.getElementById('id_plus_sign')
+        useEffect(() => {
+            console.log('id_plus_sign: ', id_plus_sign)
+            id_plus_sign?.addEventListener('mouseover', mouseOverListener)
+            id_plus_sign?.addEventListener('mouseleave', mouseLeaveListener)
+            return () => {
+                id_plus_sign?.removeEventListener('mouseover', mouseOverListener)
+                id_plus_sign?.removeEventListener('mouseleave', mouseLeaveListener)
+            }
+    
+        }, [id_plus_sign])
+    */
     useEffect(() => {
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
@@ -523,7 +531,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         // // }
 
 
-    }, [clickedUpdateChapter, clickedAddChapter])
+    }, [clickedUpdateChapter, clickedAddChapter, isCreateContentMode])
 
 
     const textAreaAdjust = (e) => {
@@ -536,21 +544,12 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     useEffect(() => {
         console.log('useEffect - 4. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
 
-        // if (clickedChapter?.content?.length > 0) {
-
-        //     // test to delete item in contentAction
-        //     // dispatch(deleteContentAction(8))
-        //     // dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
-        //     // dispatch(updateContentActionById({ catId: 1, id: 16, type: 'url', data: 'https:www.youtube.com' }))
-
-        //     /** --2. Initialize Content with first one.-- */
-        //     contentAction.length > 0 && initSelectContent(contentAction[0])
-        // }
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
         setOperateChapter(true)
 
         //  -- test...
+        /*
         let _course = {}
         const setKey = 'chapter_list_sequence'
         const setValue = null
@@ -585,14 +584,15 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         // copyObject(_course, 'chapter_list_sequence', null)
         // _course.course.chapter_list_sequence = null
         console.log('_course: ', _course)
+        */
 
     }, [clickedChapter])
 
-    console.log('<<<< refreshed in AddChapter - contentAction', contentAction, ',id_plus_sign:', id_plus_sign)
+    console.log('<<<< refreshed in AddChapter - contentAction', contentAction,)
     // ----------------------------------------------------
     return (
         <div className='add_chapter__view'>
-            <h2 id='id_edit_chapter'> Edit Chapter </h2>
+            <h2 id='id_edit_chapter'> Chapter Modifier </h2>
             <div className='add_chapter__component'>
                 <div className='chapters_view'>
                     {/* -- Display chapter Header Bar. --- */}
@@ -674,13 +674,13 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 </div> */}
 
                 {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
-                {chapterLists?.length > 0 && <AddContent />}
+                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} />}
 
 
             </div >
             {/* -------Preview-------- */}
             <h3>Preview</h3>
-            {clickedContent?.id && <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} />}
+            {clickedContent?.id && <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} />}
         </div >
     )
 }

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const chapterSlice = createSlice({
-    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: [] },
+    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: null },
     name: 'chapters',
     reducers: {
         setChapters: (state, action) => {
@@ -36,18 +36,21 @@ const chapterSlice = createSlice({
                 }
                 state.contentActionList = contentList
             }
-            console.log('slice - setClickedChapter: ', action.payload.content, ', ', contentList)
+            else {
+                state.contentActionList = null
+            }
+            console.log('slice - setClickedChapter: ', action.payload, ', ', contentList)
         },
         setChapterCategory: (state, action) => {
             state.category = action.payload
         },
         setClickedContent: (state, action) => {
             state.clickedContent = action.payload
-            // console.log('slice - setClickedChapter: ', action.payload)
+            console.log('::slice - set Clicked Content: ', action.payload)
         },
         setContentAction: (state, action) => {
             state.contentActionList = action.payload
-            // console.log('slice - setClickedChapter: ', action.payload)
+            console.log('slice - setContentAction: ', action.payload)
         },
         resetContentAction: (state, action) => {
             // state.clickedContent = action.payload
@@ -67,6 +70,7 @@ const chapterSlice = createSlice({
                 }
                 state.contentActionList = contentList
             }
+            else state.contentActionList = null
         },
 
         createContentAction: (state, action) => {
@@ -84,19 +88,42 @@ const chapterSlice = createSlice({
             newItem[action.payload.type] = action.payload.data
 
             // -- Find max id and max content_no, and then increase value by one. --
-            // console.log('----Slice createContentAction----', state.contentActionList)
+            // console.log('----Slice createContentAction----', state.contentActionList, newItem)
+            let hasNewContent = false
+            let _newContentActionList = []
             if (state.contentActionList) {
                 // console.log('----Slice createContentAction----')
                 let maxId = 0
                 let maxNo = 0
+
                 state.contentActionList.forEach(item => {
+
+                    if (item.action == 'created') {
+                        hasNewContent = true
+                        _newContentActionList.push(newItem)
+                    }
+                    else {
+                        _newContentActionList.push(item)
+                    }
                     maxId = item.id >= maxId ? item.id : maxId
                     maxNo = item.content_no >= maxNo ? item.content_no : maxNo
                 })
-                newItem['id'] = maxId + 1
-                newItem['content_no'] = maxNo + 1
+                if (!hasNewContent) {
+                    newItem['id'] = maxId + 1
+                    newItem['content_no'] = maxNo + 1
+                    _newContentActionList.push(newItem)
+                }
+
+
             }
-            state.contentActionList.push(newItem)
+            else {// -- null case (no content)
+                newItem['id'] = 1
+                newItem['content_no'] = 1
+                _newContentActionList.push(newItem)
+            }
+            state.contentActionList = _newContentActionList
+            console.log('slice - createContentAction: _newContentActionList: ', _newContentActionList)
+
         },
         deleteContentAction: (state, action) => {
             // state.contentActionList = state.contentActionList.filter(item => item.id != action.payload)

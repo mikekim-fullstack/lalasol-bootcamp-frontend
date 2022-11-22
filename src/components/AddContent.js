@@ -8,8 +8,9 @@ import {
     createContentAction, updateContentActionById, setContentAction
 } from '../slices/chapterSlice'
 import './AddContent.css'
+import PreviewContent from './PreviewContent'
 
-const AddContent = () => {
+const AddContent = ({ funcSetCreateMode }) => {
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
@@ -19,6 +20,17 @@ const AddContent = () => {
     const [contentChoice, setContentChoice] = useState(null)
     const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
+
+    /** 
+    * -- 
+    * 1. operateContent: show on and off for + and - sign 
+    * 2. clickedAddContent: When add(+sign) clicked set it to true
+    * 3. clickedUpdateContent: When update(pen sign) clicked set it to true
+    *  */
+    const [clickedAddContent, setClickedAddContent] = useState(false)
+    const [clickedUpdateContent, setClickedUpdateContent] = useState(false)
+    const [operateContent, setOperateContent] = useState(true)
+
 
     const contentFileRef = useRef(null)
     const contentLinkRef = useRef(null)
@@ -35,10 +47,17 @@ const AddContent = () => {
 
     }
     const handleAddContent = (e) => {
-
+        setInputContent({ file: null, ulr: null, text: null })
+        setContentChoice(null)
+        setOperateContent(false)
+        setClickedAddContent(true)
+        funcSetCreateMode(true)
     }
     const handleClickCloseContent = (e) => {
-
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+        funcSetCreateMode(false)
     }
 
     /**
@@ -52,7 +71,40 @@ const AddContent = () => {
         }
         return ''
     }
+    const handleOnChangeInputAdd = (e, type) => {
+        // setInputContent({ file: null, ulr: null, text: null })
+
+        if (type == 'file') {
+            // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
+            setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
+            e.target.nextSibling.innerHTML = e.target.files[0].name
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0] }))
+        }
+        else if (type == 'image') {
+            console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
+            setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0] }))
+            e.target.nextSibling.innerHTML = e.target.files[0].name
+        }
+        else if (type == 'url') {
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'url', data: e.target.value }))
+        }
+        else if (type == 'title') {
+            // console.log('e.target.name-title: ', e.target.name, e.target.value)
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value }))
+        }
+        else if (type == 'text') {
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value }))
+        }
+        else if (type == 'content_name') {
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+        }
+    }
     const handleOnChangeInput = (e, type) => {
+        // setInputContent({ file: null, ulr: null, text: null })
 
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
@@ -81,52 +133,117 @@ const AddContent = () => {
         }
     }
     // --------------------------------------------------
-    const genContentDetailEle = (contentId) => {
+    const genContentDetailEleAdd = (contentId) => {
         if (contentChoice?.title?.includes('PDF File'))
-            return <div>
-                <input ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInputAdd(e, 'file')} />
                 <label className='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
             </div>
 
         if (contentChoice?.title?.includes('HTML File'))
-            return <div>
-                <input ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInputAdd(e, 'file')} />
+                <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+            </div>
+        if (contentChoice?.title?.includes('Image File')) {
+            const sel = null;
+            // const sel = contentAction.filter(content => content.id == contentId)[0]
+            console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputAdd(e, 'image')} />
+                <label id='fileinput_label'>{(inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label>
+            </div>
+        }
+        if (contentChoice.title.includes('Link'))
+            return <div className='element_input'>
+                <input className='input_url' ref={contentLinkRef} required name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInputAdd(e, 'url')} />
+            </div>
+
+        if (contentChoice.title.includes('Title')) {
+
+            return <div className='element_input'>
+                <input required className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInputAdd(e, 'title')} />
+            </div>
+        } if (contentChoice.title.includes('Paragraph'))
+            // console.log('clickedContent.text: ', clickedContent.text)
+            return <div className='element_input'>
+                <textarea required className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            </div>
+
+        if (contentChoice.title.includes('Code'))
+            return <div className='element_input'>
+                <textarea required className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            </div>
+
+        if (contentChoice.title.includes('Note'))
+            return <div className='element_input'>
+                <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            </div>
+
+        if (contentChoice.title.includes('Break Line')) {
+            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            // setInputContent({ ...inputContent, ['break']: 1 })
+
+            return <label ></label>
+        }
+    }
+    // --------------------------------------------------
+    const genContentDetailEle = (contentId) => {
+        if (contentChoice?.title?.includes('PDF File'))
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                <label className='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
+            </div>
+
+        if (contentChoice?.title?.includes('HTML File'))
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
                 <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
             </div>
         if (contentChoice?.title?.includes('Image File')) {
             const sel = contentAction.filter(content => content.id == contentId)[0]
             console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
-            return <div>
-                <input ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInput(e, 'image')} />
+            return <div className='element_input'>
+                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInput(e, 'image')} />
                 <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label>
             </div>
         }
         if (contentChoice.title.includes('Link'))
-            return <input className='input_url' ref={contentLinkRef} name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />
+            return <div className='element_input'>
+                <input className='input_url' ref={contentLinkRef} required name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />
+            </div>
 
         if (contentChoice.title.includes('Title')) {
 
-            return <input className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
+            return <div className='element_input'>
+                <input required className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
+            </div>
         } if (contentChoice.title.includes('Paragraph'))
             // console.log('clickedContent.text: ', clickedContent.text)
-            return <textarea className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <div className='element_input'>
+                <textarea required className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            </div>
 
         if (contentChoice.title.includes('Code'))
-            return <textarea className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <div className='element_input'>
+                <textarea required className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            </div>
 
         if (contentChoice.title.includes('Note'))
-            return <textarea className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            return <div className='element_input'>
+                <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+            </div>
 
         if (contentChoice.title.includes('Break Line')) {
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
             // setInputContent({ ...inputContent, ['break']: 1 })
 
-            return <label >Break Line</label>
+            return <label ></label>
         }
     }
 
     const handleClickContent = (e, content) => {//clickedChapter?.content
-
+        console.log('handleClickContent: ', content)
         /**
          * Show filename in input file
          */
@@ -173,7 +290,7 @@ const AddContent = () => {
          * selectionRef.current.value is for initial value of select tag
          */
         if (selectionRef?.current) selectionRef.current.value = content.chapter_category
-
+        console.log('chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0]: ', chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
         setInputContent({
             url: content.url,
@@ -191,7 +308,12 @@ const AddContent = () => {
 
         // dispatch(deleteContentAction(6)) // for test
     }
+    const onSubmitAddContentForm = (e) => {
+        e.preventDefault()
+        funcSetCreateMode(false)
+        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice, ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value)
 
+    }
 
     /** When refresh window it automatically selects the first content */
     const initSelectContent = (_clickedContent) => {
@@ -227,6 +349,12 @@ const AddContent = () => {
     }
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     useEffect(() => {
+        dispatch(setClickedContent(null))
+
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+
         console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
 
         if (clickedChapter?.content?.length > 0) {
@@ -250,61 +378,96 @@ const AddContent = () => {
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
         }
     }, [contentChoice?.title])
-
+    console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent)
 
 
     return (
         <div className='chapter_content__view'>
+            {/* -- Display Content Header Bar. --- */}
             <div className='title'>
-                <div><span className='t1'>Content</span><span className='t2'>{clickedChapter?.title}</span></div>
+                <div><span className='t1'>Content On Chapter</span><span className='t2'>{clickedChapter?.name}</span></div>
                 <div className='svg_icon'>
                     {/* -- delete sign -- */}
-                    {<svg onClick={e => handleDeleteContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
+                    {contentAction?.length > 0 && operateContent && <svg onClick={e => handleDeleteContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
                     {/* -- edit sign -- */}
-                    {<svg onClick={e => handleUpdateContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
+                    {contentAction?.length > 0 && operateContent && <svg onClick={e => handleUpdateContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                     {/*-- add expend + sign --*/}
-                    {<svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
+                    {operateContent && <svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
                     {/* close add - sign */}
-                    {<svg onClick={e => handleClickCloseContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
+                    {!operateContent && <svg onClick={e => handleClickCloseContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                 </div>
             </div>
-            <div className='content_lists'>
+            {/* -- When the Add Chapter + sign pressed.-- */}
+            {clickedAddContent &&
+                <form className='add_content_form' onSubmit={onSubmitAddContentForm}>
+                    <div className='input_content_name'>
+                        <label>Content Name</label>
+                        {/* {console.log('inputContent: ', inputContent)} */}
+                        <input type='text' name='content_name' value={inputContent.content_name} onChange={e => handleOnChangeInputAdd(e, 'content_name')} required placeholder='Enter Content Name*' />
+                    </div>
+                    <div className='chapter_categories'>
+                        <label className='descpriton'>Select Content Element</label>
+                        <div className='chapter_categories_content'>
 
-                <div className='content_lists_body'>
-                    {/* {console.log('content_lists_body: ', contentAction)} */}
-                    {contentAction?.length > 0 ? contentAction?.map((content, index) => {
-                        if (content.action != 'deleted') {
+                            {chapterCategory.map(chapterCat => (<div key={chapterCat.id} className='item' onClick={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == chapterCat.id)[0])} >{chapterCat.title}</div>))
+                            }
+                        </div>
+                    </div>
+                    <div className='content_element'>
+                        {contentChoice && <div className='choice'>{contentChoice?.title}</div>}
+                        {contentChoice && genContentDetailEleAdd(clickedContent?.id)}
+                    </div>
+                    {<button disabled={contentChoice ? false : true} type='submit'>Add Content</button>}
+                </form>
 
-                            return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                                {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
-                            </div>
-                        }
-                    }
-                    )
-                        : <div></div>
-                    }
-                </div>
-            </div>
+            }
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
-            <div className='content_detail'>
-                <h3>Content details</h3>
-                <div>{clickedContent?.id}</div>
-                {/* --------------- */}
-                {clickedContent && <div className="select-container">
-                    {/* {console.log('val=', chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category), clickedContent?.id, contentChoice)} */}
-                    {/* <select onChange={e => console.log('e.target: ', e.target.value)} value={chapterCategory?.filter((chCat) => chCat.id == clickedContent?.chapter_category)[0].id}> */}
-                    <select ref={selectionRef} value={contentChoice ? contentChoice.id : 0} onChange={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == e.target.value)[0])}  >
-                        {chapterCategory.map((chapterCat) => (
-                            <option key={chapterCat.id} value={chapterCat.id} name={chapterCat.title}>{chapterCat.title}</option>
-                        ))}
-                    </select>
-                </div>}
-                {/* {console.log('getContentActionById: ', useSelector(state => getContentActionById(state, 6)))} */}
-                {/* <input ref={contentFileRef} type='file' /> */}
-                {contentChoice && console.log('contentChoice: ', contentChoice, inputContent)}
-                {contentChoice && genContentDetailEle(clickedContent?.id)}
+            {!clickedAddContent &&
+                <div className='content_lists'>
 
-            </div>
+                    <div className='content_lists_body'>
+                        {console.log('content_lists_body: ', contentAction)}
+                        {contentAction?.length > 0 ? contentAction?.map((content, index) => {
+                            if (content.action != 'deleted') {
+
+                                return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                                    {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                                </div>
+                            }
+                        }
+                        )
+                            : <div></div>
+                        }
+                    </div>
+                </div>
+            }
+            {clickedAddContent
+                // <div>
+                //     {/* -------Preview-------- */}
+                //     <h3>Preview</h3>
+                //     {<PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateMode={true} />}
+                // </div>
+
+                // <div className='content_lists'>
+
+                //     <div className='content_lists_body'>
+                //         {console.log('content_lists_body: ', contentAction)}
+                //         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
+                //             if (content.action == 'created') {
+
+                //                 return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                //                     {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                //                 </div>
+                //             }
+                //         }
+                //         )
+                //             : <div></div>
+                //         }
+                //     </div>
+                // </div>
+            }
+
+
         </div>
     )
 }

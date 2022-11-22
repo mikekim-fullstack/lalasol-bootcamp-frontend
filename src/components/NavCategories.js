@@ -44,7 +44,10 @@ const NavCategoreis = () => {
                 'Content-Type': 'Application/Json'
             }
         })
-            .then(res => dispatch(setChapterCategory(res.data)))
+            .then(res => {
+                const _sortedChapterCat = res.data.sort((a, b) => a.seq_no > b.seq_no ? 1 : a.seq_no < b.seq_no ? -1 : 0)
+                dispatch(setChapterCategory(_sortedChapterCat))
+            })
             .catch(e => console.log('fetchChapterCategory-Error:', e))
     }
 

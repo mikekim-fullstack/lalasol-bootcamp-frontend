@@ -8,14 +8,28 @@ import a11yDark from "react-syntax-highlighter/dist/esm/styles/prism/a11y-dark"
 import axios from 'axios'
 import './PreviewContent.css'
 
-const PreviewContent = ({ contentAction, clickedContentId }) => {
+const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }) => {
+    const [localContentAction, setLocalContentAction] = useState(null)
+    useEffect(() => {
+        console.log('<<<< useEffect-PreviewContent: ', isCreateContentMode, contentAction)
+        if (isCreateContentMode) {
+            /** In Add(Create) mode, only show the new content in preview area
+             *  otherwise it shows all in preview area.
+             */
+            if (contentAction) setLocalContentAction(contentAction?.filter((item) => item.action == 'created'))
+        }
+        else {
+            setLocalContentAction(contentAction)
+        }
+    }, [contentAction, isCreateContentMode])
     return (
         <div className='content__preview'>
+            {console.log('localContentAction: ', localContentAction)}
+            {localContentAction && localContentAction.map(content => {
 
-            {contentAction && contentAction.map(content => {
                 switch (content.chapter_category) {
                     case 1: // html file
-                        // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
+                        console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
                         return <div className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
                             <iframe
@@ -27,7 +41,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
                                 // scrolling="no"
                                 className='iframe__view'
                                 // src={axios.defaults.baseURL + content.file}
-                                src={content.action == 'updated' ? URL.createObjectURL(content?.file) : axios.defaults.baseURL + content.file}
+                                src={(content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.file) : axios.defaults.baseURL + content.file}
                                 title="description">
 
                             </iframe>
@@ -62,7 +76,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
                     // return <p className='main_paragraph'>{content.text}</p>
                     case 12: // Break line
                         {
-                            // console.log('case - content.action -break', content)
+                            console.log('case - content.action -break', content)
                             return <hr style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
                         }
                     case 13:// Code Block
@@ -75,7 +89,7 @@ const PreviewContent = ({ contentAction, clickedContentId }) => {
                         return <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
-                        return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={content.action == 'updated' ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image} />
+                        return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={(content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image} />
                     default:
                         <div></div>
                 }

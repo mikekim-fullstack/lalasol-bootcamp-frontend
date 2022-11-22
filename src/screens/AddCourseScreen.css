@@ -59,8 +59,17 @@
     margin: 2.4rem 0;
     display: flex;
     /* gap: 20px; */
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
+    overflow-x: scroll;
+    align-items: center;
 
+
+
+}
+
+.add_update_course__screen_content .courses .item {
+    align-self: stretch;
+    min-width: 200px;
 }
 
 /* .add_update_course__screen_content .categories .expanding {

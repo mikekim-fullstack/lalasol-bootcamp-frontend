@@ -457,7 +457,7 @@ const AddCourseScreen = () => {
                                         ?.map((course) => {
                                             // console.log('catId:', catId, ', course: ', course)
                                             return (
-                                                <div key={course.id}>
+                                                <div key={course.id} className='item'>
                                                     <CourseEditCard cat={cat} course={course} isTeacher={true} handleClickCourse={handleClickCourse} />
                                                 </div>
                                             )
