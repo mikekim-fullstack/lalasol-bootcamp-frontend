@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const chapterSlice = createSlice({
-    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: null },
+    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: [] },
     name: 'chapters',
     reducers: {
         setChapters: (state, action) => {
@@ -134,6 +134,10 @@ const chapterSlice = createSlice({
                 return item
             })
         },
+        deleteContentAddAction: (state) => {
+            // state.contentActionList = state.contentActionList.filter(item => item.id != action.payload)
+            state.contentActionList = state.contentActionList?.filter(item => item.action != 'created')
+        },
         updateContentActionById: (state, action) => {
             // {id:'',catId='', type:'', data:''}
             // action.payload.id, action.payload.action
@@ -172,7 +176,7 @@ export const { setChapters, setClickedChapter,
     setClickedContent, setChapterCategory,
     resetContentAction, updateContentActionById,
     deleteContentAction, createContentAction,
-    setContentAction,
+    setContentAction, deleteContentAddAction,
 } = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {

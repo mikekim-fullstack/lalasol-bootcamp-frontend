@@ -25,17 +25,23 @@
 
 .add_chapter__view .chapters_view .title .t1 {
     display: inline-block;
-    border: 1px solid rgb(150, 150, 150);
-    background-color: rgb(127, 127, 127);
+    border: 0.5px solid rgb(180, 5, 255);
+    background-color: rgb(4, 91, 97);
     color: white;
-    padding: 2px 5px;
+    padding: 4px 8px;
     border-radius: 5px;
 }
 
 .add_chapter__view .chapters_view .title .t2 {
     display: inline-block;
-    border-bottom: 2px solid rgb(57, 57, 96);
+    /* border-bottom: 2px solid rgb(57, 57, 96); */
     margin-left: 5px;
+
+    border: 0.5px solid rgb(180, 5, 255);
+    background-color: rgb(4, 83, 88);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
 }
 
 .add_chapter__view .chapters_view .title .svg_icon svg {
@@ -109,6 +115,31 @@
     margin-right: 10px;
 }
 
+.preview__layout {
+    border-left: 1px dashed rgba(42, 5, 77, 0.6);
+    border-right: 1px dashed rgba(42, 5, 77, 0.6);
+    border-bottom: 1px dashed rgba(42, 5, 77, 0.6);
+    border-radius: 0 0 5px 5px;
+}
+
+.preview__control {
+    display: flex;
+    max-width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(42, 5, 77);
+    color: white;
+}
+
+.preview__control h3 {
+    display: inline-block;
+    margin: 10px;
+}
+
+.preview__control>svg {
+    fill: white;
+}
+
 
 
 
@@ -144,14 +175,17 @@
 }
 
 .add_chapter__component .content_lists {
-    margin-left: 5px;
-    margin-right: 5px;
-    padding-bottom: 20px;
+    /* margin: 10px 5px; */
+
+    padding-bottom: 10px;
 }
 
 .add_chapter__component .content_lists .content_lists_body {
-    overflow-y: scroll;
+    overflow-x: scroll;
     max-height: 200px;
+    display: flex;
+    margin-top: 10px;
+    scrollbar-width: none;
 }
 
 .add_chapter__form {

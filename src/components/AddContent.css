@@ -6,10 +6,11 @@
     grid-template-columns: auto; */
     width: 100%;
     max-width: 100%;
-    border-radius: 8px;
     background-color: rgb(35, 28, 68);
     color: white;
     box-sizing: border-box;
+    border-radius: 0;
+    margin: 0;
 }
 
 .chapter_content__view .title {
@@ -25,17 +26,20 @@
 
 .chapter_content__view .title .t1 {
     display: inline-block;
-    border: 1px solid rgb(150, 150, 150);
-    background-color: rgb(127, 127, 127);
+    border: 0.5px solid rgb(180, 5, 255);
+    background-color: rgb(55, 0, 166);
     color: white;
-    padding: 2px 5px;
+    padding: 4px 8px;
     border-radius: 5px;
 }
 
 .chapter_content__view .title .t2 {
     display: inline-block;
-    border-bottom: 2px solid rgb(57, 57, 96);
-    margin-left: 5px;
+    border: 0.5px solid rgb(180, 5, 255);
+    background-color: rgb(55, 0, 166);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
 }
 
 .chapter_content__view .title .svg_icon svg {
@@ -65,7 +69,7 @@
     align-items: center;
     padding: 0;
     margin-left: 10px;
-    margin: 10px;
+    margin: 0 10px;
     max-width: 100%;
 }
 
@@ -92,6 +96,10 @@
     width: 120px;
     vertical-align: center;
     /* padding-top: 10px; */
+}
+
+.chapter_content__view .add_content_form {
+    border-radius: 0;
 }
 
 .chapter_content__view .add_content_form>button {
@@ -178,16 +186,26 @@
 }
 
 .chapter_content__view .content_lists_item {
+    display: flex;
+    align-items: flex-start;
     margin: 7px 10px;
     box-sizing: border-box;
 
-    padding: 10px 20px;
-    background-color: rgb(23, 51, 101);
+    padding: 10px 10px 10px 0;
+    background-color: rgb(78, 17, 135);
     border-radius: 5px;
-    color: rgb(161, 160, 171);
+    color: white;
     /* width: 100%; */
     max-width: 100%;
+    font-size: 0.8rem;
+    min-width: 100px;
 }
+
+.chapter_content__view .content_lists_item svg {
+    fill: rgba(255, 255, 255, 0.772);
+}
+
+.chapter_content__view .content_lists_item div {}
 
 
 @media screen and (min-width:768px) {}

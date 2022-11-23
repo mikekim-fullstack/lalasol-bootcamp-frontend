@@ -78,6 +78,7 @@ const AddCourseScreen = () => {
 
     }
     const updateCourseSequenceInCategory = async (catID, seqCatData) => {
+        console.log('updateCourseSequenceInCategory: ', catID, seqCatData, ', url:', axios.defaults.baseURL + '/api/course-category-detail/' + catID)
         axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/course-category-detail/' + catID,
@@ -339,7 +340,7 @@ const AddCourseScreen = () => {
 
     }
 
-    const handleSuccessUploading = (status, courseID, catID, teacherID) => {
+    const handleSuccessCreatedCourse = (status, courseID, catID, teacherID) => {
 
         // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
         console.log('....handleSuccessUpdated: ', previousIndex)
@@ -350,7 +351,7 @@ const AddCourseScreen = () => {
             setSelCatID([..._selCatID])
 
             const catEle = document.getElementById('add_update_category_' + catID + '_' + previousIndex)
-            _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
+            if (catEle) _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
             // console.log('previousIndex=', previousIndex, _selCatID)
         }
 
@@ -441,7 +442,7 @@ const AddCourseScreen = () => {
                                         {selCatID[index] && <svg onClick={e => handleClickCloseCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                                     </div>
                                 </div>
-                                {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessUploading={handleSuccessUploading} />}
+                                {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessCreatedCourse={handleSuccessCreatedCourse} />}
                                 {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
                             {/** When delete button clicked on course it pops up */}

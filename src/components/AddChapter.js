@@ -26,6 +26,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const [createChapter, setCreateChapter] = useState(false)
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
     const [isCreateContentMode, setIsCreateContentMode] = useState(null)
+    const [isPreViewMode, setIsPreViewMode] = useState(true)
 
     /** 
      * -- 
@@ -472,11 +473,11 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     // }, [contentChoice?.title])
 
 
-    useEffect(() => {
-        console.log('useEffect --- contentAction.action updated')
+    // useEffect(() => {
+    //     console.log('useEffect --- contentAction.action updated')
 
 
-    }, [contentAction?.action])
+    // }, [contentAction?.action])
 
     useEffect(() => {
 
@@ -597,7 +598,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 <div className='chapters_view'>
                     {/* -- Display chapter Header Bar. --- */}
                     <div className='title'>
-                        <div><span className='t1'>Chapters On Course: </span><span className='t2'>{clickedCourseInfo?.course?.title}</span></div>
+                        <div><span className='t1'>Manage Chapters</span> On<span className='t2'>{clickedCourseInfo?.course?.title}</span> Course</div>
                         <div className='svg_icon'>
                             {/* -- delete sign -- */}
                             {(chapterLists?.length > 0 && operateChapter) && <svg onClick={e => handleDeleteChapter(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
@@ -679,8 +680,20 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
             </div >
             {/* -------Preview-------- */}
-            <h3>Preview</h3>
-            {clickedContent?.id && <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} />}
+            <div className='preview__layout'>
+                <div className='preview__control'>
+
+                    <h3>Preview Content</h3>
+                    {/* Visibility Off */}
+                    {!isPreViewMode && <svg onClick={e => setIsPreViewMode(true)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M15.775 12.975 14.65 11.85q.225-1.25-.712-2.237Q13 8.625 11.65 8.85l-1.125-1.125q.35-.15.7-.225.35-.075.775-.075 1.7 0 2.887 1.188Q16.075 9.8 16.075 11.5q0 .425-.075.787-.075.363-.225.688Zm3.175 3.1-1.1-1.025q.95-.725 1.688-1.588.737-.862 1.262-1.962-1.25-2.525-3.588-4.013Q14.875 6 12 6q-.725 0-1.425.1-.7.1-1.375.3L8.025 5.225q.95-.375 1.938-.55Q10.95 4.5 12 4.5q3.525 0 6.35 1.938 2.825 1.937 4.1 5.062-.55 1.35-1.425 2.512-.875 1.163-2.075 2.063Zm.8 5.8-4.025-4.025q-.775.3-1.712.475-.938.175-2.013.175-3.525 0-6.338-1.938Q2.85 14.625 1.55 11.5q.55-1.325 1.425-2.475Q3.85 7.875 4.9 7.05l-2.775-2.8 1.05-1.075 17.65 17.65ZM5.95 8.1q-.8.625-1.537 1.513Q3.675 10.5 3.2 11.5q1.25 2.525 3.587 4.012Q9.125 17 12 17q.675 0 1.35-.113.675-.112 1.15-.237l-1.25-1.3q-.275.1-.6.162-.325.063-.65.063-1.7 0-2.887-1.188Q7.925 13.2 7.925 11.5q0-.3.063-.638.062-.337.162-.612Zm7.575 2.625Zm-3.3 1.65Z" /></svg>}
+                    {/* Visibility On */}
+                    {isPreViewMode && <svg onClick={e => setIsPreViewMode(false)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M12 15.575q1.7 0 2.887-1.188 1.188-1.187 1.188-2.887t-1.188-2.887Q13.7 7.425 12 7.425T9.113 8.613Q7.925 9.8 7.925 11.5t1.188 2.887Q10.3 15.575 12 15.575Zm0-1.375q-1.125 0-1.912-.788Q9.3 12.625 9.3 11.5t.788-1.913Q10.875 8.8 12 8.8t1.913.787q.787.788.787 1.913t-.787 1.912q-.788.788-1.913.788Zm0 4.3q-3.45 0-6.287-1.9-2.838-1.9-4.163-5.1 1.325-3.2 4.163-5.1Q8.55 4.5 12 4.5q3.45 0 6.288 1.9 2.837 1.9 4.162 5.1-1.325 3.2-4.162 5.1Q15.45 18.5 12 18.5Zm0-7Zm0 5.5q2.825 0 5.188-1.488Q19.55 14.025 20.8 11.5q-1.25-2.525-3.612-4.013Q14.825 6 12 6 9.175 6 6.812 7.487 4.45 8.975 3.2 11.5q1.25 2.525 3.612 4.012Q9.175 17 12 17Z" /></svg>}
+
+                </div>
+                {isPreViewMode && <div >
+                    <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} />
+                </div>}
+            </div>
         </div >
     )
 }

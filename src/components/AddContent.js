@@ -5,7 +5,8 @@ import {
     getClickedChapter, setClickedChapter, setClickedContent,
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
-    createContentAction, updateContentActionById, setContentAction
+    createContentAction, updateContentActionById, setContentAction,
+    deleteContentAddAction,
 } from '../slices/chapterSlice'
 import './AddContent.css'
 import PreviewContent from './PreviewContent'
@@ -54,6 +55,11 @@ const AddContent = ({ funcSetCreateMode }) => {
         funcSetCreateMode(true)
     }
     const handleClickCloseContent = (e) => {
+        console.log('handleClickCloseContent: ', contentAction)
+        /** reset inputContent */
+        setInputContent({ file: null, ulr: null, text: null })
+        /** delete any created acation */
+        dispatch(deleteContentAddAction())
         setOperateContent(true)
         setClickedAddContent(false)
         setClickedUpdateContent(false)
@@ -133,7 +139,8 @@ const AddContent = ({ funcSetCreateMode }) => {
         }
     }
     // --------------------------------------------------
-    const genContentDetailEleAdd = (contentId) => {
+    const genContentDetailEleAdd = () => {
+        console.log('genContentDetailEleAdd: ', contentChoice)
         if (contentChoice?.title?.includes('PDF File'))
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInputAdd(e, 'file')} />
@@ -164,7 +171,8 @@ const AddContent = ({ funcSetCreateMode }) => {
             return <div className='element_input'>
                 <input required className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInputAdd(e, 'title')} />
             </div>
-        } if (contentChoice.title.includes('Paragraph'))
+        }
+        if (contentChoice.title.includes('Paragraph'))
             // console.log('clickedContent.text: ', clickedContent.text)
             return <div className='element_input'>
                 <textarea required className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
@@ -183,7 +191,7 @@ const AddContent = ({ funcSetCreateMode }) => {
         if (contentChoice.title.includes('Break Line')) {
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputAdd(e, 'text')} />
             // setInputContent({ ...inputContent, ['break']: 1 })
-
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
             return <label ></label>
         }
     }
@@ -235,8 +243,12 @@ const AddContent = ({ funcSetCreateMode }) => {
             </div>
 
         if (contentChoice.title.includes('Break Line')) {
+
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
             // setInputContent({ ...inputContent, ['break']: 1 })
+            // setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+
+            // dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
 
             return <label ></label>
         }
@@ -373,11 +385,12 @@ const AddContent = ({ funcSetCreateMode }) => {
 
     useEffect(() => {
         // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
-        if (contentChoice?.title.includes('Break Line')) {
-            console.log('useEffect --- contentChoice.title')
-            dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
-        }
-    }, [contentChoice?.title])
+        // if (contentChoice?.title.includes('Break Line')) {
+        //     console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
+        //     dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
+        // }
+        console.log('useEffect AddContent-clickedContent: ', clickedContent)
+    }, [contentChoice?.title, operateContent, contentAction])
     console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent)
 
 
@@ -385,7 +398,7 @@ const AddContent = ({ funcSetCreateMode }) => {
         <div className='chapter_content__view'>
             {/* -- Display Content Header Bar. --- */}
             <div className='title'>
-                <div><span className='t1'>Content On Chapter</span><span className='t2'>{clickedChapter?.name}</span></div>
+                <div><span className='t1'>Manage Content</span> On <span className='t2'>{clickedChapter?.name}</span> Chapter</div>
                 <div className='svg_icon'>
                     {/* -- delete sign -- */}
                     {contentAction?.length > 0 && operateContent && <svg onClick={e => handleDeleteContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
@@ -415,7 +428,7 @@ const AddContent = ({ funcSetCreateMode }) => {
                     </div>
                     <div className='content_element'>
                         {contentChoice && <div className='choice'>{contentChoice?.title}</div>}
-                        {contentChoice && genContentDetailEleAdd(clickedContent?.id)}
+                        {contentChoice && genContentDetailEleAdd()}
                     </div>
                     {<button disabled={contentChoice ? false : true} type='submit'>Add Content</button>}
                 </form>
@@ -430,8 +443,11 @@ const AddContent = ({ funcSetCreateMode }) => {
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 
-                                return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                                    {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
+                                return <div>
+                                    <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                                        <div><svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg></div>
+                                        <div>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</div>
+                                    </div>
                                 </div>
                             }
                         }
