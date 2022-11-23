@@ -6,7 +6,8 @@ import {
     getClickedChapter, setClickedChapter, setClickedContent,
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
-    createContentAction, updateContentActionById, setContentAction
+    createContentAction, updateContentActionById, setContentAction,
+    getChapterUpdatedStatus
 } from '../slices/chapterSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
@@ -27,6 +28,9 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
     const [isCreateContentMode, setIsCreateContentMode] = useState(null)
     const [isPreViewMode, setIsPreViewMode] = useState(true)
+    const [isCompleteFetchChapter, setIsCompleteFetchChapter] = useState(false)
+    const chapterUpdatedStatus = useSelector(getChapterUpdatedStatus)
+
 
     /** 
      * -- 
@@ -103,10 +107,11 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     }
 
     /** Gell all chapters by userID and courseID from server */
-    const fetchChapters = async () => {
+    const fetchChapters = async (updated) => {
         setCreateChapter(false)
         await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
             .then(res => {
+
                 console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourseInfo?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
                 const chapterListData = res.data
                 /** If there is chapter_list_sequence, then sort key by sequence and reproduce chapter array in to _sortedChapters */
@@ -124,29 +129,40 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                         }
                     }
                     setChapterLists(_sortedcChapters)
+                    if (updated) {
+                        // setClickedAddChapter({ ...clickedAddChapter })
+                        const clickCht = _sortedcChapters.filter((chapter) => chapter.id == clickedChapter.id)
+                        console.log('------updated------', clickCht)
+                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                    }
+                    // else {
+                    //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
+                    // }
                 }
                 else {
                     setChapterLists(chapterListData)
+                    if (updated) {
+                        // setClickedAddChapter({ ...clickedAddChapter })
+                        const clickCht = chapterLists.filter((chapter) => chapter.id == clickedChapter.id)
+                        console.log('------updated------', clickCht)
+                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                    }
+                    // else {
+                    //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
+                    // }
                 }
+                if (!updated) setIsCompleteFetchChapter(!isCompleteFetchChapter)
                 // if (res.data.length > 1) {
                 //     _sortedData.sort((a, b) => a.chapter_no > b.chapter_no ? 1 : a.chapter_no < b.chapter_no ? -1 : 0)
                 // }
 
                 // setChapterLists(_sortedData)
+
+
             })
             .catch(err => console.log('error: ', err))
     }
-    // const handleSubmitForm = (e) => {
-    //     e.preventDefault()
-    //     console.log('handleSubmitForm - ', e.target.innerText.toLowerCase(), ', contentFileRef: ', contentFileRef.current.files)
-    //     if (e.target.innerText.toLowerCase() == 'update') {
 
-
-    //     }
-    //     else if (e.target.innerText.toLowerCase() == 'create') {
-
-    //     }
-    // }
 
     const handleClickChapter = (e, chapterId) => {
         const clickCht = chapterLists.filter((chapter) => chapter.id == chapterId)
@@ -431,6 +447,13 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
         console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
     }, [clickedCourseInfo?.course?.id, isChapterUpdated, clickedCourseInfo?.course?.chapter_list_sequence])
+    useEffect(() => {
+        // setClickedChapter(null)
+
+        fetchChapters(true)
+
+        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
+    }, [chapterUpdatedStatus])
 
     useEffect(() => {
         setIsChapterUpdated(false)
@@ -445,7 +468,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
         // chapterLists?.length > 0 && console.log('useEffect- chapterLists: ', chapterLists, chapterLists[0])
         console.log('useEffect - 2. AddChapter->chapterLists: setClickedChapter')
-    }, [chapterLists])
+    }, [isCompleteFetchChapter])
 
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     // useEffect(() => {
@@ -510,6 +533,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         }, [id_plus_sign])
     */
     useEffect(() => {
+
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
         setOperateChapter(true)
@@ -532,7 +556,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         // // }
 
 
-    }, [clickedUpdateChapter, clickedAddChapter, isCreateContentMode])
+    }, [clickedUpdateChapter, clickedAddChapter, isCreateContentMode, isPreViewMode, clickedChapter])
 
 
     const textAreaAdjust = (e) => {
@@ -589,7 +613,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
     }, [clickedChapter])
 
-    console.log('<<<< refreshed in AddChapter - contentAction', contentAction,)
+    console.log('<<<< refreshed in AddChapter - contentAction', contentAction, ', chapterLists:', chapterLists)
     // ----------------------------------------------------
     return (
         <div className='add_chapter__view'>
@@ -675,7 +699,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 </div> */}
 
                 {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
-                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} />}
+                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} teacherId={teacherId} />}
 
 
             </div >

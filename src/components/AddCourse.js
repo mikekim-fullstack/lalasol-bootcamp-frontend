@@ -20,8 +20,6 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
         e.preventDefault()
         // setInputData({...inputData, course_no:})
         let formData = new FormData()
-        // 
-        // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
         console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({

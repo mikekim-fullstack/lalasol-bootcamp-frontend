@@ -11,7 +11,7 @@ import './PreviewContent.css'
 const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }) => {
     const [localContentAction, setLocalContentAction] = useState(null)
     useEffect(() => {
-        console.log('<<<< useEffect-PreviewContent: ', isCreateContentMode, contentAction)
+        console.log('<<<< useEffect-PreviewContent: -isCreateContentMode-', isCreateContentMode, ', contentAction', contentAction)
         if (isCreateContentMode) {
             /** In Add(Create) mode, only show the new content in preview area
              *  otherwise it shows all in preview area.
@@ -47,8 +47,10 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                             </iframe>
                         </div>
                     case 5:// youtube link
-                        const url = content.action == '' ? content.url.split('/').pop() : content.url.split('=').pop()
-                        console.log('youtube: ', `https://www.youtube.com/embed/${url}`)
+                        const url = content.action == '' ?
+                            (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
+                            : content.url.split('=').pop()
+                        console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
                         // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
                         return <div className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
                             <iframe
@@ -89,7 +91,11 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                         return <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
-                        return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={(content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image} />
+                        {
+                            const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.img) : axios.defaults.baseURL + content?.img
+                            console.log('image: ', src, content)
+                            return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
+                        }
                     default:
                         <div></div>
                 }

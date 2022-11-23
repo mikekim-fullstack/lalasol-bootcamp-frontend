@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus, setClickedCourse, getClickedCourse } from '../slices/courseSlice'
-import { setChapters, getChapters, setClickedChapter } from '../slices/chapterSlice'
+import { setChapters, getChapters, setClickedChapter, setChapterUpdatedStatus, getChapterUpdatedStatus } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
@@ -27,6 +27,7 @@ const AddCourseScreen = () => {
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
     const clickedCourseInfo = useSelector(getClickedCourse)
+    const chapterUpdatedStatus = useSelector(getChapterUpdatedStatus)
 
 
     const [selCatID, setSelCatID] = useState([])
@@ -410,7 +411,7 @@ const AddCourseScreen = () => {
     // }, [isUpdatedCourse])
 
     useEffect(() => {
-        console.log('useEffect - allCategories', allCategories)
+        console.log('useEffect - allCategories -- updating', allCategories)
         if (allCategories) {
             fetchAllCourses()
         }

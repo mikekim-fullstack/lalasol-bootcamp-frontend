@@ -1,7 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const chapterSlice = createSlice({
-    initialState: { data: null, clickedChapter: null, category: null, clickedContent: null, contentActionList: [] },
+    initialState: {
+        data: null,
+        clickedChapter: null,
+        category: null,
+        clickedContent: null,
+        contentActionList: [],
+        chapterUpdated: false,
+    },
     name: 'chapters',
     reducers: {
         setChapters: (state, action) => {
@@ -79,7 +86,7 @@ const chapterSlice = createSlice({
             const newItem = {}
             newItem['id'] = 0
             newItem['chapter_category'] = action.payload.catId
-            newItem['creater'] = action.payload.createrId
+            newItem['creater'] = action.payload.creater
             newItem['text'] = null
             newItem['file'] = null
             newItem['url'] = null
@@ -165,6 +172,9 @@ const chapterSlice = createSlice({
             // }
             // console.log('slice - setClickedChapter: ', action.payload)
         },
+        setChapterUpdatedStatus: (state, action) => {
+            state.chapterUpdated = !state.chapterUpdated
+        },
 
     }
 })
@@ -177,6 +187,7 @@ export const { setChapters, setClickedChapter,
     resetContentAction, updateContentActionById,
     deleteContentAction, createContentAction,
     setContentAction, deleteContentAddAction,
+    setChapterUpdatedStatus,
 } = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {
@@ -192,6 +203,7 @@ export const getClickedChapter = (state) => state.chapters.clickedChapter
 export const getChapterCategory = (state) => state.chapters.category
 export const getClickedContent = (state) => state.chapters.clickedContent
 export const getContentAction = (state) => state.chapters.contentActionList
+export const getChapterUpdatedStatus = (state) => state.chapters.chapterUpdated
 export const getContentActionById = (state, id) => state.chapters.contentActionList.filter(item => item.id == id)
 
 

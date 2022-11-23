@@ -1,26 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
+import { getClickedCourse, setClickedCourse } from '../slices/courseSlice'
 import {
     getClickedChapter, setClickedChapter, setClickedContent,
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
     createContentAction, updateContentActionById, setContentAction,
-    deleteContentAddAction,
+    deleteContentAddAction, setChapterUpdatedStatus,
 } from '../slices/chapterSlice'
 import './AddContent.css'
 import PreviewContent from './PreviewContent'
 
-const AddContent = ({ funcSetCreateMode }) => {
+const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
     const clickedContent = useSelector(getClickedContent)
+    const clickedCourseInfo = useSelector(getClickedCourse)
+
 
     const [contentChoice, setContentChoice] = useState(null)
     const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
+    const [isBreakLine, setIsBreakLine] = useState(false)
 
     /** 
     * -- 
@@ -40,6 +44,9 @@ const AddContent = ({ funcSetCreateMode }) => {
     const imageRef = useRef(null)
     const paragraphRef = useRef(null)
     const codeRef = useRef(null)
+
+
+
     // ----------------------------------------------------
     const handleDeleteContent = (e) => {
 
@@ -78,40 +85,44 @@ const AddContent = ({ funcSetCreateMode }) => {
         return ''
     }
     const handleOnChangeInputAdd = (e, type) => {
-        // setInputContent({ file: null, ulr: null, text: null })
+        setInputContent({ file: null, ulr: null, text: null })
 
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             e.target.nextSibling.innerHTML = e.target.files[0].name
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0] }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0], creater: teacherId }))
         }
         else if (type == 'image') {
             console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0] }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0], creater: teacherId }))
             e.target.nextSibling.innerHTML = e.target.files[0].name
         }
         else if (type == 'url') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'url', data: e.target.value }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'url', data: e.target.value, creater: teacherId }))
         }
         else if (type == 'title') {
             // console.log('e.target.name-title: ', e.target.name, e.target.value)
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creater: teacherId }))
         }
         else if (type == 'text') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value, creater: teacherId }))
         }
         else if (type == 'content_name') {
-            setInputContent({ ...inputContent, [e.target.name]: e.target.value })
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value, creater: teacherId })
         }
+        // else if (type == 'break_line') {
+        //     setInputContent({ ...inputContent, 'text': null, creater: teacherId })
+        //     dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
+        // }
     }
     const handleOnChangeInput = (e, type) => {
         // setInputContent({ file: null, ulr: null, text: null })
-
+        setInputContent({ ...inputContent, 'text': null, creater: teacherId })
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
@@ -140,7 +151,17 @@ const AddContent = ({ funcSetCreateMode }) => {
     }
     // --------------------------------------------------
     const genContentDetailEleAdd = () => {
-        console.log('genContentDetailEleAdd: ', contentChoice)
+        console.log('genContentDetailEleAdd: ', contentChoice, contentAction)
+        if (contentChoice.title.includes('Break Line')) {
+            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            // setInputContent({})
+            // dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
+            // return <input className='break_line' value={'<hr>'} onFocus={e => handleOnChangeInputAdd(e, 'text')} />
+            // return handleOnChangeInputAdd(null, 'break_line')
+            // setIsBreakLine(true)
+            return
+        }
+        // setIsBreakLine(false)
         if (contentChoice?.title?.includes('PDF File'))
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInputAdd(e, 'file')} />
@@ -188,12 +209,7 @@ const AddContent = ({ funcSetCreateMode }) => {
                 <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
             </div>
 
-        if (contentChoice.title.includes('Break Line')) {
-            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputAdd(e, 'text')} />
-            // setInputContent({ ...inputContent, ['break']: 1 })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
-            return <label ></label>
-        }
+
     }
     // --------------------------------------------------
     const genContentDetailEle = (contentId) => {
@@ -244,8 +260,9 @@ const AddContent = ({ funcSetCreateMode }) => {
 
         if (contentChoice.title.includes('Break Line')) {
 
+            console.log('Break Line-inputContent', inputContent)
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
-            // setInputContent({ ...inputContent, ['break']: 1 })
+            // setInputContent({ ...inputContent })
             // setInputContent({ ...inputContent, [e.target.name]: e.target.value })
 
             // dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
@@ -322,8 +339,69 @@ const AddContent = ({ funcSetCreateMode }) => {
     }
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()
+
+
         funcSetCreateMode(false)
-        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice, ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value)
+
+        /** reset inputContent */
+        setInputContent({ file: null, ulr: null, text: null })
+        /** delete any created acation */
+        dispatch(deleteContentAddAction())
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+        funcSetCreateMode(false)
+
+
+        let formData = new FormData()
+        formData.append('title', e.target[0].value)
+        formData.append('chapter_category', Number(contentChoice.id))
+        formData.append('creater', Number(teacherId))
+        const _contentAction = contentAction.filter((item) => item.action == 'created')
+        if (_contentAction.length == 1) {
+            console.log('contentAction.image: ', _contentAction[0].image)
+            _contentAction[0].file && formData.append('file', _contentAction[0].file)
+            _contentAction[0].url && formData.append('url', _contentAction[0].url)
+            _contentAction[0].text && formData.append('text', _contentAction[0].text)
+            _contentAction[0].image && formData.append('img', _contentAction[0].image)
+        }
+        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
+            ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
+            'contentAction: ', contentAction, ', formData', formData
+        )
+        // return
+        // Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
+
+        axios({
+            method: 'POST',
+            url: axios.defaults.baseURL + '/api/chapter-content/',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+        })
+            .then(res => {
+                console.log('Success - End point-/api/chapter-content/', res.data)
+                const formData = new FormData()
+                formData.append('chapter_id', clickedChapter?.id)
+                formData.append('content_id', res.data.id)
+                axios({
+                    method: 'PUT',
+                    url: axios.defaults.baseURL + '/api/chapter-content-add/',
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    data: formData
+                })
+                    .then(res => {
+                        console.log('Success-End point-/api/chapter-content-add/', res.data)
+                        /** For rerendering to update */
+                        // dispatch(setClickedChapter(null))
+                        dispatch(setChapterUpdatedStatus())
+                    })
+                    .catch(err => console.log('Error-End point-/api/chapter-content-add/', err))
+            })
+            .catch(err => console.log('Error - End point-/api/chapter-content/', err))
 
     }
 
@@ -385,15 +463,18 @@ const AddContent = ({ funcSetCreateMode }) => {
 
     useEffect(() => {
         // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
-        // if (contentChoice?.title.includes('Break Line')) {
-        //     console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
-        //     dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
-        // }
-        console.log('useEffect AddContent-clickedContent: ', clickedContent)
-    }, [contentChoice?.title, operateContent, contentAction])
+
+    }, [contentChoice?.title, operateContent,])// contentAction])
+
     console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent)
 
-
+    useEffect(() => {
+        if (contentChoice?.title.includes('Break Line')) {
+            console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
+        }
+        console.log('useEffect AddContent-clickedContent: ', clickedContent)
+    }, [isBreakLine])
     return (
         <div className='chapter_content__view'>
             {/* -- Display Content Header Bar. --- */}
@@ -446,7 +527,7 @@ const AddContent = ({ funcSetCreateMode }) => {
                                 return <div>
                                     <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
                                         <div><svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg></div>
-                                        <div>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</div>
+                                        <div>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title} [{content.title}]</div>
                                     </div>
                                 </div>
                             }
