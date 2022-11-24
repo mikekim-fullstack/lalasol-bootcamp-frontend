@@ -184,6 +184,7 @@
     overflow-x: scroll;
     max-height: 200px;
     display: flex;
+    /* flex-wrap: wrap; */
     margin-top: 10px;
     scrollbar-width: none;
 }

@@ -111,7 +111,9 @@
     background-color: orange;
 }
 
-.chapter_content__view .add_content_form>button:hover {}
+.chapter_content__view .add_content_form>button:hover {
+    cursor: pointer;
+}
 
 
 .chapter_content__view .chapter_categories {
@@ -175,6 +177,15 @@
     border-radius: 5px;
 }
 
+.chapter_content__view .content_lists_block {
+    display: flex;
+    align-items: center;
+}
+
+.chapter_content__view .content_lists_block>svg {
+    fill: yellow;
+}
+
 .chapter_content__view .content_lists_item:hover {
     background-color: rgb(17, 38, 75);
     color: white;
@@ -188,6 +199,7 @@
 .chapter_content__view .content_lists_item {
     display: flex;
     align-items: flex-start;
+    justify-content: center;
     margin: 7px 10px;
     box-sizing: border-box;
 

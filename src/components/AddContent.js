@@ -7,10 +7,13 @@ import {
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
     createContentAction, updateContentActionById, setContentAction,
-    deleteContentAddAction, setChapterUpdatedStatus,
+    deleteContentAddAction, setChapterUpdatedStatus, getChapterUpdatedStatus,
+
 } from '../slices/chapterSlice'
 import './AddContent.css'
 import PreviewContent from './PreviewContent'
+import DialogBox from './DialogBox'
+import { Form } from 'react-router-dom'
 
 const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const dispatch = useDispatch()
@@ -25,6 +28,12 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
     const [isBreakLine, setIsBreakLine] = useState(false)
+    const [dialogDeleteContent, setDialogDeleteContent] = useState({
+        message: "",
+        isLoading: false,
+        itemName: "",
+        content: null,
+    });
 
     /** 
     * -- 
@@ -45,11 +54,104 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const paragraphRef = useRef(null)
     const codeRef = useRef(null)
 
+    /*
+        //------------------------------------
+        const updateChapterContentSequence = async (chapterSeqData) => {
+            await axios({
+                method: 'PATCH',
+                url: axios.defaults.baseURL + '/api/course-update/' + clickedCourseInfo?.course?.id,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: chapterSeqData
+            })
+                .then(res => {
+                    // handleSuccessUpdateChapterSeq(true)
+                    dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.courseId, foundCard: clickedCourseInfo.foundCard, course: res.data }))
+                    setIsChapterUpdated(true)
+                    console.log('onSubmitUpdateCourseForm:', res.data)
+                })
+    
+                .catch(res => {
+    
+                    console.log('onSubmitUpdateCourseForm--error: ', res);
+                })
+    
+        }
+        */
+    // --------------------------------------------------
+    const handleDeleteContentResponse = (choose, messageData) => {
+        console.log('handleDeleteContentResponse: ', choose, messageData)
+        // setDialogDeleteContent({ message: "", isLoading: false, itemName: '', content: null, });
+        // dispatch(setChapterUpdatedStatus())
+        // return;
+        /*
+axios({
+                method: 'DELETE',
+                url: axios.defaults.baseURL + '/api/chapter-content/' + messageData.content.id
 
+            })
+                .then(res => {
+                    // Remove content sequence from chapter.content_list_sequence
+                    const formData = new FormData()
+                    formData.append('chapter_id', clickedChapter?.id)
+                    formData.append('content_id', messageData.content.id)
+                    axios({
+                        method: 'DELETE',
+                        // url: axios.defaults.baseURL + '/api/chapter-content/' + messageData.content.id
+                        url: axios.defaults.baseURL + '/api/chapter-content-delete/',
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        },
+                        data: formData,
+                    })
+                    .then(res => {
+                        console.log('Successfully remove sequence end-point /api/chapter-content-delete/', res.data)
+                    })
+                    .catch(err => console.log('Error: remove sequence end-point /api/chapter-content-delete/', err))
+                    dispatch(setChapterUpdatedStatus())
 
+                })
+                .catch(err => console.log(err))
+            console.log('delete content', messageData.content)
+        */
+        if (choose) {
+            //   setProducts(products.filter((p) => p.id !== idProductRef.current));
+            // -- Delete course by dispatch it to server. --
+            const formData = new FormData()
+            formData.append('chapter_id', clickedChapter?.id)
+            formData.append('content_id', messageData.content.id)
+            axios({
+                method: 'DELETE',
+                // url: axios.defaults.baseURL + '/api/chapter-content/' + messageData.content.id
+                url: axios.defaults.baseURL + '/api/chapter-content-delete/',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                data: formData,
+            })
+                .then(res => {
+
+                    dispatch(setChapterUpdatedStatus())
+
+                })
+                .catch(err => console.log(err))
+            console.log('delete content', messageData.content)
+        } else {
+        }
+        setDialogDeleteContent({ message: "", isLoading: false, itemName: '', content: null, });
+
+    }
     // ----------------------------------------------------
     const handleDeleteContent = (e) => {
-
+        const contentCat = chapterCategory.filter(item => item.id == clickedContent?.chapter_category)
+        setDialogDeleteContent({
+            message: "Are you sure you want to delete?",
+            isLoading: true,
+            itemName: contentCat.length == 0 && contentCat[0].title + ' Content',
+            content: clickedContent,
+        });
+        console.log('handleDeleteCourse-clickedChapter', clickedChapter)
     }
     const handleUpdateContent = (e) => {
 
@@ -340,9 +442,6 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()
 
-
-        funcSetCreateMode(false)
-
         /** reset inputContent */
         setInputContent({ file: null, ulr: null, text: null })
         /** delete any created acation */
@@ -354,19 +453,20 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
 
         let formData = new FormData()
-        formData.append('title', e.target[0].value)
+        // formData.append('title', e.target[0].value)
         formData.append('chapter_category', Number(contentChoice.id))
         formData.append('creater', Number(teacherId))
-        const _contentAction = contentAction.filter((item) => item.action == 'created')
-        if (_contentAction.length == 1) {
+        const _contentAction = contentAction?.filter((item) => item.action == 'created')
+        if (_contentAction?.length == 1) {
             console.log('contentAction.image: ', _contentAction[0].image)
             _contentAction[0].file && formData.append('file', _contentAction[0].file)
             _contentAction[0].url && formData.append('url', _contentAction[0].url)
             _contentAction[0].text && formData.append('text', _contentAction[0].text)
             _contentAction[0].image && formData.append('img', _contentAction[0].image)
+            _contentAction[0].title && formData.append('title', _contentAction[0].title)
         }
         console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
-            ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
+            // ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
             'contentAction: ', contentAction, ', formData', formData
         )
         // return
@@ -494,11 +594,11 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             {/* -- When the Add Chapter + sign pressed.-- */}
             {clickedAddContent &&
                 <form className='add_content_form' onSubmit={onSubmitAddContentForm}>
-                    <div className='input_content_name'>
+                    {/* <div className='input_content_name'>
                         <label>Content Name</label>
-                        {/* {console.log('inputContent: ', inputContent)} */}
+                        
                         <input type='text' name='content_name' value={inputContent.content_name} onChange={e => handleOnChangeInputAdd(e, 'content_name')} required placeholder='Enter Content Name*' />
-                    </div>
+                    </div> */}
                     <div className='chapter_categories'>
                         <label className='descpriton'>Select Content Element</label>
                         <div className='chapter_categories_content'>
@@ -515,6 +615,11 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 </form>
 
             }
+            {/** When delete button clicked on course it pops up */}
+            {dialogDeleteContent.isLoading && <DialogBox
+                dialogData={dialogDeleteContent} onDialog={handleDeleteContentResponse} backgroundColor={'rgba(0,0,0,0.6)'}
+            />
+            }
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
             {!clickedAddContent &&
                 <div className='content_lists'>
@@ -524,11 +629,15 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 
-                                return <div>
+                                return <div className='content_lists_block'>
                                     <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                                        <div><svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg></div>
-                                        <div>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title} [{content.title}]</div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
+                                        <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>
                                     </div>
+                                    <svg viewBox='9 9 30 30' xmlns="http://www.w3.org/2000/svg" height="30" width="20"><path d="M18.75 36.6 16 33.85l9.95-9.95L16 13.95l2.75-2.75 12.7 12.7Z" /></svg>
+                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
+                                    </svg> */}
                                 </div>
                             }
                         }
