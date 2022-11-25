@@ -462,7 +462,7 @@ axios({
             _contentAction[0].file && formData.append('file', _contentAction[0].file)
             _contentAction[0].url && formData.append('url', _contentAction[0].url)
             _contentAction[0].text && formData.append('text', _contentAction[0].text)
-            _contentAction[0].image && formData.append('img', _contentAction[0].image)
+            _contentAction[0].image && formData.append('image', _contentAction[0].image)
             _contentAction[0].title && formData.append('title', _contentAction[0].title)
         }
         console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,

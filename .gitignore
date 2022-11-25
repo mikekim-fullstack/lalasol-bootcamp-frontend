@@ -12,6 +12,7 @@
 /build
 
 DIFF*.JS
+git.*
 
 # misc
 .DS_Store

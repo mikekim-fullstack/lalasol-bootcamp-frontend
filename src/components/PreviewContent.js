@@ -92,8 +92,9 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
                         {
-                            const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.img) : axios.defaults.baseURL + content?.img
+                            const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image
                             console.log('image: ', src, content)
+                            // return;
                             return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
                         }
                     default:

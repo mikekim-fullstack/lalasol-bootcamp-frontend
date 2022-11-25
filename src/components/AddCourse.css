@@ -149,7 +149,7 @@ textarea {
 }
 
 @media screen and (min-width:600px) {
-    .add_course__form form {
+    /* .add_course__form form {
         flex-direction: row;
     }
 
@@ -159,5 +159,5 @@ textarea {
 
     .add_course__form form .group-1 {
         margin-right: 10px;
-    }
+    } */
 }

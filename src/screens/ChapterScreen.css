@@ -148,11 +148,11 @@ html {
 }
 
 @media screen and (min-width:1200px) {
-    .iframe_container_youtube {
+    /* .iframe_container_youtube {
         padding-bottom: 50%;
         overflow: hidden;
         max-width: 80%;
-    }
+    } */
 
 
     .iframe_container_youtube iframe {}

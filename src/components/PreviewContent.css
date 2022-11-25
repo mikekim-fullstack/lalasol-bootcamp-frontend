@@ -55,11 +55,11 @@
 
     /* overflow: hidden; */
     padding-bottom: 62.55%;
-    /* padding-bottom: 52%; */
+    /* padding-bottom: 70%; */
     /* 56.25%; 16:9 */
     height: auto;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -74,9 +74,12 @@
     /* transform: translateX(0%); */
 }
 
-.content__preview img {
+.content__preview>img {
+    display: block;
     object-fit: cover;
-    max-width: 750px;
+    width: 100%;
+    margin: auto;
+    /* border: 2px dashed green; */
 }
 
 .content__preview .main_paragraph code,
@@ -149,7 +152,6 @@
 
 .content__preview .note {
 
-
     padding: 16px 24px;
     border-radius: 4px;
     display: block;
@@ -164,4 +166,29 @@
     border-left-width: 1px;
     border-left: 4px solid #0556f3;
     border-radius: 4px;
+}
+
+@media screen and (min-width:1200px) {
+
+    /* .iframe_container_youtube {
+        position: relative;
+
+        padding-bottom: 62.55%;
+
+        height: auto;
+        text-align: center;
+        margin-bottom: 50px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+
+    .iframe_container_youtube iframe {
+        position: absolute;
+        top: 0;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+    } */
+
 }
