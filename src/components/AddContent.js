@@ -27,7 +27,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const [contentChoice, setContentChoice] = useState(null)
     const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
-    const [isBreakLine, setIsBreakLine] = useState(false)
+    const [triggerUseEffect, setTriggerUseEffect] = useState(false)
     const [dialogDeleteContent, setDialogDeleteContent] = useState({
         message: "",
         isLoading: false,
@@ -164,7 +164,10 @@ axios({
         funcSetCreateMode(true)
     }
     const handleClickCloseContent = (e) => {
-        console.log('handleClickCloseContent: ', contentAction)
+        console.log('handleClickCloseContent: ', contentAction, ', previousClickedContent:', previousClickedContent)
+
+
+
         /** reset inputContent */
         setInputContent({ file: null, ulr: null, text: null })
         /** delete any created acation */
@@ -173,6 +176,16 @@ axios({
         setClickedAddContent(false)
         setClickedUpdateContent(false)
         funcSetCreateMode(false)
+        setTriggerUseEffect(!triggerUseEffect)
+        // if (previousClickedContent) {
+
+        //     const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+        //     previousClickedContent.style['box-shadow'] = shadowColor
+        //     previousClickedContent.style['-webkit-box-shadow'] = shadowColor
+        //     previousClickedContent.style['-moz-box-shadow'] = shadowColor
+
+        // }
+
     }
 
     /**
@@ -558,7 +571,7 @@ axios({
             contentAction.length > 0 && initSelectContent(contentAction[0])
         }
 
-    }, [clickedChapter])
+    }, [clickedChapter, triggerUseEffect])
 
 
     useEffect(() => {
@@ -566,7 +579,7 @@ axios({
 
     }, [contentChoice?.title, operateContent,])// contentAction])
 
-    console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent)
+    console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
 
     useEffect(() => {
         if (contentChoice?.title.includes('Break Line')) {
@@ -574,7 +587,7 @@ axios({
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         }
         console.log('useEffect AddContent-clickedContent: ', clickedContent)
-    }, [isBreakLine])
+    }, [])
     return (
         <div className='chapter_content__view'>
             {/* -- Display Content Header Bar. --- */}

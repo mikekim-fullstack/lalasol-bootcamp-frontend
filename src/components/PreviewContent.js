@@ -10,6 +10,35 @@ import './PreviewContent.css'
 
 const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }) => {
     const [localContentAction, setLocalContentAction] = useState(null)
+    const [gitHubFile, setGitHubFile] = useState(null)
+    const [fileExtension, setFileExtension] = useState(null)
+    const fetchGithub = async (url, content_id) => {
+
+        console.log('-- url Github: ', url)
+        const ext = url.split('.').pop().toLocaleLowerCase()
+        await axios.get(url,
+            {
+                headers: {
+                    "Content-type": "Application/Json",
+                    // 'Access-Control-Allow-Origin': '*',
+                }
+            }
+        )
+            .then(res => {
+
+                // console.log('------github----', res.data)
+                setGitHubFile(res.data)
+                setFileExtension(ext)
+
+
+            })
+            .catch(err => {
+                console.log('error: ', err)
+                // return <div>Not Found</div>
+            })
+
+    }
+
     useEffect(() => {
         console.log('<<<< useEffect-PreviewContent: -isCreateContentMode-', isCreateContentMode, ', contentAction', contentAction)
         if (isCreateContentMode) {
@@ -29,6 +58,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
 
                 switch (content.chapter_category) {
                     case 1: // html file
+                    case 3: // PDF file
                         console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
                         return <div className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
@@ -46,24 +76,40 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
 
                             </iframe>
                         </div>
-                    case 5:// youtube link
-                        const url = content.action == '' ?
-                            (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
-                            : content.url.split('=').pop()
-                        console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
-                        // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
-                        return <div className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
-                            <iframe
-                                frameBorder="0"
-                                border='0'
-                                scrolling="no"
-                                className='iframe__view'
-                                src={`https://www.youtube.com/embed/${url}`}
-                                title="YouTube video player"
+                    // case 3: // PDF file
 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
-                            </iframe>
-                        </div>
+
+                    case 4:// Github
+                        {
+                            const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
+                            fetchGithub(url, content.id)
+                            return localContentAction && localContentAction.length > 0 && gitHubFile && <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                                customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                                children={gitHubFile && gitHubFile}
+                            /></div>
+                        }
+
+                    // return;
+                    case 5:// youtube link
+                        {
+                            const url = content.action == '' ?
+                                (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
+                                : content.url.split('=').pop()
+                            console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
+                            // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
+                            return <div className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
+                                <iframe
+                                    frameBorder="0"
+                                    border='0'
+                                    scrolling="no"
+                                    className='iframe__view'
+                                    src={`https://www.youtube.com/embed/${url}`}
+                                    title="YouTube video player"
+
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
+                                </iframe>
+                            </div>
+                        }
                     case 8:// main title
                         // console.log('case - content.action - main title', content, content.title)
                         return <h1 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
@@ -93,6 +139,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                     case 15:// Image
                         {
                             const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image
+                            // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
                             console.log('image: ', src, content)
                             // return;
                             return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
@@ -101,6 +148,10 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                         <div></div>
                 }
             })}
+            {/* {localContentAction && localContentAction.length > 0 && gitHubFile && <div ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                children={gitHubFile && gitHubFile}
+            /></div>} */}
         </div>
     )
 }

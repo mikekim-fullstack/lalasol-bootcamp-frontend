@@ -10,7 +10,9 @@ const firebaseConfig = {
     projectId: "lalasol-bootcamp",
     storageBucket: "lalasol-bootcamp.appspot.com",
     messagingSenderId: "102833688168",
-    appId: "1:102833688168:web:cdd008d8d0bf7b8dc735dd"
+    appId: "1:102833688168:web:cdd008d8d0bf7b8dc735dd",
+    measurementId: "G-10CRC2TRXX",
+
 };
 
 // Initialize Firebase

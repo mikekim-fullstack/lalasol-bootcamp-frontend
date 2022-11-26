@@ -49,6 +49,10 @@
     margin-bottom: 40px;
 }
 
+.iframe_container_file iframe {
+    width: 100%;
+    /* height: 100%; */
+}
 
 .iframe_container_youtube {
     position: relative;
@@ -63,6 +67,7 @@
     margin-left: auto;
     margin-right: auto;
 }
+
 
 
 .iframe_container_youtube iframe {
