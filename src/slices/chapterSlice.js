@@ -8,6 +8,7 @@ const chapterSlice = createSlice({
         clickedContent: null,
         contentActionList: [],
         chapterUpdated: false,
+        backupContentAction: [],
     },
     name: 'chapters',
     reducers: {
@@ -30,23 +31,48 @@ const chapterSlice = createSlice({
             state.clickedChapter = action.payload
             /** --1. Populate content array to store the status of action for content history-- */
             const contentList = []
-            if (action.payload?.content.length > 0) {
+            const seq = action.payload.content_list_sequence
 
-                for (const contentItem of action.payload?.content) {
-                    console.log('contentItem: ', contentItem)
-                    const item = {}
-                    Object.keys(contentItem).map(key => {
-                        if (key != 'created_date') item[key] = contentItem[key]
+
+            if (action.payload?.content.length > 0) {
+                if (seq) {
+                    const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+
+                    sortedSeqKeys?.forEach(key => {
+                        const foundContentItem = action.payload?.content.filter(content => content.id == Number(key))
+                        if (foundContentItem.length == 1) {
+                            const item = {}
+                            Object.keys(foundContentItem[0]).map(key => {
+                                if (key != 'created_date') item[key] = foundContentItem[0][key]
+                            })
+                            item['action'] = ''
+
+                            contentList.push(item)
+                        }
+
                     })
-                    item['action'] = ''
-                    contentList.push(item)
                 }
+                else {
+                    for (const contentItem of action.payload?.content) {
+                        console.log('contentItem: ', contentItem)
+                        const item = {}
+                        Object.keys(contentItem).map(key => {
+                            if (key != 'created_date') item[key] = contentItem[key]
+                        })
+                        item['action'] = ''
+                        contentList.push(item)
+                    }
+                }
+
+                /*
+                
+                */
                 state.contentActionList = contentList
             }
             else {
                 state.contentActionList = null
             }
-            console.log('slice - setClickedChapter: ', action.payload, ', ', contentList)
+            console.log('slice - setClickedChapter: ', action.payload, ', ', contentList,)
         },
         setChapterCategory: (state, action) => {
             state.category = action.payload
@@ -79,7 +105,31 @@ const chapterSlice = createSlice({
             }
             else state.contentActionList = null
         },
+        setBackupContentAction: (state, action) => {
+            state.backupContentAction.splice(0, state.backupContentAction.length)
+            state.contentActionList.forEach(contentItem => {
 
+                const item = {}
+                Object.keys(contentItem).map(key => {
+                    item[key] = contentItem[key]
+                })
+
+                // contentItem.push(item)
+                state.backupContentAction.push(item)
+            })
+        },
+        setRestoreContentAction: (state, action) => {
+            state.contentActionList.splice(0, state.contentActionList.length)
+            state.backupContentAction.forEach(contentItem => {
+                const item = {}
+                Object.keys(contentItem).map(key => {
+                    item[key] = contentItem[key]
+                })
+
+                // contentItem.push(item)
+                state.contentActionList.push(item)
+            })
+        },
         createContentAction: (state, action) => {
 
             // -- action.payload { catId:'', createrId:'', type:'', data:'', } --
@@ -188,6 +238,8 @@ export const { setChapters, setClickedChapter,
     deleteContentAction, createContentAction,
     setContentAction, deleteContentAddAction,
     setChapterUpdatedStatus,
+    setBackupContentAction,
+    setRestoreContentAction,
 } = chapterSlice.actions
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {

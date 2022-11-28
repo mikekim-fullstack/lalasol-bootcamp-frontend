@@ -60,7 +60,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                     case 1: // html file
                     case 3: // PDF file
                         console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
-                        return <div className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
+                        return <div key={content.id} className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
                             <iframe
                                 // id='iframe_file'
@@ -83,7 +83,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                         {
                             const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
                             fetchGithub(url, content.id)
-                            return localContentAction && localContentAction.length > 0 && gitHubFile && <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                            return localContentAction && localContentAction.length > 0 && gitHubFile && <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
                                 customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
                                 children={gitHubFile && gitHubFile}
                             /></div>
@@ -97,7 +97,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                 : content.url.split('=').pop()
                             console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
                             // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
-                            return <div className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
+                            return <div key={content.id} className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
                                 <iframe
                                     frameBorder="0"
                                     border='0'
@@ -112,29 +112,29 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                         }
                     case 8:// main title
                         // console.log('case - content.action - main title', content, content.title)
-                        return <h1 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
+                        return <h1 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
                     case 9:// sub title 1
-                        return <h2 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_1'>{content.title}</h2>
+                        return <h2 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_1'>{content.title}</h2>
                     case 10:// sub title 2
-                        return <h3 style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_2'>{content.title}</h3>
+                        return <h3 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_2'>{content.title}</h3>
                     case 11:// Paragraph
                         // console.log('case - content.action -Paragraph', content, content.text.split('.'))
                         // return content.text.split('.')
-                        return <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
+                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
                     // return <p className='main_paragraph'>{content.text}</p>
                     case 12: // Break line
                         {
                             console.log('case - content.action -break', content)
-                            return <hr style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
+                            return <hr key={content.id} style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
                         }
                     case 13:// Code Block
                         // console.log('case - content.action', content.action, content.file)
-                        return <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
+                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
                             customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
                             children={content.text}
                         /></div>
                     case 14:// Note
-                        return <div style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
+                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
                         {
@@ -142,11 +142,12 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
                             console.log('image: ', src, content)
                             // return;
-                            return <img style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
+                            return <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
                         }
                     default:
-                        <div></div>
+                        <div key={content.id}></div>
                 }
+
             })}
             {/* {localContentAction && localContentAction.length > 0 && gitHubFile && <div ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
                 customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}

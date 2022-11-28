@@ -8,6 +8,7 @@ import {
     getContentAction, getContentActionById, deleteContentAction,
     createContentAction, updateContentActionById, setContentAction,
     deleteContentAddAction, setChapterUpdatedStatus, getChapterUpdatedStatus,
+    setBackupContentAction, setRestoreContentAction,
 
 } from '../slices/chapterSlice'
 import './AddContent.css'
@@ -24,8 +25,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const clickedCourseInfo = useSelector(getClickedCourse)
 
 
+    const [copidClickedContent, setCopidClickedContent] = useState(null)
     const [contentChoice, setContentChoice] = useState(null)
-    const [inputContent, setInputContent] = useState({ file: null, ulr: null, text: null })
+    const [inputContent, setInputContent] = useState({ file: null, url: null, text: null })
     const [previousClickedContent, setPreviousClickedContent] = useState(null)
     const [triggerUseEffect, setTriggerUseEffect] = useState(false)
     const [dialogDeleteContent, setDialogDeleteContent] = useState({
@@ -82,39 +84,6 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     // --------------------------------------------------
     const handleDeleteContentResponse = (choose, messageData) => {
         console.log('handleDeleteContentResponse: ', choose, messageData)
-        // setDialogDeleteContent({ message: "", isLoading: false, itemName: '', content: null, });
-        // dispatch(setChapterUpdatedStatus())
-        // return;
-        /*
-axios({
-                method: 'DELETE',
-                url: axios.defaults.baseURL + '/api/chapter-content/' + messageData.content.id
-
-            })
-                .then(res => {
-                    // Remove content sequence from chapter.content_list_sequence
-                    const formData = new FormData()
-                    formData.append('chapter_id', clickedChapter?.id)
-                    formData.append('content_id', messageData.content.id)
-                    axios({
-                        method: 'DELETE',
-                        // url: axios.defaults.baseURL + '/api/chapter-content/' + messageData.content.id
-                        url: axios.defaults.baseURL + '/api/chapter-content-delete/',
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        },
-                        data: formData,
-                    })
-                    .then(res => {
-                        console.log('Successfully remove sequence end-point /api/chapter-content-delete/', res.data)
-                    })
-                    .catch(err => console.log('Error: remove sequence end-point /api/chapter-content-delete/', err))
-                    dispatch(setChapterUpdatedStatus())
-
-                })
-                .catch(err => console.log(err))
-            console.log('delete content', messageData.content)
-        */
         if (choose) {
             //   setProducts(products.filter((p) => p.id !== idProductRef.current));
             // -- Delete course by dispatch it to server. --
@@ -153,11 +122,40 @@ axios({
         });
         console.log('handleDeleteCourse-clickedChapter', clickedChapter)
     }
+
     const handleUpdateContent = (e) => {
+        // console.log('handleUpdateCourse-clickedContent', clickedContent)
+        // const copy_clickedContent = {}
+        // Object.keys(clickedContent).map(key => copy_clickedContent[key] = clickedContent[key])
+        // setCopidClickedContent(copy_clickedContent)
+
+        dispatch(setBackupContentAction())
+        // setInputContent({ file: null, url: null, text: null })
+        // setContentChoice(null)
+        setOperateContent(false)
+        setClickedAddContent(false)
+        setClickedUpdateContent(true)
+        funcSetCreateMode(false)
 
     }
+    const handleCancelUpdate = (e) => {
+        // const recovery_clickedContent = {}
+        // Object.keys(copidClickedContent).map(key => recovery_clickedContent[key] = copidClickedContent[key])
+        // dispatch(setClickedContent(recovery_clickedContent))
+
+        // dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creater: teacherId }))
+        dispatch(setRestoreContentAction())
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+        funcSetCreateMode(false)
+        setTriggerUseEffect(!triggerUseEffect)
+        // console.log('handleCancelUpdate-recovery_clickedContent: ', recovery_clickedContent, ', copidClickedContent:', copidClickedContent, ', clickedContent:', clickedContent)
+        console.log('handleCancelUpdate-,  clickedContent:', clickedContent)
+    }
+
     const handleAddContent = (e) => {
-        setInputContent({ file: null, ulr: null, text: null })
+        setInputContent({ file: null, url: null, text: null })
         setContentChoice(null)
         setOperateContent(false)
         setClickedAddContent(true)
@@ -166,10 +164,17 @@ axios({
     const handleClickCloseContent = (e) => {
         console.log('handleClickCloseContent: ', contentAction, ', previousClickedContent:', previousClickedContent)
 
+        if (clickedUpdateContent) {
+            dispatch(setRestoreContentAction())
+            setClickedUpdateContent(false)
+        }
+        else {
 
+            setInputContent({ file: null, url: null, text: null })
+        }
 
         /** reset inputContent */
-        setInputContent({ file: null, ulr: null, text: null })
+        // setInputContent({ file: null, url: null, text: null })
         /** delete any created acation */
         dispatch(deleteContentAddAction())
         setOperateContent(true)
@@ -200,7 +205,7 @@ axios({
         return ''
     }
     const handleOnChangeInputAdd = (e, type) => {
-        setInputContent({ file: null, ulr: null, text: null })
+        setInputContent({ file: null, url: null, text: null })
 
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
@@ -235,8 +240,8 @@ axios({
         //     dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         // }
     }
-    const handleOnChangeInput = (e, type) => {
-        // setInputContent({ file: null, ulr: null, text: null })
+    const handleOnChangeInputUpdate = (e, type) => {
+        // setInputContent({ file: null, url: null, text: null })
         setInputContent({ ...inputContent, 'text': null, creater: teacherId })
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
@@ -327,56 +332,57 @@ axios({
 
     }
     // --------------------------------------------------
-    const genContentDetailEle = (contentId) => {
+    const genContentDetailEleUpdate = (contentId) => {
+        console.log('----- genContentDetailEleUpdate---- contentChoice:', contentChoice, ', clickedContent:', clickedContent, ', inputContent:', inputContent)
         if (contentChoice?.title?.includes('PDF File'))
             return <div className='element_input'>
-                <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInputUpdate(e, 'file')} />
                 <label className='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
             </div>
 
         if (contentChoice?.title?.includes('HTML File'))
             return <div className='element_input'>
-                <input required ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInput(e, 'file')} />
+                <input required ref={contentFileRef} type='file' accept=".html" name='file' onChange={e => handleOnChangeInputUpdate(e, 'file')} />
                 <label id='fileinput_label'>{clickedContent && clickedContent.action == 'updated' ? clickedContent.file.name : getFileName(clickedContent?.file) || 'Choose File'}</label>
             </div>
         if (contentChoice?.title?.includes('Image File')) {
             const sel = contentAction.filter(content => content.id == contentId)[0]
             console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
-                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInput(e, 'image')} />
+                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputUpdate(e, 'image')} />
                 <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label>
             </div>
         }
         if (contentChoice.title.includes('Link'))
             return <div className='element_input'>
-                <input className='input_url' ref={contentLinkRef} required name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInput(e, 'url')} />
+                <input className='input_url' ref={contentLinkRef} required name='url' type='text' value={inputContent.url} onChange={e => handleOnChangeInputUpdate(e, 'url')} />
             </div>
 
         if (contentChoice.title.includes('Title')) {
 
             return <div className='element_input'>
-                <input required className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInput(e, 'title')} />
+                <input required className='input_title' ref={titleRef} name='title' type='text' value={inputContent.title} onChange={e => handleOnChangeInputUpdate(e, 'title')} />
             </div>
         } if (contentChoice.title.includes('Paragraph'))
             // console.log('clickedContent.text: ', clickedContent.text)
             return <div className='element_input'>
-                <textarea required className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+                <textarea required className='input_paragraph' rows={7} ref={paragraphRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             </div>
 
         if (contentChoice.title.includes('Code'))
             return <div className='element_input'>
-                <textarea required className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+                <textarea required className='input_code' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             </div>
 
         if (contentChoice.title.includes('Note'))
             return <div className='element_input'>
-                <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInput(e, 'text')} />
+                <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             </div>
 
         if (contentChoice.title.includes('Break Line')) {
 
             console.log('Break Line-inputContent', inputContent)
-            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInput(e, 'text')} />
+            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             // setInputContent({ ...inputContent })
             // setInputContent({ ...inputContent, [e.target.name]: e.target.value })
 
@@ -452,11 +458,15 @@ axios({
 
         // dispatch(deleteContentAction(6)) // for test
     }
+
+    const onSubmitUpdateContentForm = (e) => {
+        e.preventDefault()
+    }
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()
 
         /** reset inputContent */
-        setInputContent({ file: null, ulr: null, text: null })
+        setInputContent({ file: null, url: null, text: null })
         /** delete any created acation */
         dispatch(deleteContentAddAction())
         setOperateContent(true)
@@ -523,6 +533,18 @@ axios({
 
         // dispatch(setClickedContent(_clickedContent))
         console.log('>>>>----initSelectContent: ', _clickedContent)
+        if (_clickedContent) {
+
+
+            setInputContent({
+                url: _clickedContent.url,
+                file: _clickedContent.file,
+                text: _clickedContent.text,
+                title: _clickedContent.title,
+                image: _clickedContent.image,
+                code: _clickedContent.code,
+            })
+        }
         /**
                  * Show filename in input file
                  */
@@ -628,13 +650,34 @@ axios({
                 </form>
 
             }
+            {/* -- When the Add Chapter + sign pressed.-- */}
+            {clickedUpdateContent &&
+                <form className='add_content_form' onSubmit={onSubmitUpdateContentForm}>
+
+                    <div className='chapter_categories'>
+                        <label className='descpriton'>Select Content Element</label>
+                        <div className='chapter_categories_content'>
+
+                            {chapterCategory.map(chapterCat => (<div key={chapterCat.id} className='item' onClick={e => setContentChoice(chapterCategory?.filter((chCat) => chCat.id == chapterCat.id)[0])} >{chapterCat.title}</div>))
+                            }
+                        </div>
+                    </div>
+                    <div className='content_element'>
+                        {contentChoice && <div className='choice'>{contentChoice?.title}</div>}
+                        {contentChoice && genContentDetailEleUpdate()}
+                    </div>
+                    {<button disabled={contentChoice ? false : true} type='button' onClick={handleCancelUpdate}>Cancel</button>}
+                    {<button disabled={contentChoice ? false : true} type='submit'>Update Content</button>}
+                </form>
+
+            }
             {/** When delete button clicked on course it pops up */}
             {dialogDeleteContent.isLoading && <DialogBox
                 dialogData={dialogDeleteContent} onDialog={handleDeleteContentResponse} backgroundColor={'rgba(0,0,0,0.6)'}
             />
             }
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
-            {!clickedAddContent &&
+            {!clickedAddContent && !clickedUpdateContent &&
                 <div className='content_lists'>
 
                     <div className='content_lists_body'>
@@ -642,15 +685,12 @@ axios({
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 
-                                return <div className='content_lists_block'>
+                                return <div key={content.id} className='content_lists_block'>
                                     <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
                                         <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>
                                     </div>
                                     <svg viewBox='9 9 30 30' xmlns="http://www.w3.org/2000/svg" height="30" width="20"><path d="M18.75 36.6 16 33.85l9.95-9.95L16 13.95l2.75-2.75 12.7 12.7Z" /></svg>
-                                    {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z" />
-                                    </svg> */}
                                 </div>
                             }
                         }
@@ -660,31 +700,7 @@ axios({
                     </div>
                 </div>
             }
-            {clickedAddContent
-                // <div>
-                //     {/* -------Preview-------- */}
-                //     <h3>Preview</h3>
-                //     {<PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateMode={true} />}
-                // </div>
 
-                // <div className='content_lists'>
-
-                //     <div className='content_lists_body'>
-                //         {console.log('content_lists_body: ', contentAction)}
-                //         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
-                //             if (content.action == 'created') {
-
-                //                 return <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
-                //                     {index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}
-                //                 </div>
-                //             }
-                //         }
-                //         )
-                //             : <div></div>
-                //         }
-                //     </div>
-                // </div>
-            }
 
 
         </div>

@@ -115,8 +115,9 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourseInfo?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
                 const chapterListData = res.data
                 /** If there is chapter_list_sequence, then sort key by sequence and reproduce chapter array in to _sortedChapters */
-                if (clickedCourseInfo?.course?.chapter_list_sequence && Object.keys(clickedCourseInfo?.course?.chapter_list_sequence).length > 0) {
+                if (false) {//(clickedCourseInfo?.course?.chapter_list_sequence && Object.keys(clickedCourseInfo?.course?.chapter_list_sequence).length > 0) {
                     const seq = clickedCourseInfo?.course?.chapter_list_sequence
+
                     const keyChapterID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
                     console.log('keyChapterID: ', keyChapterID)
                     const _sortedcChapters = []
@@ -129,11 +130,21 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                         }
                     }
                     setChapterLists(_sortedcChapters)
+
+
                     if (updated) {
                         // setClickedAddChapter({ ...clickedAddChapter })
-                        const clickCht = _sortedcChapters.filter((chapter) => chapter.id == clickedChapter.id)
-                        console.log('------updated------', clickCht)
-                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                        if (clickedChapter == null && _sortedcChapters.length > 0) {
+                            dispatch(setClickedChapter(_sortedcChapters[0]))
+                            console.log('------updated------', _sortedcChapters[0], ', clickedChapter:', clickedChapter)
+                        }
+                        else {
+                            const clickCht = _sortedcChapters.filter((chapter) => chapter.id == clickedChapter.id)
+                            clickCht?.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                            console.log('------updated------', clickCht, ', clickedChapter-', clickedChapter)
+                        }
+
+
                     }
                     // else {
                     //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
@@ -143,15 +154,22 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                     setChapterLists(chapterListData)
                     if (updated) {
                         // setClickedAddChapter({ ...clickedAddChapter })
-                        const clickCht = chapterLists.filter((chapter) => chapter.id == clickedChapter.id)
-                        console.log('------updated------', clickCht)
-                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                        if (clickedChapter == null && chapterListData.length > 0) {
+                            dispatch(setClickedChapter(chapterListData[0]))
+                        }
+                        else {
+
+                            const clickCht = chapterListData.filter((chapter) => chapter.id == clickedChapter.id)
+                            console.log('------updated------chapterListData:', chapterListData, ', chapterLists-', clickCht)
+                            clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                        }
                     }
                     // else {
                     //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
                     // }
                 }
-                if (!updated) setIsCompleteFetchChapter(!isCompleteFetchChapter)
+                // if (!updated) setIsCompleteFetchChapter(!isCompleteFetchChapter)
+                setIsCompleteFetchChapter(!isCompleteFetchChapter)
                 // if (res.data.length > 1) {
                 //     _sortedData.sort((a, b) => a.chapter_no > b.chapter_no ? 1 : a.chapter_no < b.chapter_no ? -1 : 0)
                 // }
@@ -247,7 +265,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
                     setClickedChapter(null)
 
-                    fetchChapters()
+                    fetchChapters(true)
                     setClickedAddChapter(false)
 
 
@@ -443,7 +461,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     useEffect(() => {
         setClickedChapter(null)
 
-        fetchChapters()
+        fetchChapters(true)
 
         console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
     }, [clickedCourseInfo?.course?.id, isChapterUpdated, clickedCourseInfo?.course?.chapter_list_sequence])
