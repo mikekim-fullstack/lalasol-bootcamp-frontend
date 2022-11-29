@@ -350,7 +350,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputUpdate(e, 'image')} />
-                <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label>
+                {/* <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label> */}
+                <label id='fileinput_label'>{sel && sel?.action == 'updated' && (inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label>
+                {/* <label id='fileinput_label'>{(inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label> */}
             </div>
         }
         if (contentChoice.title.includes('Link'))
@@ -388,7 +390,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
             // dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
 
-            return <label ></label>
+            return
         }
     }
 
@@ -461,6 +463,67 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
     const onSubmitUpdateContentForm = (e) => {
         e.preventDefault()
+        /** reset inputContent */
+        setInputContent({ file: null, url: null, text: null })
+        /** delete any created acation */
+        // dispatch(deleteContentAddAction())
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+        funcSetCreateMode(false)
+        setTriggerUseEffect(!triggerUseEffect)
+
+
+        let formData = new FormData()
+        // formData.append('chapter_category', Number(contentChoice.id))
+        // formData.append('creater', Number(teacherId))
+
+        const contentId = clickedContent.id
+        const _contentAction = contentAction?.filter((item) => item.action == 'updated')
+        console.log('+++===> onSubmitUpdateContentFor:-contentAction', contentAction, ', contentChoice', contentChoice)
+        if (_contentAction.length !== 1) return;
+        if (contentChoice.id == 12) {// Break Line
+            formData.append('title', contentChoice.title)
+            formData.append('file', '')
+            formData.append('url', '')
+            formData.append('text', '')
+            formData.append('image', '')
+        }
+        else {
+            formData.append('file', _contentAction[0].file)
+            formData.append('url', _contentAction[0].url)
+            formData.append('text', _contentAction[0].text)
+            formData.append('image', _contentAction[0].image)
+            formData.append('title', _contentAction[0].title)
+        }
+
+
+        formData.append('chapter_category', contentChoice.id)
+
+        axios({
+            method: 'PATCH',
+            url: axios.defaults.baseURL + '/api/chapter-content/' + contentId,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+        })
+            .then(res => {
+                console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
+                setTriggerUseEffect(!triggerUseEffect)
+            })
+            .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
+
+
+
+
+
+
+        console.log('+++===> onSubmitUpdateContentFor: - contentChoice:', contentChoice,
+            // ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
+            'contentAction: ', contentAction, ', formData', formData
+        )
+
     }
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()

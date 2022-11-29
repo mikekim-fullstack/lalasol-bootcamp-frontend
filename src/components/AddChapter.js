@@ -114,60 +114,24 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
                 console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourseInfo?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
                 const chapterListData = res.data
-                /** If there is chapter_list_sequence, then sort key by sequence and reproduce chapter array in to _sortedChapters */
-                if (false) {//(clickedCourseInfo?.course?.chapter_list_sequence && Object.keys(clickedCourseInfo?.course?.chapter_list_sequence).length > 0) {
-                    const seq = clickedCourseInfo?.course?.chapter_list_sequence
 
-                    const keyChapterID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
-                    console.log('keyChapterID: ', keyChapterID)
-                    const _sortedcChapters = []
-                    for (let i = 0; i < keyChapterID.length; i++) {
-
-                        const res = chapterListData.filter(chapter => (chapter.id == Number(keyChapterID[i])))
-                        if (res && res.length == 1) {
-                            // console.log('cat.id', cat.id, 'orderedCourse: ', res)
-                            _sortedcChapters.push(res[0])
-                        }
+                setChapterLists(chapterListData)
+                if (updated) {
+                    // setClickedAddChapter({ ...clickedAddChapter })
+                    if (clickedChapter == null && chapterListData.length > 0) {
+                        dispatch(setClickedChapter(chapterListData[0]))
                     }
-                    setChapterLists(_sortedcChapters)
+                    else {
 
-
-                    if (updated) {
-                        // setClickedAddChapter({ ...clickedAddChapter })
-                        if (clickedChapter == null && _sortedcChapters.length > 0) {
-                            dispatch(setClickedChapter(_sortedcChapters[0]))
-                            console.log('------updated------', _sortedcChapters[0], ', clickedChapter:', clickedChapter)
-                        }
-                        else {
-                            const clickCht = _sortedcChapters.filter((chapter) => chapter.id == clickedChapter.id)
-                            clickCht?.length > 0 && dispatch(setClickedChapter(clickCht[0]))
-                            console.log('------updated------', clickCht, ', clickedChapter-', clickedChapter)
-                        }
-
-
+                        const clickCht = chapterListData.filter((chapter) => chapter.id == clickedChapter.id)
+                        console.log('------updated------chapterListData:', chapterListData, ', chapterLists-', clickCht)
+                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
                     }
-                    // else {
-                    //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
-                    // }
                 }
-                else {
-                    setChapterLists(chapterListData)
-                    if (updated) {
-                        // setClickedAddChapter({ ...clickedAddChapter })
-                        if (clickedChapter == null && chapterListData.length > 0) {
-                            dispatch(setClickedChapter(chapterListData[0]))
-                        }
-                        else {
+                // else {
+                //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
+                // }
 
-                            const clickCht = chapterListData.filter((chapter) => chapter.id == clickedChapter.id)
-                            console.log('------updated------chapterListData:', chapterListData, ', chapterLists-', clickCht)
-                            clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
-                        }
-                    }
-                    // else {
-                    //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
-                    // }
-                }
                 // if (!updated) setIsCompleteFetchChapter(!isCompleteFetchChapter)
                 setIsCompleteFetchChapter(!isCompleteFetchChapter)
                 // if (res.data.length > 1) {
