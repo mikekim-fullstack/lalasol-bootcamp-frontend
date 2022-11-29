@@ -46,11 +46,11 @@ const AddCourseScreen = () => {
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
-
+    const teacherID = 1
     const fetchAllCourses = async () => {
         await axios({
             method: 'GET',
-            url: `/api/courses-enrolled-status/${user?.id}`,
+            url: `/api/courses-all-by-teacher/${teacherID}`,// user id should be teacher id
             headers: {
                 'Content-Type': 'Application/Json'
             },
@@ -208,36 +208,12 @@ const AddCourseScreen = () => {
         // _selCatID[index] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
         setIsEditMode(false)
         setIsAddMode(true)
-        // const sortedCourses = [...courses]
-        // sortedCourses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
-        // // courses && courses.forEeach(course => {
-        //     console.log('course-no', course)
-        // })
+
         Object.keys(courses).map((key) => {
             console.log(courses[key].course_no, courses[key].title)
         })
 
         console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, _selCatID[index],)
-
-        // const courseID = 91
-        // const addedCat = allCategories?.filter(cat => cat.id == 1)[0]
-        // const seqCatData = { "course_list_sequence": {} }
-        // let maxVal = -1
-        // if (addedCat?.course_list_sequence) {
-        //     // -- Copy all current courseID:order into seqCatData{}. --
-        //     Object.keys(addedCat.course_list_sequence)
-        //         .forEach(key => {
-        //             const val = Number(addedCat.course_list_sequence[key])
-        //             seqCatData.course_list_sequence[key] = Number(val)
-        //             maxVal = (maxVal > val) ? maxVal : val
-        //         })
-        //     // -- Add new key:value pair which is created by new one. --
-        //     seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
-        // }
-        // else {
-        //     seqCatData.course_list_sequence[String(courseID)] = Number(1)
-        // }
-        // console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
     }
     const handleClickCloseCourse = (e, cat, index) => {
         const _selCatID = [...selCatID]

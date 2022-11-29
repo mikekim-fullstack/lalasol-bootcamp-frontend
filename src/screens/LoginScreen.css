@@ -142,14 +142,43 @@ body {
 }
 
 .loginScreen__input>form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto;
+    /* flex-direction: column; */
     align-items: center;
+    /* justify-content: center; */
     margin: auto;
     gap: 5px;
     width: 100%;
     /* border: 2px dashed gray; */
 
+}
+
+.loginScreen__input>form .role {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginScreen__input>form .role div {
+    margin-right: 10px;
+    font-size: 1rem;
+    width: 110px;
+    border-radius: 5px;
+    background-color: rgb(44, 15, 101);
+    padding: 9px 20px;
+    box-sizing: border-box;
+    height: 2.4rem;
+}
+
+.loginScreen__input>form .role select {
+    /* margin: 10px; */
+    width: 110px;
+    font-size: 1rem;
+    height: 2.35rem;
+    padding-left: 10px;
+    border: none;
+    border-radius: 5px;
 }
 
 .loginScreen__input>form .email,
@@ -299,15 +328,22 @@ body {
     }
 
     .loginScreen__body {
-        top: 25%;
+        top: 15%;
     }
 
     .loginScreen__input>form {
-        flex-direction: row;
+        /* grid-template-columns: auto;
+        grid-template-rows: auto auto; */
+        /* flex-direction: row; */
         align-items: center;
         margin: auto;
-        /* gap: 2px; */
         max-width: 600px;
+    }
+
+    .loginScreen__input>form .loginScreen__btn_signIn {
+        /* text-align: center; */
+        margin: auto;
+        max-width: 100%;
     }
 
     .loginScreen__input {

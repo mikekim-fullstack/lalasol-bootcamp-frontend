@@ -30,7 +30,8 @@ const NavCategoreis = () => {
     })
     const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
         method: 'GET',
-        url: `/api/courses-enrolled-status/${user?.id}`,
+        // url: `/api/courses-enrolled-status/${user?.id}`,
+        url: user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}` : `/api/courses-all-by-teacher/${user?.id}`,
         headers: {
             'Content-Type': 'Application/Json'
         },

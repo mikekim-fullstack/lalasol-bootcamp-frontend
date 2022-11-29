@@ -13,6 +13,7 @@ const LoginScreen = () => {
     const [toggleIcon, setToggleIcon] = useState(true)
     const [singUp, setSingUp] = useState(false)
     const [loginError, setLoginError] = useState(null)
+    const [role, setRole] = useState('student')
     // const [inputData, setInputData] = useState({ email: '', password: '', updated: false })
     // const user = useSelector(selectUser)
     const dispatch = useDispatch()
@@ -27,12 +28,14 @@ const LoginScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        console.log('handleSubmit: role-', role)
+
         // console.log(e.target, e.target.email.value, e.target.password.value)
         try {
 
             const res = await axios({
                 method: 'POST',
-                url: '/api/student-login/',
+                url: role == 'student' ? '/api/student-login/' : '/api/teacher-login/',
                 headers: {
                     'Content-Type': 'Application/Json'
                 },
@@ -89,6 +92,15 @@ const LoginScreen = () => {
                                     }}>&nbsp;{loginError && `Error: ${loginError}`}</div>
                                 }
                                 <form onSubmit={handleSubmit}>
+                                    <div className='role' >
+                                        <div>You are  </div>
+                                        <select value={role} onChange={e => setRole(e.target.value)}>
+                                            {/* <option value='select'>Select</option> */}
+                                            <option value='student'>Student</option>
+                                            <option value='teachter'>Teacher</option>
+                                        </select>
+                                    </div>
+                                    {/* <div className='inputs'> */}
                                     <div className='email'>
                                         <input type={'email'} name='email' required placeholder='Email Address*'></input>
                                         <EmailOutlinedIcon className='email_icon' />
@@ -100,6 +112,7 @@ const LoginScreen = () => {
                                     </div>
 
                                     <button disabled={false} type='submit' className='loginScreen__btn_signIn'>Sign In</button>
+                                    {/* </div> */}
                                 </form>
                             </div>
                         </div>
