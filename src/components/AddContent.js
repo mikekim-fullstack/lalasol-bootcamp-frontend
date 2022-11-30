@@ -22,7 +22,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
     const clickedContent = useSelector(getClickedContent)
-    const clickedCourseInfo = useSelector(getClickedCourse)
+    const clickedCourse = useSelector(getClickedCourse)
 
 
     const [copidClickedContent, setCopidClickedContent] = useState(null)
@@ -61,7 +61,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         const updateChapterContentSequence = async (chapterSeqData) => {
             await axios({
                 method: 'PATCH',
-                url: axios.defaults.baseURL + '/api/course-update/' + clickedCourseInfo?.course?.id,
+                url: axios.defaults.baseURL + '/api/course-update/' + clickedCourse?.course?.id,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -69,7 +69,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             })
                 .then(res => {
                     // handleSuccessUpdateChapterSeq(true)
-                    dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.courseId, foundCard: clickedCourseInfo.foundCard, course: res.data }))
+                    dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, foundCard: clickedCourse.foundCard, course: res.data }))
                     setIsChapterUpdated(true)
                     console.log('onSubmitUpdateCourseForm:', res.data)
                 })

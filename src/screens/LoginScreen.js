@@ -49,7 +49,7 @@ const LoginScreen = () => {
             dispatch(login(res.data))
         }
         catch (e) {
-            console.log('error: ', e.response.data, ', message=', e.message)
+            console.log('error: /api/student-login/, /api/teacher-login/', e.response.data, ', message=', e.message)
             setLoginError(e?.response?.data?.error)
         }
 

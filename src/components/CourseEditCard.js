@@ -3,14 +3,14 @@ import './CourseEditCard.css'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { getUser } from '../slices/userSlices'
-const CourseEditCard = ({ cat, course, handleClickCourse, isTeacher }) => {
+const CourseEditCard = ({ course, handleClickCourse, index }) => {
     const user = useSelector(getUser)
     return (
         <div
             draggable
-            className={`course__edit_card_outline`}
-            onClick={(e) => handleClickCourse(e, cat, course)}>
-            <div className={`course__edit_card`}>
+            className={`course__edit_card_outline ${course.id}`}
+            onClick={(e) => handleClickCourse(e, course, index)}>
+            <div className={`course__edit_card `}>
                 <div className='image'>
                     {/* <img width='36px' height='36px' className={course.enrolled || isTeacher ? '' : 'svg_image_gray'} src={axios.defaults.baseURL + course.course_image}></img> */}
                     {/* {console.log('course.course_image: ', course.course_image)} */}

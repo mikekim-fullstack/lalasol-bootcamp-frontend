@@ -37,7 +37,7 @@ const HomeScreen = () => {
                 dispatch(setCourses(res.data))
                 console.log('done-homescreen')
             })
-            .catch(err => console.log('error: ', err))
+            .catch(err => console.log('error: ' + `/api/student-course-enrollment/${userId}/${selectedCatId}`, err))
     }
 
     const fetchChapters = async (course_id) => {
@@ -46,7 +46,7 @@ const HomeScreen = () => {
                 // console.log('fetchChapters: ', res.data)
                 dispatch(setChapters(res.data))
             })
-            .catch(err => console.log('error: ', err))
+            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`, err))
     }
 
 

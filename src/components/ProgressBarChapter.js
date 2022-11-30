@@ -46,7 +46,7 @@ const ProgressBarChapter = () => {
             // .then(res=>{
             //     console.log('chapter Viewed: ', res.data)
             // })
-            .catch(err => console.log('error: ', err))
+            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${pathCourseID}`, err))
     }
     useEffect(() => {
         if (!chapters && user.id && pathCourseID && pathChapterID) {

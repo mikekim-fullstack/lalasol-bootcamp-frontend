@@ -30,7 +30,6 @@ const NavCategoreis = () => {
     })
     const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
         method: 'GET',
-        // url: `/api/courses-enrolled-status/${user?.id}`,
         url: user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}` : `/api/courses-all-by-teacher/${user?.id}`,
         headers: {
             'Content-Type': 'Application/Json'
@@ -84,6 +83,7 @@ const NavCategoreis = () => {
 
     }
     const selectCategory = async (_sortedCat, openSideMenu = true) => {
+        if (!_sortedCat) return
         // const _sortedCat = sortedCat[cat_id]
         // console.log('handleSelectCategoryClick: ', _sortedCat)
 

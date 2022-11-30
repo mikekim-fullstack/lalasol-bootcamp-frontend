@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus, setClickedCourse, getClickedCourse } from '../slices/courseSlice'
 import { setChapters, getChapters, setClickedChapter, setChapterUpdatedStatus, getChapterUpdatedStatus } from '../slices/chapterSlice'
-import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
+import { setPathCourseID, setPathCatID, getPathCatID, setPathCourseCardIndex, getPathCourseCardIndex, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
+// import { setPathCatID, setPathCourseID, getPathCatID, getPathCourseID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './AddCourseScreen.css'
@@ -26,13 +27,15 @@ const AddCourseScreen = () => {
     const courses = useSelector(getCourses)
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
-    const clickedCourseInfo = useSelector(getClickedCourse)
+    const clickedCourse = useSelector(getClickedCourse)
     const chapterUpdatedStatus = useSelector(getChapterUpdatedStatus)
+    const courseID = useSelector(getPathCourseID)
+    const catID = useSelector(getPathCatID)
 
 
     const [selCatID, setSelCatID] = useState([])
     const [isUpdatedCourse, setIsUpdatedCourse] = useState(false)
-    // const [clickedCourseInfo, setClickedCourseInfo] = useState({ catId: null, courseId: null, foundCard: null, course: null })
+    // const [clickedCourse, setClickedCourseInfo] = useState({ catId: null, courseId: null, foundCard: null, course: null })
     const [dialogDeleteCourse, setDialogDeleteCourse] = useState({
         message: "",
         isLoading: false,
@@ -133,16 +136,21 @@ const AddCourseScreen = () => {
         setDialogDeleteCourse({
             message: "Are you sure you want to delete?",
             isLoading: true,
-            itemName: clickedCourseInfo?.course?.title + ' Course',
-            course: clickedCourseInfo?.course,
+            itemName: clickedCourse?.course?.title + ' Course',
+            course: clickedCourse?.course,
             catId: catId,
         });
-        console.log('handleDeleteCourse', clickedCourseInfo.course)
+        console.log('handleDeleteCourse', clickedCourse.course)
     }
     const successfullyDeleted = (res, messageData) => {
-        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
-        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
+        const _selCatID = selCatID.map(sel => false)
+        setSelCatID([..._selCatID])
+        dispatch(setClickedCourse({ catId: null, courseId: null, course: null }))
+        dispatch(resetPathAll())
         setIsUpdatedCourse(true)
+        setIsAddMode(false)
+        setIsEditMode(true)
+        console.log('fisuccessfullyDeletedrst ---', _selCatID)
     }
     const handleDeleteCourseResponse = (choose, messageData) => {
         if (choose) {
@@ -228,62 +236,58 @@ const AddCourseScreen = () => {
         setIsAddMode(false)
     }
 
+    /** Find current Course Card by the card index and cat ID */
+    const outlinedCourseCard = (courseID) => {
 
-    const handleClickCourse = async (e, cat, course) => {
+        const course__edit_card_outline = document.querySelectorAll('.course__edit_card_outline')
+        const shadowColor = '0px 0px 0px 6px rgba(0, 200,200 , 0.95)'
+        for (let i = 0; i < course__edit_card_outline.length; i++) {
+
+            const card = course__edit_card_outline[i]
+            const id = card.className.split(' ').pop()
+            /** Once find the clicled element and highlight outline(box-shadow) */
+            if (Number(id) == courseID) {
+                card.style['border-radius'] = '5px'
+                card.style['box-shadow'] = shadowColor
+                card.style['-webkit-box-shadow'] = shadowColor
+                card.style['-moz-box-shadow'] = shadowColor
+            }
+            /** Reset previous outline to nothing */
+            else {
+                card.style['border-radius'] = '0px'
+                card.style['box-shadow'] = ''
+                card.style['-webkit-box-shadow'] = ''
+                card.style['-moz-box-shadow'] = ''
+            }
+        }
+    }
+
+    const handleClickCourse = (e, course, index) => {
         const catId = course.category
         const courseId = course.id
 
         /** -- Change color targeting the clicked category + sign. -- */
-
-        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
         const _selCatID = selCatID.map(sel => false)
         setSelCatID([..._selCatID])
 
-        // const catid = cat[0]
-        // const catEle = document.getElementById('add_update_category_' + catid + '_' + previousIndex)
-        // _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
-        // console.log('previousIndex=', previousIndex, _selCatID)
 
-        // console.log('previousIndex=', previousIndex)
         setIsEditMode(false)
         setIsAddMode(false)
-        /** Reset previous outline to nothing */
-        if (clickedCourseInfo.foundCard) {
-            clickedCourseInfo.foundCard.style['box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
-        }
 
-        /** Find all .course__edit_card_outline class names and select only one which contains the 
-         *  clicked element (e.target)
-         */
-        const course__edit_card_outline = document.querySelectorAll('.course__edit_card_outline')
-        let foundCard = null
-        for (let i = 0; i < course__edit_card_outline.length; i++) {
-            if (course__edit_card_outline[i].contains(e.target)) {
-                foundCard = course__edit_card_outline[i]
-                break
-            }
-        }
+        outlinedCourseCard(course.id)
 
-        /** Once find the clicled element and highlight outline(box-shadow) */
-        if (foundCard) {
-
-            const shadowColor = '0px 0px 0px 6px rgba(0, 200,200 , 0.95)'//'0px 0px 0px 6px rgba(255, 0, 0, 0.5)'
-
-            foundCard.style['border-radius'] = '5px'
-            foundCard.style['box-shadow'] = shadowColor
-            foundCard.style['-webkit-box-shadow'] = shadowColor
-            foundCard.style['-moz-box-shadow'] = shadowColor
-        }
+        dispatch(setPathCatID(catId))
+        dispatch(setPathCourseID(courseId))
         dispatch(setClickedChapter(null))
+
+        const foundCourse = coursesEnrolled.filter(course => course.id == courseId)
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
-        dispatch(setClickedCourse({ catId, courseId, foundCard, course }))
+        dispatch(setClickedCourse({ catId, courseId, foundCard: null, course }))
         // setClickedCourseInfo({ catId, courseId, foundCard, course })
-        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId,)// e.target, foundCard, (course__edit_card_outline))
+        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, 'foundCourse:', foundCourse, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
     }
+
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
-        // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
         console.log('....handleSuccessUpdated: ', previousIndex)
         /** -- Change color targeting the clicked category + sign. -- */
         if (previousIndex != null) {
@@ -295,17 +299,6 @@ const AddCourseScreen = () => {
             _selCatID[previousIndex] ? catEle.style.background = 'rgb(0, 86, 89)' : catEle.style.background = 'rgb(0, 46, 49)'
             // console.log('previousIndex=', previousIndex, _selCatID)
         }
-
-        /** Reset previous outline to nothing */
-        if (clickedCourseInfo.foundCard) {
-            clickedCourseInfo.foundCard.style['box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
-        }
-        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
-        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
-        // setIsUpdatedCourse(true)
-
         if (status) {
             const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
             updateCourseSequenceInCategory(catID, addedCat?.course_list_sequence)
@@ -314,7 +307,6 @@ const AddCourseScreen = () => {
         setIsUpdatedCourse(status)
         setIsEditMode(false)
         setIsAddMode(false)
-
     }
 
     const handleSuccessCreatedCourse = (status, courseID, catID, teacherID) => {
@@ -332,14 +324,7 @@ const AddCourseScreen = () => {
             // console.log('previousIndex=', previousIndex, _selCatID)
         }
 
-        /** Reset previous outline to nothing */
-        if (clickedCourseInfo.foundCard) {
-            clickedCourseInfo.foundCard.style['box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-webkit-box-shadow'] = ''
-            clickedCourseInfo.foundCard.style['-moz-box-shadow'] = ''
-        }
-        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
-        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
+        dispatch(setPathCourseID(courseID))
         setIsUpdatedCourse(true)
 
         if (status) {
@@ -367,16 +352,20 @@ const AddCourseScreen = () => {
         setIsUpdatedCourse(status)
         setIsEditMode(false)
         setIsAddMode(false)
-        dispatch(setClickedCourse({ catId: null, courseId: null, foundCard: null, course: null }))
-        // setClickedCourseInfo({ catId: null, courseId: null, foundCard: null, course: null })
-        // setIsUpdatedCourse(true)
-    }
 
+    }
+    /** --------------------------- */
     useEffect(() => {
         // console.log('categories', categories, categories.length, selCatID)
         // console.log('--fetchEnrolledCourses:', courses, ', categories: ', categories, categories?.filter(cat => cat[0] == 1)[0][4].course_list_sequence)// && courses?.sort((a, b) => a.course_no >= b.course_no ? -1 : 1))
         if (categories)
             setSelCatID(new Array(categories.length).fill(false))
+        if (courseID && catID && coursesEnrolled) {
+
+            outlinedCourseCard(courseID)
+            const foundCourse = coursesEnrolled.filter(course => course.id == courseID)
+            dispatch(setClickedCourse({ catId: catID, courseId: courseID, course: foundCourse[0] }))
+        }
     }, [categories, isUpdatedCourse, coursesEnrolled])
 
     // useEffect(() => {
@@ -392,7 +381,7 @@ const AddCourseScreen = () => {
             fetchAllCourses()
         }
     }, [allCategories])
-    console.log('<<< Refresh - AddCourseScreen: clickedCourseInfo', clickedCourseInfo, ',coursesEnrolled:', coursesEnrolled)
+    console.log('<<< Refresh - AddCourseScreen: clickedCourse', clickedCourse, ',coursesEnrolled:', coursesEnrolled)
     return (
 
         <div className='add_update_course__screen'>
@@ -410,9 +399,9 @@ const AddCourseScreen = () => {
                                     <div><span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}</div>
                                     <div className='svg_icon'>
                                         {/* -- delete sign -- */}
-                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleDeleteCourse(e, catId, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
+                                        {selCatID[index] || clickedCourse?.catId == catId && <svg onClick={e => handleDeleteCourse(e, catId, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
                                         {/* -- edit sign -- */}
-                                        {selCatID[index] || clickedCourseInfo?.catId == catId && <svg onClick={e => handleUpdateCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
+                                        {selCatID[index] || clickedCourse?.catId == catId && <svg onClick={e => handleUpdateCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                                         {/*-- add expend + sign --*/}
                                         {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
                                         {/* close add - sign */}
@@ -420,7 +409,7 @@ const AddCourseScreen = () => {
                                     </div>
                                 </div>
                                 {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessCreatedCourse={handleSuccessCreatedCourse} />}
-                                {selCatID[index] && isEditMode && <UpdateCourse clickedCourseInfo={clickedCourseInfo} handleSuccessUploading={handleSuccessUpdated} />}
+                                {selCatID[index] && isEditMode && <UpdateCourse clickedCourse={clickedCourse} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
                             {/** When delete button clicked on course it pops up */}
                             {dialogDeleteCourse.isLoading && <DialogBox
@@ -432,11 +421,11 @@ const AddCourseScreen = () => {
                                 {
                                     coursesEnrolled && coursesEnrolled
                                         ?.filter((course) => course.category == catId)
-                                        ?.map((course) => {
+                                        ?.map((course, index) => {
                                             // console.log('catId:', catId, ', course: ', course)
                                             return (
                                                 <div key={course.id} className='item'>
-                                                    <CourseEditCard cat={cat} course={course} isTeacher={true} handleClickCourse={handleClickCourse} />
+                                                    <CourseEditCard course={course} index={index} handleClickCourse={handleClickCourse} />
                                                 </div>
                                             )
                                         })
@@ -445,8 +434,8 @@ const AddCourseScreen = () => {
                             {/** * When the course card clicked, this div element populates for adding and modifying chapter. */}
                             <div>
                                 {
-                                    (catId == clickedCourseInfo.catId) && (<div >
-                                        {/* <h1>{clickedCourseInfo.catId}, {clickedCourseInfo.courseId}</h1> */}
+                                    (catId == clickedCourse.catId) && (<div >
+                                        {/* <h1>{clickedCourse.catId}, {clickedCourse.courseId}</h1> */}
                                         <AddChapter catTitle={catTitle} userId={user.id} teacherId={1} />
                                     </div>)
                                 }

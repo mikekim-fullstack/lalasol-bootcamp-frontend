@@ -4,13 +4,13 @@ import { useSelector } from 'react-redux'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus } from '../slices/courseSlice'
 import axios from 'axios'
 import './AddCourse.css'
-const UpdateCourse = ({ showLabel, clickedCourseInfo, handleSuccessUploading }) => {
+const UpdateCourse = ({ showLabel, clickedCourse, handleSuccessUploading }) => {
     const navigate = useNavigate()
     const [inputData, setInputData] = useState({
-        category: clickedCourseInfo?.catId,
+        category: clickedCourse?.catId,
 
-        title: clickedCourseInfo?.course?.title,
-        description: clickedCourseInfo?.course?.description,
+        title: clickedCourse?.course?.title,
+        description: clickedCourse?.course?.description,
         course_image: '',
     })
     const [uploadSuccess, setUploadSuccess] = useState(false)
@@ -29,7 +29,7 @@ const UpdateCourse = ({ showLabel, clickedCourseInfo, handleSuccessUploading }) 
         // return
         axios({
             method: 'PATCH',
-            url: axios.defaults.baseURL + '/api/course-update/' + clickedCourseInfo?.course?.id,
+            url: axios.defaults.baseURL + '/api/course-update/' + clickedCourse?.course?.id,
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
@@ -44,7 +44,7 @@ const UpdateCourse = ({ showLabel, clickedCourseInfo, handleSuccessUploading }) 
 
                 setUploadSuccess(true)
                 handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
-                console.log('onSubmitUpdateCourseForm:', res)
+                console.log('onSubmitUpdateCourseForm:', res.data)
 
             })
 
@@ -59,7 +59,7 @@ const UpdateCourse = ({ showLabel, clickedCourseInfo, handleSuccessUploading }) 
         //     .then(res => console.log(res))
         //     .catch(res => console.log('onSubmitUpdateCourseForm--error: ', res.response.data))
     }
-    console.log('clickedCourseInfo: ', clickedCourseInfo)
+    console.log('--UpdateCourse-clickedCourse: ', clickedCourse)
     const onHandleInputChange = (e) => {
         if (e.target.name == 'course_image') {
             setInputData({ ...inputData, [e.target.name]: e.target.files[0] })
@@ -84,7 +84,7 @@ const UpdateCourse = ({ showLabel, clickedCourseInfo, handleSuccessUploading }) 
                 <div className='group-2'>
                     <div className='input_file'>
                         <input onChange={onHandleInputChange} ref={fileRef} name='course_image' type='file' accept="image/*" />
-                        <label >{inputData?.course_image ? '*Image' : clickedCourseInfo?.course?.course_image?.split('/').pop().length > 6 ? clickedCourseInfo?.course?.course_image?.split('/').pop().substr(0, 6) + '...' : clickedCourseInfo?.course?.course_image?.split('/').pop()}</label>
+                        <label >{inputData?.course_image ? '*Image' : clickedCourse?.course?.course_image?.split('/').pop().length > 6 ? clickedCourse?.course?.course_image?.split('/').pop().substr(0, 6) + '...' : clickedCourse?.course?.course_image?.split('/').pop()}</label>
                     </div>
 
                     <button type='submit'>Update</button>

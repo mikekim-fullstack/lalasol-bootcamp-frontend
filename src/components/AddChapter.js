@@ -21,7 +21,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
-    const clickedCourseInfo = useSelector(getClickedCourse)
+    const clickedCourse = useSelector(getClickedCourse)
 
     const [chapterLists, setChapterLists] = useState(null)
     const [createChapter, setCreateChapter] = useState(false)
@@ -52,7 +52,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         chapter: null,
     });
     const [inputData, setInputData] = useState({
-        // course: clickedCourseInfo?.course?.id,
+        // course: clickedCourse?.course?.id,
         name: '',
         description: '',
     })
@@ -108,11 +108,12 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
     /** Gell all chapters by userID and courseID from server */
     const fetchChapters = async (updated) => {
+        if (!userId || !clickedCourse?.course?.id) return
         setCreateChapter(false)
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
+        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
             .then(res => {
 
-                console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourseInfo?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourseInfo?.course?.id}`)
+                console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourse?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
                 const chapterListData = res.data
 
                 setChapterLists(chapterListData)
@@ -142,7 +143,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
 
             })
-            .catch(err => console.log('error: ', err))
+            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`, err))
     }
 
 
@@ -207,7 +208,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 .then(res => {
 
                     // -- Remove map(deletedCourseID:orderNumber) from course_list_sequence. ---
-                    const chapterListSequence = clickedCourseInfo?.course?.chapter_list_sequence
+                    const chapterListSequence = clickedCourse?.course?.chapter_list_sequence
                     const seqChapterData = { "chapter_list_sequence": {} }
                     let maxVal = -1
                     if (chapterListSequence) {
@@ -278,7 +279,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
     const updateCourseChapterSequence = async (chapterSeqData) => {
         await axios({
             method: 'PATCH',
-            url: axios.defaults.baseURL + '/api/course-update/' + clickedCourseInfo?.course?.id,
+            url: axios.defaults.baseURL + '/api/course-update/' + clickedCourse?.course?.id,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -286,12 +287,12 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         })
             .then(res => {
                 // handleSuccessUpdateChapterSeq(true)
-                dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.courseId, foundCard: clickedCourseInfo.foundCard, course: res.data }))
+                dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, foundCard: clickedCourse.foundCard, course: res.data }))
                 // --- Reset input fields. ---
                 // setInputData({ ...inputData, title: '', description: '' })
                 // fileRef.current.value = "";//Resets the file name of the file input 
 
-                // const _clickedCouseInfo = clickedCourseInfo
+                // const _clickedCouseInfo = clickedCourse
                 // _clickedCouseInfo.course.chapter_list_sequence = chapterSeqData
                 // const _clickedCourseInfo = {}
                 // copyObject(_clickedCourseInfo)
@@ -302,7 +303,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
                 // setUploadSuccess(true)
                 //status, courseID, catID, teacherID
-                // handleSuccessUploading(true, clickedCourseInfo?.courseId, clickedCourseInfo?.catId, teacherId)
+                // handleSuccessUploading(true, clickedCourse?.courseId, clickedCourse?.catId, teacherId)
 
                 console.log('onSubmitUpdateCourseForm:', res.data)
 
@@ -327,7 +328,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         let formData = new FormData()
 
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
-        formData.append('course', clickedCourseInfo?.course?.id)
+        formData.append('course', clickedCourse?.course?.id)
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
         console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({
@@ -343,7 +344,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 setInputData({ name: '', description: '' })
 
                 // --------------------------------------------------------
-                const chapterListSequence = clickedCourseInfo?.course?.chapter_list_sequence
+                const chapterListSequence = clickedCourse?.course?.chapter_list_sequence
                 const seqChapterData = { "chapter_list_sequence": {} }
                 let maxVal = -1
                 if (chapterListSequence) {
@@ -427,14 +428,14 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
         fetchChapters(true)
 
-        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
-    }, [clickedCourseInfo?.course?.id, isChapterUpdated, clickedCourseInfo?.course?.chapter_list_sequence])
+        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
+    }, [clickedCourse?.course?.id, isChapterUpdated, clickedCourse?.course?.chapter_list_sequence])
     useEffect(() => {
         // setClickedChapter(null)
 
         fetchChapters(true)
 
-        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourseInfo?.course?.id)
+        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
     }, [chapterUpdatedStatus])
 
     useEffect(() => {
@@ -519,7 +520,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
         setOperateChapter(true)
-    }, [clickedCourseInfo])
+    }, [clickedCourse])
 
     useEffect(() => {
         // const txHeight = 16;
@@ -560,11 +561,11 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
         let _course = {}
         const setKey = 'chapter_list_sequence'
         const setValue = null
-        const objectCourse = clickedCourseInfo.course
+        const objectCourse = clickedCourse.course
         Object.keys(objectCourse).map(key => {
             if (typeof (objectCourse[key]) == 'object') {
                 _course[key] = {}
-                // console.log('setkey', setKey, setValue, key, typeof (clickedCourseInfo[key]) == 'object')
+                // console.log('setkey', setKey, setValue, key, typeof (clickedCourse[key]) == 'object')
 
                 if (key == setKey) {
 
@@ -586,7 +587,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
             }
 
         })
-        // dispatch(setClickedCourse({ catId: clickedCourseInfo.catId, courseId: clickedCourseInfo.course.id, foundCard: clickedCourseInfo.foundCard, course: _course }))
+        // dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.course.id, foundCard: clickedCourse.foundCard, course: _course }))
         // fetchChapters()
         // copyObject(_course, 'chapter_list_sequence', null)
         // _course.course.chapter_list_sequence = null
@@ -604,7 +605,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
                 <div className='chapters_view'>
                     {/* -- Display chapter Header Bar. --- */}
                     <div className='title'>
-                        <div><span className='t1'>Manage Chapters</span> On<span className='t2'>{clickedCourseInfo?.course?.title}</span> Course</div>
+                        <div><span className='t1'>Manage Chapters</span> On<span className='t2'>{clickedCourse?.course?.title}</span> Course</div>
                         <div className='svg_icon'>
                             {/* -- delete sign -- */}
                             {(chapterLists?.length > 0 && operateChapter) && <svg onClick={e => handleDeleteChapter(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
