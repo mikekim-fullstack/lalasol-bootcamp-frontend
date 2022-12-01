@@ -304,7 +304,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                         <div
                             className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`}
                             onClick={(e) => handleCourseClick(e, course.id)}>
-                            <img width='30px' height='30px' src={axios.defaults.baseURL + course.course_image}></img>
+                            <img width='30px' height='30px' src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
                             <span>{course.title}</span>
 
                         </div>

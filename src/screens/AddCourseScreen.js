@@ -49,23 +49,24 @@ const AddCourseScreen = () => {
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
-    const teacherID = 1
+
     const fetchAllCourses = async () => {
+        const url = `/api/courses-all-by-teacher/${user?.id}`
         await axios({
             method: 'GET',
-            url: `/api/courses-all-by-teacher/${teacherID}`,// user id should be teacher id
+            url,// user id should be teacher id
             headers: {
                 'Content-Type': 'Application/Json'
             },
         })
             .then(res => {
 
-                console.log('----- setCoursesEnrolledStatus', res.data, categories)
+                console.log('----- AddCourseScreen-fetchAllCourses', res.data, categories)
                 dispatch(setCoursesEnrolledStatus({ 'categories': allCategories, 'courses': res.data }))
                 setIsUpdatedCourse(false)
 
             })
-            .catch(error => console.log('error-/api/courses-enrolled-status/: ', user?.id, error))
+            .catch(error => console.log('error: ' + url, user?.id, error))
     }
     const fetchAllCategories = async () => {
         axios({
@@ -408,7 +409,7 @@ const AddCourseScreen = () => {
                                         {selCatID[index] && <svg onClick={e => handleClickCloseCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                                     </div>
                                 </div>
-                                {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={1} course_no={1} handleSuccessCreatedCourse={handleSuccessCreatedCourse} />}
+                                {selCatID[index] && isAddMode && <AddCourse category_id={catId} teacher_id={user.id} course_no={1} handleSuccessCreatedCourse={handleSuccessCreatedCourse} />}
                                 {selCatID[index] && isEditMode && <UpdateCourse clickedCourse={clickedCourse} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
                             {/** When delete button clicked on course it pops up */}
@@ -436,7 +437,7 @@ const AddCourseScreen = () => {
                                 {
                                     (catId == clickedCourse.catId) && (<div >
                                         {/* <h1>{clickedCourse.catId}, {clickedCourse.courseId}</h1> */}
-                                        <AddChapter catTitle={catTitle} userId={user.id} teacherId={1} />
+                                        <AddChapter catTitle={catTitle} userId={user.id} teacherId={user.id} />
                                     </div>)
                                 }
                             </div>

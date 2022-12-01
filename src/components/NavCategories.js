@@ -11,7 +11,8 @@ import axios from 'axios'
 import { Sync } from '@mui/icons-material'
 
 const NavCategoreis = () => {
-    const [pathCatID, courseID, chapterID] = useSelector(getPathID)
+    // const [pathCatID, courseID, chapterID] = useSelector(getPathID)
+    const pathID = useSelector(getPathID)
     const user = useSelector(getUser)
     // const pathCatID = useSelector(getPathCatID)
     // const sel = useSelector(state => { console.log('test'); return state.category.data; }, shallowEqual)
@@ -55,7 +56,8 @@ const NavCategoreis = () => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
 
-        await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
+        // await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
+        await axios.get(user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}` : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`,
             {
                 headers: {
                     "Content-type": "Application/Json",
@@ -117,28 +119,28 @@ const NavCategoreis = () => {
             console.log('-----_sortedCat----:', _sortedCat)
             dispatch(setCat(_sortedCat))
             setSortedCat(_sortedCat)
-            if (pathCatID && courseID && chapterID) {
-                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)
+            if (pathID?.catID && pathID?.courseID && pathID?.chapterID) {
+                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathID.catID)
                 // console.log('-----_sortedCat----:', _sortedCat, selectedCat)
-                updateCategory(pathCatID, _selectedCat[0])
+                updateCategory(pathID?.catID, _selectedCat[0])
             }
-            console.log('-- pathCatID', pathCatID, typeof (pathCatID), ', end')
+            console.log('-- pathCatID', pathID?.catID, typeof (pathID?.catID), ', end')
 
             // -- Initially after user login, by default select the first category. ---
-            if (typeof (pathCatID) == 'undefined') {
+            if (pathID?.catID == null) {
                 console.log('No pathCatId: ')
                 selectCategory(_sortedCat[0], false)
             }
             else if (selectedCat == null) {
 
-                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathCatID)[0]
+                const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathID?.catID)[0]
                 selectCategory(_selectedCat, false)
                 console.log('Yes pathCatId: ', _selectedCat)
             }
 
         }
         fetchChapterCateory()
-        console.log('-----Nav Path----:', pathCatID, courseID, chapterID)
+        console.log('-----Nav Path----:', pathID)
     }, [categories])
 
     const getSortedCourseID = (catID) => {
@@ -194,6 +196,7 @@ const NavCategoreis = () => {
 
         console.log('selectedCat: ', selectedCat)
     }, [selectedCat])
+    console.log('navCategories: pathCatID && courseID && chapterID', pathID)
     /*
     // //-- Detect Window is refreshed. --
     useEffect(() => {
@@ -223,7 +226,7 @@ const NavCategoreis = () => {
                 // console.log(category)
                 return <button key={category[0]}
                     // className={`nav__btn_category btn_selected`}
-                    className={`nav__btn_category ${pathCatID == category[0] && 'btn_selected'}`}
+                    className={`nav__btn_category ${pathID?.catID == category[0] && 'btn_selected'}`}
                     onClick={handleSelectCategoryClick}
                     name={index}
                     dangerouslySetInnerHTML={{ __html: (category[1].replace(' ', '&nbsp;')) }}>

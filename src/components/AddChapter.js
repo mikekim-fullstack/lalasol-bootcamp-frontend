@@ -15,7 +15,7 @@ import { ContentCutTwoTone } from '@mui/icons-material'
 import PreviewContent from './PreviewContent'
 import AddContent from './AddContent'
 import DialogBox from './DialogBox'
-const AddChapter = ({ catTitle, userId, teacherId }) => {
+const AddChapter = ({ teacherId }) => {
 
     const dispatch = useDispatch()
     const clickedChapter = useSelector(getClickedChapter)
@@ -108,12 +108,20 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
     /** Gell all chapters by userID and courseID from server */
     const fetchChapters = async (updated) => {
-        if (!userId || !clickedCourse?.course?.id) return
+        if (!clickedCourse?.course?.id) return
         setCreateChapter(false)
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
+        const url = axios.defaults.baseURL + `/api/course-chapter/${clickedCourse?.course?.id}`
+        // await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
+        await axios({
+            method: 'GET',
+            url,
+            // headers: {
+            //     'Content-Type': 'Application/json'
+            // }
+        })
             .then(res => {
 
-                console.log('fetchChapters: userId-', userId, ', courseId-', clickedCourse?.course?.id, ', response: ', res.data, ', endpoint-', `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
+                console.log('fetchChapters:  courseId-', clickedCourse?.course?.id, ', response: ', res.data, ', endpoint-', url)
                 const chapterListData = res.data
 
                 setChapterLists(chapterListData)
@@ -143,7 +151,7 @@ const AddChapter = ({ catTitle, userId, teacherId }) => {
 
 
             })
-            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`, err))
+            .catch(err => console.log('error: ' + url, err))
     }
 
 
