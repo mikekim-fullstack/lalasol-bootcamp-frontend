@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const courseSlice = createSlice({
-    initialState: { data: null, enrolledData: null, clickedCourseData: { catId: null, courseId: null, foundCard: null, course: null, cardIndex: null } },
+    initialState: { data: null, enrolledData: null, clickedCourseData: { catId: null, courseId: null, course: null, cardIndex: null } },
     name: 'courses',
     reducers: {
         setCourses: (state, action) => {

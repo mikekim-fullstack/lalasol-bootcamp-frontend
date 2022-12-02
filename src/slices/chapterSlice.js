@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+
+
 const chapterSlice = createSlice({
     initialState: {
         data: null,
+        lists: null,
         clickedChapter: null,
         category: null,
         clickedContent: null,
@@ -12,18 +15,40 @@ const chapterSlice = createSlice({
     },
     name: 'chapters',
     reducers: {
+
+        setChapterLists: (state, action) => {
+            // console.log('setChapterList: ', action.payload)
+            state.lists = action.payload
+        },
         setChapters: (state, action) => {
-            // console.log('setChapter-slice:', action.payload)
+
+            const chapters = action.payload?.res_data
+            const seq = action.payload?.chapter_list_sequence
+
+            console.log('setChapter-slice:', action.payload, chapters, seq)
+            const sortedChapters = []
 
             // --- sort chapters by chapter_no in the ascending order. --- 
-            if (action.payload && action.payload.length > 1) {
+            // const seq = action.payload.content_list_sequence
+            if (chapters && chapters.length > 0) {
+                if (seq) {
+                    const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
 
-                const unSortedChapters = action.payload
-                state.data = unSortedChapters.sort((a, b) => a.chapter_no > b.chapter_no ? 1 : (a.chapter_no < b.chapter_no) ? -1 : 0)
+                    sortedSeqKeys?.forEach(key => {
+                        const foundChapter = chapters.filter(chapter => chapter.id == Number(key))
+                        foundChapter.length == 1 && sortedChapters.push(foundChapter[0])
+                    })
+                    state.data = sortedChapters
+                    console.log('sortedChapters: ', sortedChapters)
+                }
+                else {
+                    state.data = chapters
+                }
             }
             else {
-                state.data = action.payload
+                state.data = null
             }
+
 
         },
         setClickedChapter: (state, action) => {
@@ -240,7 +265,9 @@ export const { setChapters, setClickedChapter,
     setChapterUpdatedStatus,
     setBackupContentAction,
     setRestoreContentAction,
+    setChapterLists,
 } = chapterSlice.actions
+export const getChapterLists = (state) => state.chapters.lists
 export const getChapters = (state) => state.chapters.data
 export const getChapter = (state, id) => {
     if (state.chapters?.data) {

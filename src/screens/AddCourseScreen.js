@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus, setClickedCourse, getClickedCourse } from '../slices/courseSlice'
-import { setChapters, getChapters, setClickedChapter, setChapterUpdatedStatus, getChapterUpdatedStatus } from '../slices/chapterSlice'
+import { setChapters, getChapters, setClickedChapter, setChapterUpdatedStatus, getChapterUpdatedStatus, getChapterLists } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, getPathCatID, setPathCourseCardIndex, getPathCourseCardIndex, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 // import { setPathCatID, setPathCourseID, getPathCatID, getPathCourseID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
@@ -31,6 +31,7 @@ const AddCourseScreen = () => {
     const chapterUpdatedStatus = useSelector(getChapterUpdatedStatus)
     const courseID = useSelector(getPathCourseID)
     const catID = useSelector(getPathCatID)
+    const chapterLists = useSelector(getChapterLists)
 
 
     const [selCatID, setSelCatID] = useState([])
@@ -46,6 +47,13 @@ const AddCourseScreen = () => {
     const [isEditMode, setIsEditMode] = useState(false)
     const [isAddMode, setIsAddMode] = useState(false)
     const [previousIndex, setPreviousIndex] = useState(null)
+
+
+    // test...
+    // console.log('---AddCourseScreen ---chapterLists: ', chapterLists)
+    // useEffect(() => {
+
+    // }, [chapterLists])
 
     // console.log('---add_courseScreen ---categories: ', categories)
     // console.log('---add_courseScreen ---courses: ', coursesEnrolled)
@@ -278,14 +286,21 @@ const AddCourseScreen = () => {
         outlinedCourseCard(course.id)
 
         dispatch(setPathCatID(catId))
+
         dispatch(setPathCourseID(courseId))
+        dispatch(setPathChapterID(null))
+
         dispatch(setClickedChapter(null))
 
-        const foundCourse = coursesEnrolled.filter(course => course.id == courseId)
+        // const foundCourse = coursesEnrolled.filter(course => course.id == courseId)
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
-        dispatch(setClickedCourse({ catId, courseId, foundCard: null, course }))
+        // dispatch(setClickedCourse({ catId, courseId, course: foundCourse && foundCourse[0] }))
+        dispatch(setClickedCourse({ catId, courseId, course }))
         // setClickedCourseInfo({ catId, courseId, foundCard, course })
-        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, 'foundCourse:', foundCourse, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
+        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
+
+
+
     }
 
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
@@ -367,7 +382,7 @@ const AddCourseScreen = () => {
             const foundCourse = coursesEnrolled.filter(course => course.id == courseID)
             dispatch(setClickedCourse({ catId: catID, courseId: courseID, course: foundCourse[0] }))
         }
-    }, [categories, isUpdatedCourse, coursesEnrolled])
+    }, [categories, coursesEnrolled])
 
     // useEffect(() => {
     //     if (isUpdatedCourse) {

@@ -71,7 +71,9 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                 // scrolling="no"
                                 className='iframe__view'
                                 // src={axios.defaults.baseURL + content.file}
-                                src={(content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.file) : axios.defaults.baseURL + content.file}
+                                src={(content.action == 'updated' || content.action == 'created') ?
+                                    URL.createObjectURL(content?.file) :
+                                    (content.file.includes('http') ? content.file : axios.defaults.baseURL + content.file)}
                                 title="description">
 
                             </iframe>
@@ -138,7 +140,10 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
                         {
-                            const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : axios.defaults.baseURL + content?.image
+                            // const imageURL = 
+                            const src = (content.action == 'updated' || content.action == 'created') ?
+                                URL.createObjectURL(content?.image)
+                                : (content?.image?.includes('http') ? content?.image : axios.defaults.baseURL + content?.image)
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
                             console.log('image: ', src, content)
                             // return;

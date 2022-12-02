@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
-import { setCourses, getCourses, getCoursesEnrolledStatus } from '../slices/courseSlice'
-import { setChapters, getChapters } from '../slices/chapterSlice'
+import { setCoursesEnrolledStatus, getCourses, getCoursesEnrolledStatus, getClickedCourse, setClickedCourse } from '../slices/courseSlice'
+import { setChapters, getChapters, getChapterLists } from '../slices/chapterSlice'
 import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
@@ -17,15 +17,18 @@ const HomeScreen = () => {
     // const courses = useSelector(getCourses)
     const coursesEnrolled = useSelector(getCoursesEnrolledStatus)
     const chapters = useSelector(getChapters)
+    const chapterLists = useSelector(getChapterLists)
+    const clickedCourse = useSelector(getClickedCourse)
 
-    // console.log('---HomeScreen ---categories: ', categories)
     // console.log('---HomeScreen ---courses: ', coursesEnrolled)
+
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
-
-        await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
+        const url = user.role == 'teacher' ? `/api/courses-all-by-teacher/${user?.id}` :
+            axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`
+        await axios.get(url,
             {
                 headers: {
                     "Content-type": "Application/Json",
@@ -34,19 +37,23 @@ const HomeScreen = () => {
         )
             .then(res => {
                 // console.log('--fetchEnrolledCourses:', res.data)
-                dispatch(setCourses(res.data))
+                // dispatch(setCourses(res.data))
+                dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
                 console.log('done-homescreen')
             })
             .catch(err => console.log('error: ' + `/api/student-course-enrollment/${userId}/${selectedCatId}`, err))
     }
 
-    const fetchChapters = async (course_id) => {
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
+    const fetchChapters = async (course) => {
+        const url = user?.role == 'teacher' ? axios.defaults.baseURL + `/api/course-chapter/${course.id}`
+            : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
+        await axios.get(url)
             .then(res => {
                 // console.log('fetchChapters: ', res.data)
-                dispatch(setChapters(res.data))
+                // dispatch(setChapters(res.data))
+                dispatch(setChapters({ chapter_list_sequence: course?.chapter_list_sequence, res_data: res.data }))
             })
-            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`, err))
+            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
     }
 
 
@@ -55,22 +62,14 @@ const HomeScreen = () => {
         const catId = course.category
         const courseid = course.id
         // console.log('handleCourseClick: ', cat, catId, courseid)
+        dispatch(setClickedCourse({ catId: catId, courseId: courseid, course }))
 
-        // const _sortedCat = sortedCat[e.target.name]
-        // console.log('handleSelectCategoryClick: ', _sortedCat)
-
-        // -- For letting the submenu(sideBar) to only show the subject lists not showing 
-        //    previous items of selected subject. --
-        // const catId = _sortedCat[0]
-        // const catTitle = _sortedCat[1]
-        await fetchEnrolledCourses(user.id, catId)
 
         dispatch(setSelectedCat(cat))
         dispatch(resetPathAll())
         dispatch(setPathCatID(catId))
-        dispatch(setChapters(null))
 
-        await fetchChapters(courseid)
+        await fetchChapters(course)
         dispatch(setPathCourseID(courseid))
         dispatch(setSelectedCatStatus(true))
     }
@@ -87,7 +86,9 @@ const HomeScreen = () => {
                                 <span>{cat[1]}</span>&nbsp;-&nbsp;{cat[2]}
                             </div>
                             <div className='courses'>
+                                {/* {console.log('-------- courses:coursesEnrolled -------', coursesEnrolled)} */}
                                 {
+
                                     coursesEnrolled && coursesEnrolled
                                         .filter((course) => course.category == cat[0])
                                         .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
@@ -97,24 +98,6 @@ const HomeScreen = () => {
                                         })
                                 }
                             </div>
-                            {/* <div className='courses'>
-                                {
-                                    coursesEnrolled && coursesEnrolled.filter((course) => course.category == cat[0]).map((course) => {
-                                        // console.log('course: ', course)
-                                        return <div key={course.id}
-                                            className={`course_outline`}
-                                            onClick={(e) => handleCourseClick(e, cat, course)}>
-                                            <div className={`course_card`}>
-                                                <div className='image'>
-                                                    <img width='36px' height='36px' className={course.enrolled ? '' : 'svg_image_gray'} src={axios.defaults.baseURL + course.course_image}></img>
-                                                </div>
-                                                <div className='title'><span>{course.title}</span></div>
-                                            </div>
-
-                                        </div>
-                                    })
-                                }
-                            </div> */}
                         </div>
 
                     })

@@ -8,9 +8,11 @@ import {
     getContentAction, getContentActionById, deleteContentAction,
     createContentAction, updateContentActionById, setContentAction,
     deleteContentAddAction, setChapterUpdatedStatus, getChapterUpdatedStatus,
-    setBackupContentAction, setRestoreContentAction,
+    setBackupContentAction, setRestoreContentAction, setChapters
 
 } from '../slices/chapterSlice'
+
+import { setPathContentID, getPathID } from '../slices/pathSlice'
 import './AddContent.css'
 import PreviewContent from './PreviewContent'
 import DialogBox from './DialogBox'
@@ -18,6 +20,7 @@ import { Form } from 'react-router-dom'
 
 const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const dispatch = useDispatch()
+    const pathID = useSelector(getPathID)
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
@@ -56,31 +59,31 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const paragraphRef = useRef(null)
     const codeRef = useRef(null)
 
-    /*
-        //------------------------------------
-        const updateChapterContentSequence = async (chapterSeqData) => {
-            await axios({
-                method: 'PATCH',
-                url: axios.defaults.baseURL + '/api/course-update/' + clickedCourse?.course?.id,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: chapterSeqData
+    const fetchChapters = async () => {
+        if (!clickedCourse?.course?.id) return
+        // setCreateChapter(false)
+        const url = axios.defaults.baseURL + `/api/course-chapter/${clickedCourse?.course?.id}`
+        await axios({
+            method: 'GET',
+            url,
+            // headers: {
+            //     'Content-Type': 'Application/json'
+            // }
+        })
+            .then(res => {
+
+                console.log('fetchChapters:  course-', clickedCourse?.course, ', response: ', res.data, ', endpoint-', url)
+                // const chapterListData = res.data
+
+
+                dispatch(setChapters({ chapter_list_sequence: clickedCourse?.course?.chapter_list_sequence, res_data: res.data }))
+
+
+                // setIsCompleteFetchChapter(!isCompleteFetchChapter)
+
             })
-                .then(res => {
-                    // handleSuccessUpdateChapterSeq(true)
-                    dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, foundCard: clickedCourse.foundCard, course: res.data }))
-                    setIsChapterUpdated(true)
-                    console.log('onSubmitUpdateCourseForm:', res.data)
-                })
-    
-                .catch(res => {
-    
-                    console.log('onSubmitUpdateCourseForm--error: ', res);
-                })
-    
-        }
-        */
+            .catch(err => console.log('error: ' + url, err))
+    }
     // --------------------------------------------------
     const handleDeleteContentResponse = (choose, messageData) => {
         console.log('handleDeleteContentResponse: ', choose, messageData)
@@ -125,9 +128,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
     const handleUpdateContent = (e) => {
         // console.log('handleUpdateCourse-clickedContent', clickedContent)
-        // const copy_clickedContent = {}
-        // Object.keys(clickedContent).map(key => copy_clickedContent[key] = clickedContent[key])
-        // setCopidClickedContent(copy_clickedContent)
+        fetchChapters()
 
         dispatch(setBackupContentAction())
         // setInputContent({ file: null, url: null, text: null })
@@ -393,7 +394,39 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             return
         }
     }
+    /** Find current Content Card by the card index and cat ID */
+    const outlinedContentCard = (contentID) => {
+        console.log('outlinedChapterCard - contentID', contentID)
+        const content_card_outline = document.querySelectorAll('.add_chapter__component .content_lists_item')
+        const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
 
+        for (let i = 0; i < content_card_outline.length; i++) {
+
+            const card = content_card_outline[i]
+            const id = card.className.split(' ').pop()
+            /** Once find the clicled element and highlight outline(box-shadow) */
+            if (contentID && Number(id) == contentID) {
+                // card.style['border-radius'] = '5px'
+                card.style['box-shadow'] = shadowColor
+                card.style['-webkit-box-shadow'] = shadowColor
+                card.style['-moz-box-shadow'] = shadowColor
+            }
+            else if (contentID == null || typeof (contentID) == 'undefined') {
+                if (i == 0) {
+                    card.style['box-shadow'] = shadowColor
+                    card.style['-webkit-box-shadow'] = shadowColor
+                    card.style['-moz-box-shadow'] = shadowColor
+                }
+            }
+            /** Reset previous outline to nothing */
+            else {
+                // card.style['border-radius'] = '0px'
+                card.style['box-shadow'] = ''
+                card.style['-webkit-box-shadow'] = ''
+                card.style['-moz-box-shadow'] = ''
+            }
+        }
+    }
     const handleClickContent = (e, content) => {//clickedChapter?.content
         console.log('handleClickContent: ', content)
         /**
@@ -409,33 +442,32 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 linkInput.style.display = 'unset'
             }
         }
-        // else {
-        //     linkInput.innerHTML = ''
-        //     linkInput.style.display = 'none'
-        // }
+        outlinedContentCard(content.id)
+        dispatch(setPathContentID(content.id))
 
-
-        const contentListsEle = document.querySelectorAll('.add_chapter__component .content_lists_item')
-        let clickedEle = null
-        for (let i = 0; i < contentListsEle.length; i++) {
-            if (contentListsEle[i].contains(e.target)) {
-                clickedEle = contentListsEle[i]
-                break
-            }
-        }
-        if (previousClickedContent) {
-            previousClickedContent.style['box-shadow'] = ''
-            previousClickedContent.style['-webkit-box-shadow'] = ''
-            previousClickedContent.style['-moz-box-shadow'] = ''
-
-        }
-        if (clickedEle) {
-            const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-            clickedEle.style['box-shadow'] = shadowColor
-            clickedEle.style['-webkit-box-shadow'] = shadowColor
-            clickedEle.style['-moz-box-shadow'] = shadowColor
-            setPreviousClickedContent(clickedEle)
-        }
+        /*
+                const contentListsEle = document.querySelectorAll('.add_chapter__component .content_lists_item')
+                let clickedEle = null
+                for (let i = 0; i < contentListsEle.length; i++) {
+                    if (contentListsEle[i].contains(e.target)) {
+                        clickedEle = contentListsEle[i]
+                        break
+                    }
+                }
+                if (previousClickedContent) {
+                    previousClickedContent.style['box-shadow'] = ''
+                    previousClickedContent.style['-webkit-box-shadow'] = ''
+                    previousClickedContent.style['-moz-box-shadow'] = ''
+        
+                }
+                if (clickedEle) {
+                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+                    clickedEle.style['box-shadow'] = shadowColor
+                    clickedEle.style['-webkit-box-shadow'] = shadowColor
+                    clickedEle.style['-moz-box-shadow'] = shadowColor
+                    setPreviousClickedContent(clickedEle)
+                }
+                */
 
         dispatch(setClickedContent(content))
         /**
@@ -510,6 +542,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         })
             .then(res => {
                 console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
+                fetchChapters()
                 setTriggerUseEffect(!triggerUseEffect)
             })
             .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
@@ -615,17 +648,20 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         // console.log('inputFileLabel: ', inputFileLabel)
         // if (inputFileLabel && _clickedContent?.file) inputFileLabel.innerHTML = _clickedContent.file.split('/').pop()
 
+        /*
+                const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
+                console.log('contentListsEle: ', contentListsEle)
+                if (contentListsEle) {
+                    console.log(' --- contentListsEle: ---')
+                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+                    contentListsEle.style['box-shadow'] = shadowColor
+                    contentListsEle.style['-webkit-box-shadow'] = shadowColor
+                    contentListsEle.style['-moz-box-shadow'] = shadowColor
+                    setPreviousClickedContent(contentListsEle)
+                }
+                */
 
-        const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
-        console.log('contentListsEle: ', contentListsEle)
-        if (contentListsEle) {
-            console.log(' --- contentListsEle: ---')
-            const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-            contentListsEle.style['box-shadow'] = shadowColor
-            contentListsEle.style['-webkit-box-shadow'] = shadowColor
-            contentListsEle.style['-moz-box-shadow'] = shadowColor
-            setPreviousClickedContent(contentListsEle)
-        }
+        outlinedContentCard(pathID?.contentID)
         dispatch(setClickedContent(_clickedContent))
         /**
          * selectionRef.current.value is for initial value of select tag
@@ -653,7 +689,12 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             // dispatch(updateContentActionById({ catId: 1, id: 16, type: 'url', data: 'https:www.youtube.com' }))
 
             /** --2. Initialize Content with first one.-- */
-            contentAction.length > 0 && initSelectContent(contentAction[0])
+            if (contentAction.length > 0) {
+
+                const foundContent = contentAction.filter(content => content.id == pathID?.contentID)
+                if (foundContent.length == 1) initSelectContent(foundContent[0])
+                else initSelectContent(contentAction[0])
+            }
         }
 
     }, [clickedChapter, triggerUseEffect])
@@ -749,7 +790,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                             if (content.action != 'deleted') {
 
                                 return <div key={content.id} className='content_lists_block'>
-                                    <div className='content_lists_item' key={content.id} onClick={e => handleClickContent(e, content)}>
+                                    <div className={`content_lists_item ${content.id}`} key={content.id} onClick={e => handleClickContent(e, content)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
                                         <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>
                                     </div>

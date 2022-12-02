@@ -7,8 +7,10 @@ import {
     getClickedContent, getChapterCategory, resetContentAction,
     getContentAction, getContentActionById, deleteContentAction,
     createContentAction, updateContentActionById, setContentAction,
-    getChapterUpdatedStatus
+    getChapterUpdatedStatus, setChapters, getChapters,
 } from '../slices/chapterSlice'
+
+import { setPathChapterID, getPathID, setPathContentID } from '../slices/pathSlice'
 import './AddChapter.css'
 import EditChapter from './EditChapter'
 import { ContentCutTwoTone } from '@mui/icons-material'
@@ -18,12 +20,14 @@ import DialogBox from './DialogBox'
 const AddChapter = ({ teacherId }) => {
 
     const dispatch = useDispatch()
+    const pathID = useSelector(getPathID)
     const clickedChapter = useSelector(getClickedChapter)
     const chapterCategory = useSelector(getChapterCategory)
     const contentAction = useSelector(getContentAction)
     const clickedCourse = useSelector(getClickedCourse)
 
-    const [chapterLists, setChapterLists] = useState(null)
+    // const [chapterLists, setChapterLists] = useState(null)
+    const chapterLists = useSelector(getChapters)
     const [createChapter, setCreateChapter] = useState(false)
     const [previousClickedChapter, setPreviousClickedChapter] = useState(null)
     const [isCreateContentMode, setIsCreateContentMode] = useState(null)
@@ -84,26 +88,27 @@ const AddChapter = ({ teacherId }) => {
     }
     /** When refresh window it automatically selects the first chapter */
     const initSelectChapter = (_clickedChapter) => {
-        console.log('init-click Chapter:', _clickedChapter, ', clickedContent:', clickedContent)
+        console.log('init-click Chapter:', _clickedChapter, ', clickedContent:', clickedContent, ', pathID?.chapterID:', pathID?.chapterID)
         dispatch(setClickedChapter(_clickedChapter))
 
         /** -- Initially highlight the first chapter and make a sure the rest of chapters aren't highlighted. -- */
-        const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
-        const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+        outlinedChapterCard(pathID?.chapterID)
+        // const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
+        // const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
 
-        for (let i = 0; i < chapterListsEle.length; i++) {
-            if (i == 0) {
-                chapterListsEle[i].style['box-shadow'] = shadowColor
-                chapterListsEle[i].style['-webkit-box-shadow'] = shadowColor
-                chapterListsEle[i].style['-moz-box-shadow'] = shadowColor
-                setPreviousClickedChapter(chapterListsEle[i])
-            }
-            else {
-                chapterListsEle[i].style['box-shadow'] = ''
-                chapterListsEle[i].style['-webkit-box-shadow'] = ''
-                chapterListsEle[i].style['-moz-box-shadow'] = ''
-            }
-        }
+        // for (let i = 0; i < chapterListsEle.length; i++) {
+        //     if (i == 0) {
+        //         chapterListsEle[i].style['box-shadow'] = shadowColor
+        //         chapterListsEle[i].style['-webkit-box-shadow'] = shadowColor
+        //         chapterListsEle[i].style['-moz-box-shadow'] = shadowColor
+        //         setPreviousClickedChapter(chapterListsEle[i])
+        //     }
+        //     else {
+        //         chapterListsEle[i].style['box-shadow'] = ''
+        //         chapterListsEle[i].style['-webkit-box-shadow'] = ''
+        //         chapterListsEle[i].style['-moz-box-shadow'] = ''
+        //     }
+        // }
     }
 
     /** Gell all chapters by userID and courseID from server */
@@ -121,11 +126,13 @@ const AddChapter = ({ teacherId }) => {
         })
             .then(res => {
 
-                console.log('fetchChapters:  courseId-', clickedCourse?.course?.id, ', response: ', res.data, ', endpoint-', url)
+                console.log('fetchChapters:  course-', clickedCourse?.course, ', response: ', res.data, ', endpoint-', url)
                 const chapterListData = res.data
 
-                setChapterLists(chapterListData)
-                if (updated) {
+                // setChapterLists(chapterListData)
+                // dispatch(setChapters(res.data))
+                dispatch(setChapters({ chapter_list_sequence: clickedCourse?.course?.chapter_list_sequence, res_data: res.data }))
+                if (false) {
                     // setClickedAddChapter({ ...clickedAddChapter })
                     if (clickedChapter == null && chapterListData.length > 0) {
                         dispatch(setClickedChapter(chapterListData[0]))
@@ -154,35 +161,71 @@ const AddChapter = ({ teacherId }) => {
             .catch(err => console.log('error: ' + url, err))
     }
 
+    /** Find current Chapter Card by the card index and cat ID */
+    const outlinedChapterCard = (chapterID) => {
+        console.log('outlinedChapterCard - chapterID', chapterID)
+        const chapter_card_outline = document.querySelectorAll('.add_chapter__component .chapter_lists')
+        const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+        for (let i = 0; i < chapter_card_outline.length; i++) {
+
+            const card = chapter_card_outline[i]
+            const id = card.className.split(' ').pop()
+            /** Once find the clicled element and highlight outline(box-shadow) */
+            if (chapterID && Number(id) == chapterID) {
+                // card.style['border-radius'] = '5px'
+                card.style['box-shadow'] = shadowColor
+                card.style['-webkit-box-shadow'] = shadowColor
+                card.style['-moz-box-shadow'] = shadowColor
+            }
+            else if (chapterID == null || typeof (chapterID) == 'undefined') {
+                if (i == 0) {
+                    card.style['box-shadow'] = shadowColor
+                    card.style['-webkit-box-shadow'] = shadowColor
+                    card.style['-moz-box-shadow'] = shadowColor
+                }
+            }
+            /** Reset previous outline to nothing */
+            else {
+                // card.style['border-radius'] = '0px'
+                card.style['box-shadow'] = ''
+                card.style['-webkit-box-shadow'] = ''
+                card.style['-moz-box-shadow'] = ''
+            }
+        }
+    }
 
     const handleClickChapter = (e, chapterId) => {
         const clickCht = chapterLists.filter((chapter) => chapter.id == chapterId)
+        dispatch(setPathChapterID(chapterId))
+        dispatch(setPathContentID(null))
+
+        outlinedChapterCard(chapterId)
         // clickCht.length > 0 && selectChapter(clickCht[0])
 
         clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
-
-        const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
-        let clickedEle = null
-        for (let i = 0; i < chapterListsEle.length; i++) {
-            if (chapterListsEle[i].contains(e.target)) {
-                clickedEle = chapterListsEle[i]
-                break
-            }
-        }
-        if (previousClickedChapter) {
-            previousClickedChapter.style['box-shadow'] = ''
-            previousClickedChapter.style['-webkit-box-shadow'] = ''
-            previousClickedChapter.style['-moz-box-shadow'] = ''
-
-        }
-        if (clickedEle) {
-            const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-            clickedEle.style['box-shadow'] = shadowColor
-            clickedEle.style['-webkit-box-shadow'] = shadowColor
-            clickedEle.style['-moz-box-shadow'] = shadowColor
-            setPreviousClickedChapter(clickedEle)
-        }
-        //  
+        /*
+                const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
+                let clickedEle = null
+                for (let i = 0; i < chapterListsEle.length; i++) {
+                    if (chapterListsEle[i].contains(e.target)) {
+                        clickedEle = chapterListsEle[i]
+                        break
+                    }
+                }
+                if (previousClickedChapter) {
+                    previousClickedChapter.style['box-shadow'] = ''
+                    previousClickedChapter.style['-webkit-box-shadow'] = ''
+                    previousClickedChapter.style['-moz-box-shadow'] = ''
+        
+                }
+                if (clickedEle) {
+                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
+                    clickedEle.style['box-shadow'] = shadowColor
+                    clickedEle.style['-webkit-box-shadow'] = shadowColor
+                    clickedEle.style['-moz-box-shadow'] = shadowColor
+                    setPreviousClickedChapter(clickedEle)
+                }
+                //  */
 
         console.log('handleClickChapter- clickCht:', clickCht, ', chapter id: ', chapterId, ', chapterLists: ', chapterLists)
     }
@@ -295,7 +338,7 @@ const AddChapter = ({ teacherId }) => {
         })
             .then(res => {
                 // handleSuccessUpdateChapterSeq(true)
-                dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, foundCard: clickedCourse.foundCard, course: res.data }))
+                dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, course: res.data }))
                 // --- Reset input fields. ---
                 // setInputData({ ...inputData, title: '', description: '' })
                 // fileRef.current.value = "";//Resets the file name of the file input 
@@ -452,8 +495,9 @@ const AddChapter = ({ teacherId }) => {
         dispatch(setContentAction([]))
         if (chapterLists?.length > 0) {
 
-            initSelectChapter(chapterLists[0])
-            // setIsSelectChapter(new Array(chapterLists.length).fill(false))
+            const foundChapter = chapterLists.filter(chapter => chapter.id == pathID?.chapterID)
+            if (foundChapter.length == 1) initSelectChapter(foundChapter[0])
+            else initSelectChapter(chapterLists[0])
         }
 
 
@@ -609,7 +653,7 @@ const AddChapter = ({ teacherId }) => {
     return (
         <div className='add_chapter__view'>
             <h2 id='id_edit_chapter'> Chapter Modifier </h2>
-            <div className='add_chapter__component'>
+            <div className={`add_chapter__component`}>
                 <div className='chapters_view'>
                     {/* -- Display chapter Header Bar. --- */}
                     <div className='title'>
@@ -669,7 +713,7 @@ const AddChapter = ({ teacherId }) => {
                     {chapterLists?.length > 0 && <div className='chapter_list_view'>
 
                         {chapterLists?.map((chapter) => {
-                            return <div key={chapter.id} className='chapter_lists' onClick={e => handleClickChapter(e, chapter.id)}>
+                            return <div key={chapter.id} className={`chapter_lists ${chapter.id}`} onClick={e => handleClickChapter(e, chapter.id)}>
                                 <div><svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg></div>
                                 <div >
                                     {chapter?.name}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './ProgressBarChapter.css'
 import { useSelector, useDispatch } from 'react-redux'
+import { getClickedCourse } from '../slices/courseSlice'
 import { getChapters, setChapters } from '../slices/chapterSlice'
 import { useNavigate } from 'react-router-dom'
 import { getUser } from '../slices/userSlices'
@@ -12,6 +13,7 @@ const ProgressBarChapter = () => {
     const pathCourseID = useSelector(getPathCourseID)
     const pathChapterID = useSelector(getPathChapterID)
     const chapters = useSelector(getChapters)
+    const clickedCourse = useSelector(getClickedCourse)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const user = useSelector(getUser)
@@ -35,13 +37,17 @@ const ProgressBarChapter = () => {
 
     // -----------------------------------
     const fetchChapters = async () => {
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${pathCourseID}`)
+        const url = user?.role == 'teacher' ? axios.defaults.baseURL + `/api/course-chapter/${pathCourseID}`
+            : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${pathCourseID}`
+        await axios.get(url)
+            // await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${pathCourseID}`)
             .then(res => {
                 // console.log('fetchChapters: ', res.data)
-                dispatch(setChapters(res.data))
+                // dispatch(setChapters(res.data))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')
                 // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
+                dispatch(setChapters({ chapter_list_sequence: clickedCourse?.chapter_list_sequence, res_data: res.data }))
             })
             // .then(res=>{
             //     console.log('chapter Viewed: ', res.data)

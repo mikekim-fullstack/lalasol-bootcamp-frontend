@@ -246,11 +246,13 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const pathChapterID = useSelector(getPathChapterID)
     const user = useSelector(getUser)
 
-    const fetchChapters = async (course_id) => {
-        await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`)
+    const fetchChapters = async (course) => {
+        const url = user?.role == 'teacher' ? axios.defaults.baseURL + `/api/course-chapter/${course.id}`
+            : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
+        await axios.get(url)
             .then(res => {
                 console.log('fetchChapters: ', res.data)
-                dispatch(setChapters(res.data))
+                dispatch(setChapters({ chapter_list_sequence: course.chapter_list_sequence, res_data: res.data }))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')
                 // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
@@ -258,14 +260,14 @@ const NavSubmenu = ({ className, clickedCat }) => {
             // .then(res=>{
             //     console.log('chapter Viewed: ', res.data)
             // })
-            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course_id}`, err))
+            .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
     }
 
 
-    const handleCourseClick = async (e, courseid) => {
+    const handleCourseClick = async (e, course) => {
         // console.log('handleCourseClick: ', courseid)
-        await fetchChapters(courseid)
-        dispatch(setPathCourseID(courseid))
+        await fetchChapters(course)
+        dispatch(setPathCourseID(course.id))
         // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
         // else navigate('screen404')
 
@@ -303,7 +305,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                     <div key={course.id}>
                         <div
                             className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`}
-                            onClick={(e) => handleCourseClick(e, course.id)}>
+                            onClick={(e) => handleCourseClick(e, course)}>
                             <img width='30px' height='30px' src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
                             <span>{course.title}</span>
 

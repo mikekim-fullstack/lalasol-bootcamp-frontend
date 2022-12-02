@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './NavCategories.css'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { setAllCategories, setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
+import { setAllCategories, getAllCategories, setSelectedCat, getSelectedCat, setCat, setSelectedCatStatus } from '../slices/categorySlice'
 import { setPathCatID, resetPathAll, getPathCatID, getPathID } from '../slices/pathSlice'
 import { setCourses, setCoursesEnrolledStatus, } from '../slices/courseSlice'
 import { setChapters, getChapters, setChapterCategory } from '../slices/chapterSlice'
@@ -20,22 +20,56 @@ const NavCategoreis = () => {
     const dispatch = useDispatch()
     const chapters = useSelector(getChapters)
     const selectedCat = useSelector(getSelectedCat)
+    const categories = useSelector(getAllCategories)
 
-    const [categories, catError, catLoading] = useAxios({
-        method: 'GET',
-        url: '/api/course-category/',
-        headers: {
-            'Content-Type': 'Application/Json'
-        },
+    const fetchAllCategories = async () => {
+        const url = axios.defaults.baseURL + '/api/course-category/'
+        await axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                'Content-Type': 'Application/Json'
+            },
+        })
+            .then(res => {
+                dispatch(setAllCategories(res.data))
+                // fetchAllCourses(res.data)
+            })
+            .catch(err => console.log('error: ' + axios.defaults.baseURL + '/api/course-category/', err))
+    }
+    const fetchAllCourses = async () => {
+        const url = user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}`
+            : `/api/courses-all-by-teacher/${user?.id}`
 
-    })
-    const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
-        method: 'GET',
-        url: user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}` : `/api/courses-all-by-teacher/${user?.id}`,
-        headers: {
-            'Content-Type': 'Application/Json'
-        },
-    })
+        await axios({
+            method: 'GET',
+            url: url,
+            headers: {
+                'Content-Type': 'Application/Json'
+            },
+        })
+            .then(res => {
+                console.log('--------- NavCategories - fetchAllCourses: categories', categories)
+                dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
+            })
+            .catch(err => console.log('error: ' + axios.defaults.baseURL + '/api/course-category/', err))
+    }
+    // const [categories, catError, catLoading] = useAxios({
+    //     method: 'GET',
+    //     url: '/api/course-category/',
+    //     headers: {
+    //         'Content-Type': 'Application/Json'
+    //     },
+
+    // })
+    // const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
+    //     method: 'GET',
+    //     url: user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}` 
+    //     : `/api/courses-all-by-teacher/${user?.id}`,
+    //     headers: {
+    //         'Content-Type': 'Application/Json'
+    //     },
+    // })
 
     const fetchChapterCateory = async () => {
         await axios({
@@ -57,7 +91,9 @@ const NavCategoreis = () => {
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
 
         // await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
-        await axios.get(user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}` : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`,
+        const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
+            : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`
+        await axios.get(url,
             {
                 headers: {
                     "Content-type": "Application/Json",
@@ -99,20 +135,31 @@ const NavCategoreis = () => {
         openSideMenu && dispatch(setSelectedCatStatus(true))
         dispatch(resetPathAll())
         dispatch(setPathCatID(catId))
-        dispatch(setChapters(null))
+        // dispatch(setChapters(null))
+        dispatch(setChapters({ chapter_list_sequence: null, res_data: null }))
+
     }
     const handleSelectCategoryClick = (e) => {
         selectCategory(sortedCat[e.target.name])
 
     }
+
+    useEffect(() => {
+
+        // dispatch(setAllCategories(categories))
+        fetchAllCategories()
+    }, [])
+
     useEffect(() => {
         if (user && user.id) {
 
         }
     }, [user])
+
     useEffect(() => {
         if (categories != null) {
-            dispatch(setAllCategories(categories))
+            fetchAllCourses(categories)
+            // dispatch(setAllCategories(categories))
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence }])
@@ -152,51 +199,18 @@ const NavCategoreis = () => {
         return courseIDKey // output: sorted keys in array sequence. e.g. courseIDKey[0]=='courseid'
     }
 
-    useEffect(() => {
-        console.log('NavCategores-useEffect-coursesEnrolled:', coursesEnrolled, ', categories: ', categories)
-        // if (categories == null) return
-        // const tmp = [...categories]
-        // const sss = tmp?.sort((a, b) => a.id > b.id ? 1 : a.id < a.id ? -1 : 0)
-        // console.log('tmp:', sss)
-        /*
-        const _coursesEnrolled = []
-        categories?.sort((a, b) => a.id > b.id ? 1 : a.id < a.id ? -1 : 0)
-            .forEach(cat => {
-                // const r = getSortedCourseID(cat.id)
-                const seq = cat.course_list_sequence
-                console.log('catID:', cat.id, ', seq: ', seq)
-                let keyCourseID = null
-                if (seq) {
-                    keyCourseID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
-                    console.log('keyCourseID: ', keyCourseID)
-                }
-                if (seq != null && keyCourseID != null) {
-                    for (let i = 0; i < keyCourseID.length; i++) {
+    // useEffect(() => {
+    //     console.log('NavCategores-useEffect-coursesEnrolled:', coursesEnrolled, ', categories: ', categories)
 
-                        const res = coursesEnrolled.filter(course => (course.category == cat.id && course.id == Number(keyCourseID[i])))[0]
-                        console.log('newCourse: ', res)
-                        _coursesEnrolled.push(res)
-                    }
-
-                }
-                else {
-                    const res = coursesEnrolled.filter(course => (course.category == cat.id))
-                    res.forEach(course => _coursesEnrolled.push(course))
-
-                }
-            })
-            console.log('_coursesEnrolled: ', _coursesEnrolled)
-            */
-        // dispatch(setCoursesEnrolledStatus(coursesEnrolled))
-        if (categories && coursesEnrolled)
-            dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': coursesEnrolled }))
-    }, [coursesEnrolled])
+    //     if (categories && coursesEnrolled)
+    //         dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': coursesEnrolled }))
+    // }, [coursesEnrolled])
 
     useEffect(() => {
 
         console.log('selectedCat: ', selectedCat)
     }, [selectedCat])
-    console.log('navCategories: pathCatID && courseID && chapterID', pathID)
+    // console.log('navCategories: pathCatID && courseID && chapterID', pathID)
     /*
     // //-- Detect Window is refreshed. --
     useEffect(() => {
