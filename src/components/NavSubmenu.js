@@ -251,15 +251,9 @@ const NavSubmenu = ({ className, clickedCat }) => {
             : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
         await axios.get(url)
             .then(res => {
-                console.log('fetchChapters: ', res.data)
+                // console.log('fetchChapters: ', res.data)
                 dispatch(setChapters({ chapter_list_sequence: course.chapter_list_sequence, res_data: res.data }))
-                // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
-                // else navigate('screen404')
-                // return axios.get(axios.defaults.baseURL + `/api/chapters-viewed/?student_id=${}&chapter_id=${course_id}/`)
             })
-            // .then(res=>{
-            //     console.log('chapter Viewed: ', res.data)
-            // })
             .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
     }
 
@@ -284,12 +278,10 @@ const NavSubmenu = ({ className, clickedCat }) => {
         // const selectedCourse = courses?.filter((course) => course.id == chapterId)
         if (chapters?.length > 0) navigate(`${chapter}/${chapterId}/${user.id}`)
         else navigate('screen404')
-
-
-        console.log('handleSelectedChapter--click: ', chapter, chapterId)
+        // console.log('handleSelectedChapter--click: ', chapter, chapterId)
     }
     const handleAddCourse = (e) => {
-        console.log('handleAddCourse-clicked')
+        // console.log('handleAddCourse-clicked')
         navigate('/add-course', { replace: true })
         // navigate(0)
         // window.location.reload()

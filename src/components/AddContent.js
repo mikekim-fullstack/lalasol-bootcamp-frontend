@@ -72,21 +72,14 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         })
             .then(res => {
 
-                console.log('fetchChapters:  course-', clickedCourse?.course, ', response: ', res.data, ', endpoint-', url)
-                // const chapterListData = res.data
-
-
+                // console.log('fetchChapters:  course-', clickedCourse?.course, ', response: ', res.data, ', endpoint-', url)
                 dispatch(setChapters({ chapter_list_sequence: clickedCourse?.course?.chapter_list_sequence, res_data: res.data }))
-
-
-                // setIsCompleteFetchChapter(!isCompleteFetchChapter)
-
             })
             .catch(err => console.log('error: ' + url, err))
     }
     // --------------------------------------------------
     const handleDeleteContentResponse = (choose, messageData) => {
-        console.log('handleDeleteContentResponse: ', choose, messageData)
+        // console.log('handleDeleteContentResponse: ', choose, messageData)
         if (choose) {
             //   setProducts(products.filter((p) => p.id !== idProductRef.current));
             // -- Delete course by dispatch it to server. --
@@ -109,7 +102,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
                 })
                 .catch(err => console.log(err))
-            console.log('delete content', messageData.content)
+            // console.log('delete content', messageData.content)
         } else {
         }
         setDialogDeleteContent({ message: "", isLoading: false, itemName: '', content: null, });
@@ -124,7 +117,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             itemName: contentCat.length == 0 && contentCat[0].title + ' Content',
             content: clickedContent,
         });
-        console.log('handleDeleteCourse-clickedChapter', clickedChapter)
+        // console.log('handleDeleteCourse-clickedChapter', clickedChapter)
     }
 
     const handleUpdateContent = (e) => {
@@ -153,7 +146,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         funcSetCreateMode(false)
         setTriggerUseEffect(!triggerUseEffect)
         // console.log('handleCancelUpdate-recovery_clickedContent: ', recovery_clickedContent, ', copidClickedContent:', copidClickedContent, ', clickedContent:', clickedContent)
-        console.log('handleCancelUpdate-,  clickedContent:', clickedContent)
+        // console.log('handleCancelUpdate-,  clickedContent:', clickedContent)
     }
 
     const handleAddContent = (e) => {
@@ -164,7 +157,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         funcSetCreateMode(true)
     }
     const handleClickCloseContent = (e) => {
-        console.log('handleClickCloseContent: ', contentAction, ', previousClickedContent:', previousClickedContent)
+        // console.log('handleClickCloseContent: ', contentAction, ', previousClickedContent:', previousClickedContent)
 
         if (clickedUpdateContent) {
             dispatch(setRestoreContentAction())
@@ -199,7 +192,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
       * Remove hash tag(xxxx) in file path between _xxxx by regular expression /_.*\./.
       */
     const getFileName = (filePath) => {
-        console.log('getFileName - filePath', filePath)
+        // console.log('getFileName - filePath', filePath)
         if (filePath && filePath.includes('/')) {
             const onlyFileName = filePath?.split('/').pop()
             return onlyFileName?.replace(/_.*\./, ".")
@@ -216,7 +209,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0], creater: teacherId }))
         }
         else if (type == 'image') {
-            console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
+            // console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0], creater: teacherId }))
             e.target.nextSibling.innerHTML = e.target.files[0].name
@@ -252,7 +245,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'file', data: e.target.files[0] }))
         }
         else if (type == 'image') {
-            console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
+            // console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'image', data: e.target.files[0] }))
             e.target.nextSibling.innerHTML = e.target.files[0].name
@@ -273,7 +266,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     }
     // --------------------------------------------------
     const genContentDetailEleAdd = () => {
-        console.log('genContentDetailEleAdd: ', contentChoice, contentAction)
+        // console.log('genContentDetailEleAdd: ', contentChoice, contentAction)
         if (contentChoice.title.includes('Break Line')) {
             // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputAdd(e, 'text')} />
             // setInputContent({})
@@ -297,8 +290,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             </div>
         if (contentChoice?.title?.includes('Image File')) {
             const sel = null;
-            // const sel = contentAction.filter(content => content.id == contentId)[0]
-            console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
+            // console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputAdd(e, 'image')} />
                 <label id='fileinput_label'>{(inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label>
@@ -335,7 +327,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     }
     // --------------------------------------------------
     const genContentDetailEleUpdate = (contentId) => {
-        console.log('----- genContentDetailEleUpdate---- contentChoice:', contentChoice, ', clickedContent:', clickedContent, ', inputContent:', inputContent)
+        // console.log('----- genContentDetailEleUpdate---- contentChoice:', contentChoice, ', clickedContent:', clickedContent, ', inputContent:', inputContent)
         if (contentChoice?.title?.includes('PDF File'))
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="application/pdf" name='file' onChange={e => handleOnChangeInputUpdate(e, 'file')} />
@@ -349,7 +341,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             </div>
         if (contentChoice?.title?.includes('Image File')) {
             const sel = contentAction.filter(content => content.id == contentId)[0]
-            console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
+            // console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
                 <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputUpdate(e, 'image')} />
                 {/* <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label> */}
@@ -385,19 +377,13 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
         if (contentChoice.title.includes('Break Line')) {
 
-            console.log('Break Line-inputContent', inputContent)
-            // return <input className='input_break' ref={codeRef} name='text' type='text' value={'<br/>'} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
-            // setInputContent({ ...inputContent })
-            // setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-
-            // dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
-
+            // console.log('Break Line-inputContent', inputContent)
             return
         }
     }
     /** Find current Content Card by the card index and cat ID */
     const outlinedContentCard = (contentID) => {
-        console.log('outlinedChapterCard - contentID', contentID)
+        // console.log('outlinedChapterCard - contentID', contentID)
         const content_card_outline = document.querySelectorAll('.add_chapter__component .content_lists_item')
         const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
 
@@ -429,7 +415,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         }
     }
     const handleClickContent = (e, content) => {//clickedChapter?.content
-        console.log('handleClickContent: ', content)
+        // console.log('handleClickContent: ', content)
         /**
          * Show filename in input file
          */
@@ -437,7 +423,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         const linkInput = document.querySelector('input_url')
         if (urlFilter && urlFilter[0]?.title.includes('Link')) {
 
-            console.log('-----clickContent:', content, urlFilter, ', linkInput', linkInput)
+            // console.log('-----clickContent:', content, urlFilter, ', linkInput', linkInput)
             if (linkInput) {
                 linkInput.innerHTML = content.url
                 linkInput.style.display = 'unset'
@@ -475,7 +461,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
          * selectionRef.current.value is for initial value of select tag
          */
         if (selectionRef?.current) selectionRef.current.value = content.chapter_category
-        console.log('chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0]: ', chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
+        // console.log('chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0]: ', chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
         setInputContent({
             url: content.url,
@@ -498,7 +484,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         const url = axios.defaults.baseURL + `/api/chapter/${pathID.chapterID}`
         await axios.get(url)
             .then(res => {
-                console.log('fetchContentByCourseID: ' + url, ', response:', res.data)
+                // console.log('fetchContentByCourseID: ' + url, ', response:', res.data)
                 dispatch(setClickedChapter(res.data))
 
             })
@@ -522,7 +508,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         let formData = new FormData()
         const contentId = clickedContent.id
 
-        console.log('+++===> onSubmitUpdateContentFor:-contentAction', contentAction, ', contentChoice', contentChoice,)
+        // console.log('+++===> onSubmitUpdateContentFor:-contentAction', contentAction, ', contentChoice', contentChoice,)
 
         if (contentChoice.id == 12) {// Break Line
             formData.append('title', contentChoice.title)
@@ -552,22 +538,16 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             data: formData
         })
             .then(res => {
-                console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
+                // console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
                 fetchChapters()
                 fetchContentByCourseID()
                 setTriggerUseEffect(!triggerUseEffect)
             })
             .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
 
-
-
-
-
-
-        console.log('+++===> onSubmitUpdateContentFor: - contentChoice:', contentChoice,
-            // ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
-            'contentAction: ', contentAction, ', formData', formData
-        )
+        // console.log('+++===> onSubmitUpdateContentFor: - contentChoice:', contentChoice,
+        //     'contentAction: ', contentAction, ', formData', formData
+        // )
 
     }
 
@@ -591,19 +571,16 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         formData.append('creater', Number(teacherId))
         const _contentAction = contentAction?.filter((item) => item.action == 'created')
         if (_contentAction?.length == 1) {
-            console.log('contentAction.image: ', _contentAction[0].image)
+            // console.log('contentAction.image: ', _contentAction[0].image)
             _contentAction[0].file && formData.append('file', _contentAction[0].file)
             _contentAction[0].url && formData.append('url', _contentAction[0].url)
             _contentAction[0].text && formData.append('text', _contentAction[0].text)
             _contentAction[0].image && formData.append('image', _contentAction[0].image)
             _contentAction[0].title && formData.append('title', _contentAction[0].title)
         }
-        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
-            // ', e.target.name: ', e.target[0].name, e.target[0].value, e.target[1].name, e.target[1].value,
-            'contentAction: ', contentAction, ', formData', formData
-        )
-        // return
-        // Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
+        // console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
+        //     'contentAction: ', contentAction, ', formData', formData
+        // )
 
         axios({
             method: 'POST',
@@ -614,7 +591,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             data: formData
         })
             .then(res => {
-                console.log('Success - End point-/api/chapter-content/', res.data)
+                // console.log('Success - End point-/api/chapter-content/', res.data)
 
                 dispatch(setPathContentID(res.data.id))
                 const formData = new FormData()
@@ -629,7 +606,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                     data: formData
                 })
                     .then(res => {
-                        console.log('Success-End point-/api/chapter-content-add/', res.data)
+                        // console.log('Success-End point-/api/chapter-content-add/', res.data)
 
                         /** For rerendering to update */
                         fetchContentByCourseID()
@@ -645,7 +622,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const initSelectContent = (_clickedContent) => {
 
         // dispatch(setClickedContent(_clickedContent))
-        console.log('>>>>----initSelectContent: ', _clickedContent)
+        // console.log('>>>>----initSelectContent: ', _clickedContent)
         if (_clickedContent) {
 
 
@@ -678,7 +655,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         setClickedAddContent(false)
         setClickedUpdateContent(false)
 
-        console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
+        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
 
         if (clickedChapter?.content?.length > 0) {
 
@@ -704,14 +681,14 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
     }, [contentChoice?.title, operateContent,])// contentAction])
 
-    console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
+    // console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
 
     useEffect(() => {
         if (contentChoice?.title.includes('Break Line')) {
             console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         }
-        console.log('useEffect AddContent-clickedContent: ', clickedContent)
+        // console.log('useEffect AddContent-clickedContent: ', clickedContent)
     }, [])
     return (
         <div className='chapter_content__view'>

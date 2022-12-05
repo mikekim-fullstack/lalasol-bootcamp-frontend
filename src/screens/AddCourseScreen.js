@@ -86,12 +86,12 @@ const AddCourseScreen = () => {
 
         }).then(res => {
             dispatch(setAllCategories(res.data))
-            console.log('Refresh /api/course-category/:', res.data)
+            // console.log('Refresh /api/course-category/:', res.data)
         }).catch(err => console.log('error: - /api/course-category/', err))
 
     }
     const updateCourseSequenceInCategory = async (catID, seqCatData) => {
-        console.log('updateCourseSequenceInCategory: ', catID, seqCatData, ', url:', axios.defaults.baseURL + '/api/course-category-detail/' + catID)
+        // console.log('updateCourseSequenceInCategory: ', catID, seqCatData, ', url:', axios.defaults.baseURL + '/api/course-category-detail/' + catID)
         axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/course-category-detail/' + catID,
@@ -109,7 +109,7 @@ const AddCourseScreen = () => {
             .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
     }
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
-        console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
+        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
 
         await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
@@ -125,7 +125,7 @@ const AddCourseScreen = () => {
                 const _courses = [...res.data]
                 const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
                 dispatch(setCourses(_sortedCourses, res.data))
-                console.log('done:', _sortedCourses)
+                // console.log('done:', _sortedCourses)
             })
             .catch(err => console.log('error: ', err))
     }
@@ -149,7 +149,7 @@ const AddCourseScreen = () => {
             course: clickedCourse?.course,
             catId: catId,
         });
-        console.log('handleDeleteCourse', clickedCourse.course)
+        // console.log('handleDeleteCourse', clickedCourse.course)
     }
     const successfullyDeleted = (res, messageData) => {
         const _selCatID = selCatID.map(sel => false)
@@ -159,7 +159,7 @@ const AddCourseScreen = () => {
         setIsUpdatedCourse(true)
         setIsAddMode(false)
         setIsEditMode(true)
-        console.log('fisuccessfullyDeletedrst ---', _selCatID)
+        // console.log('fisuccessfullyDeletedrst ---', _selCatID)
     }
     const handleDeleteCourseResponse = (choose, messageData) => {
         if (choose) {
@@ -192,7 +192,7 @@ const AddCourseScreen = () => {
 
                 })
                 .catch(err => console.log(err.reponse.data))
-            console.log('delete course', messageData.course)
+            // console.log('delete course', messageData.course)
         } else {
         }
         setDialogDeleteCourse({ message: "", isLoading: false, itemName: '', course: null, catId: null });
@@ -227,11 +227,11 @@ const AddCourseScreen = () => {
         setIsEditMode(false)
         setIsAddMode(true)
 
-        Object.keys(courses).map((key) => {
-            console.log(courses[key].course_no, courses[key].title)
-        })
+        // Object.keys(courses).map((key) => {
+        //     console.log(courses[key].course_no, courses[key].title)
+        // })
 
-        console.log('add_courseScreen-courses:', courses, ', _selCatID', _selCatID, ', cat:', cat, ', coursesEnrolled', coursesEnrolled)
+        // console.log('add_courseScreen-courses:', courses, ', _selCatID', _selCatID, ', cat:', cat, ', coursesEnrolled', coursesEnrolled)
     }
     const handleClickCloseCourse = (e, cat, index) => {
         const _selCatID = selCatID.map(sel => false)
@@ -282,7 +282,7 @@ const AddCourseScreen = () => {
         })
             .then(res => {
                 const course = res.data
-                console.log('fetchCourse:  course-', clickedCourse?.course, ', response: ', course, ', endpoint-', url)
+                // console.log('fetchCourse:  course-', clickedCourse?.course, ', response: ', course, ', endpoint-', url)
                 dispatch(setClickedCourse({ catId: course.category, courseId: course.id, course: course }))
                 dispatch(setPathCatID(course.category))
                 dispatch(setPathCourseID(course.id))
@@ -323,41 +323,14 @@ const AddCourseScreen = () => {
         setIsEditMode(false)
         setIsAddMode(false)
 
-        // outlinedCourseCard(course.id)
-
-        // dispatch(setPathCatID(catId))
-
-        // dispatch(setPathCourseID(courseId))
-
-        /*
-        const keyChapters = Object.keys(course.chapter_list_sequence)
-        if (keyChapters.length > 0) {
-            // select the first chapter
-            dispatch(setPathChapterID(Number(keyChapters[0])))
-        }
-        else {
-            dispatch(setPathChapterID(null))
-        }
-        dispatch(setClickedChapter(null))
-        */
-
-
-
-        // const foundCourse = coursesEnrolled.filter(course => course.id == courseId)
-        /** Save catId, courseId, foundCard info and use it in rendering <div> */
-        // dispatch(setClickedCourse({ catId, courseId, course: foundCourse && foundCourse[0] }))
-
-        // dispatch(setClickedCourse({ catId, courseId, course }))
-
-        // setClickedCourseInfo({ catId, courseId, foundCard, course })
-        console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
+        // console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
 
 
 
     }
 
     const handleSuccessUpdated = (status, courseID, catID, teacherID) => {
-        console.log('....handleSuccessUpdated: ', previousIndex)
+        // console.log('....handleSuccessUpdated: ', previousIndex)
         /** -- Change color targeting the clicked category + sign. -- */
         if (previousIndex != null) {
             const _selCatID = [...selCatID]
@@ -381,7 +354,7 @@ const AddCourseScreen = () => {
     const handleSuccessCreatedCourse = (status, courseID, catID, teacherID) => {
 
         // const currentCourse = coursesEnrolled.filter((course) => course.category == catID && course.id == courseID)
-        console.log('....handleSuccessUpdated: ', previousIndex)
+        // console.log('....handleSuccessUpdated: ', previousIndex)
         /** -- Change color targeting the clicked category + sign. -- */
         if (previousIndex != null) {
             const _selCatID = [...selCatID]
@@ -414,7 +387,7 @@ const AddCourseScreen = () => {
             else {
                 seqCatData.course_list_sequence[String(courseID)] = Number(1)
             }
-            console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
+            // console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
             updateCourseSequenceInCategory(catID, seqCatData)
 
         }
@@ -445,12 +418,12 @@ const AddCourseScreen = () => {
     // }, [isUpdatedCourse])
 
     useEffect(() => {
-        console.log('useEffect - allCategories -- updating', allCategories)
+        // console.log('useEffect - allCategories -- updating', allCategories)
         if (allCategories) {
             fetchAllCourses()
         }
     }, [allCategories])
-    console.log('<<< Refresh - AddCourseScreen: clickedCourse', clickedCourse, ',coursesEnrolled:', coursesEnrolled, ', selCatID:', selCatID, ', categories:', categories, ', PathID', pathID)
+    // console.log('<<< Refresh - AddCourseScreen: clickedCourse', clickedCourse, ',coursesEnrolled:', coursesEnrolled, ', selCatID:', selCatID, ', categories:', categories, ', PathID', pathID)
     return (
 
         <div className='add_update_course__screen'>

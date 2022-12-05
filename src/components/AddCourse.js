@@ -21,7 +21,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
         // setInputData({...inputData, course_no:})
         let formData = new FormData()
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
-        console.log('------------- onSubmitAddCourseForm--:', formData)
+        // console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/courses-create/',
@@ -39,7 +39,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
 
                 setUploadSuccess(true)
                 handleSuccessCreatedCourse(true, res.data.id, res.data.category, res.data.teacher)
-                console.log('onSubmitAddCourseForm:', res)
+                // console.log('onSubmitAddCourseForm:', res)
 
             })
 

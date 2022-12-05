@@ -30,7 +30,7 @@ const NavHeader = () => {
     const handleHome = (e) => {
         // dispatch(setCat(null))
         dispatch(setSelectedCatStatus(false))
-        console.log('click Home button')
+        // console.log('click Home button')
     }
     const handleLogout = () => {
         dispatch(resetPathAll())
@@ -74,11 +74,11 @@ const NavHeader = () => {
         window.focus()
         if (selectedCatStatus) {
             const val = getComputedStyle(document.documentElement).getPropertyValue('--side-menu-width')
-            console.log('useEffect - css val: ', val, selectedCatStatus)
+            // console.log('useEffect - css val: ', val, selectedCatStatus)
             document.documentElement.style.setProperty('--side-menu-width-on-off', val)
         }
         else {
-            console.log('useEffect - css val: off', selectedCatStatus)
+            // console.log('useEffect - css val: off', selectedCatStatus)
 
             document.documentElement.style.setProperty('--side-menu-width-on-off', '0')
         }
@@ -98,7 +98,7 @@ const NavHeader = () => {
                 }
             });
         }, { once: false })
-        console.log('---- NavHeader::selectedCat: ', selectedCatStatus, document.activeElement.tagName)
+        // console.log('---- NavHeader::selectedCat: ', selectedCatStatus, document.activeElement.tagName)
 
         document.addEventListener('click', mouseListener)
 

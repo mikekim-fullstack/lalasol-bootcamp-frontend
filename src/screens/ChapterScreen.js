@@ -65,7 +65,7 @@ const ChapterScreen = () => {
         fetchUpdateContentViewed(content.id)
         switch (content.chapter_category) {
             case TYPE_YOUTUBE:
-                console.log('youtube: ', content.url.split('/').pop())
+                // console.log('youtube: ', content.url.split('/').pop())
                 setYoutube(content.url)
                 break;
             case TYPE_HTML_File:
@@ -89,7 +89,7 @@ const ChapterScreen = () => {
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
                     const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
-                    console.log('fetchChapterContent: ', res.data.content)
+                    // console.log('fetchChapterContent: ', res.data.content)
                     previousContentIndex.current = 0
                     setCurrentContentIndex(0)
                     setChapterContentLength(sortedChapterContent.length)
@@ -109,7 +109,7 @@ const ChapterScreen = () => {
         // so replace http:// with https://. --
         const url = resolveBlockMixedActivity(file)
 
-        console.log('----urlFile: ', file, ', url: ', url)
+        // console.log('----urlFile: ', file, ', url: ', url)
 
         // -- Go and get the html file from server. --
         if (url.split('.').pop().toLowerCase() == 'html') {
@@ -145,14 +145,14 @@ const ChapterScreen = () => {
         // const user_id = JSON.parse(localStorage.getItem('userLogin'))
         // if (contentData) selectContentFromChapter(contentData[currentContentIndex])
         fetchChapterContent(chapter_id)
-        console.log('useEffect', user_id)
+        // console.log('useEffect', user_id)
     }, [chapter_id])
 
     //-----------------------------------------------
     const isViewedContent = (e) => {
         // console.log('useEffect - eventListener - scroll', document.querySelector('.chapter__screen').getBoundingClientRect().bottom, window.innerHeight)
         if (document.querySelector('.chapter__screen').getBoundingClientRect().bottom <= window.innerHeight) {
-            console.log('useEffect - eventListener - scroll -- viewed',)
+            // console.log('useEffect - eventListener - scroll -- viewed',)
         }
     }
     useEffect(() => {

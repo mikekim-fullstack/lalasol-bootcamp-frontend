@@ -24,7 +24,7 @@ const HomeScreen = () => {
 
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
-        console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
+        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
         const url = user.role == 'teacher' ? `/api/courses-all-by-teacher/${user?.id}` :
             axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`
@@ -39,7 +39,7 @@ const HomeScreen = () => {
                 // console.log('--fetchEnrolledCourses:', res.data)
                 // dispatch(setCourses(res.data))
                 dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
-                console.log('done-homescreen')
+                // console.log('done-homescreen')
             })
             .catch(err => console.log('error: ' + `/api/student-course-enrollment/${userId}/${selectedCatId}`, err))
     }

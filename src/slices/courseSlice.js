@@ -20,7 +20,7 @@ const courseSlice = createSlice({
 
 
             const courses = action.payload?.courses.filter(course => course)
-            console.log('---- setCoursesEnrolledStatus---- ', courses)
+            // console.log('---- setCoursesEnrolledStatus---- ', courses)
             const _coursesEnrolled = []
             const _sorted = _categories.sort((a, b) => (a.id > b.id) ? 1 : ((a.id < a.id) ? -1 : 0))
             // console.log('_sorted: ', _sorted)
@@ -50,11 +50,11 @@ const courseSlice = createSlice({
                 }
             })
             const _filteredCourses = _coursesEnrolled.filter(course => course)
-            console.log('courseSlice _coursesEnrolled: ', _filteredCourses)
+            // console.log('courseSlice _coursesEnrolled: ', _filteredCourses)
             state.enrolledData = _filteredCourses
         },
         setClickedCourse: (state, action) => {
-            console.log('---- slice - setClickedCourse:', action.payload)
+            // console.log('---- slice - setClickedCourse:', action.payload)
             state.clickedCourseData = action.payload
 
         }

@@ -49,7 +49,7 @@ const NavCategoreis = () => {
             },
         })
             .then(res => {
-                console.log('--------- NavCategories - fetchAllCourses: categories', categories)
+                // console.log('--------- NavCategories - fetchAllCourses: categories', categories)
                 dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
             })
             .catch(err => console.log('error: ' + axios.defaults.baseURL + '/api/course-category/', err))
@@ -87,10 +87,7 @@ const NavCategoreis = () => {
     }
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
-        console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
-        // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
-
-        // await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
+        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
             : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`
         await axios.get(url,
@@ -105,10 +102,7 @@ const NavCategoreis = () => {
                 const _courses = [...res.data]
                 const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
                 dispatch(setCourses(_sortedCourses))
-                // console.log('done:', _sortedCourses)
-
-                // dispatch(setCourses(res.data))
-                console.log('done-NavCategories:', _sortedCourses)
+                // console.log('done-NavCategories:', _sortedCourses)
             })
             .catch(err => console.log('error: ', err))
     }
@@ -159,11 +153,10 @@ const NavCategoreis = () => {
     useEffect(() => {
         if (categories != null) {
             fetchAllCourses(categories)
-            // dispatch(setAllCategories(categories))
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
                 .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence }])
-            console.log('-----_sortedCat----:', _sortedCat)
+            // console.log('-----_sortedCat----:', _sortedCat)
             dispatch(setCat(_sortedCat))
             setSortedCat(_sortedCat)
             if (pathID?.catID && pathID?.courseID && pathID?.chapterID) {
@@ -171,23 +164,23 @@ const NavCategoreis = () => {
                 // console.log('-----_sortedCat----:', _sortedCat, selectedCat)
                 updateCategory(pathID?.catID, _selectedCat[0])
             }
-            console.log('-- pathCatID', pathID?.catID, typeof (pathID?.catID), ', end')
+            // console.log('-- pathCatID', pathID?.catID, typeof (pathID?.catID), ', end')
 
             // -- Initially after user login, by default select the first category. ---
             if (pathID?.catID == null) {
-                console.log('No pathCatId: ')
+                // console.log('No pathCatId: ')
                 selectCategory(_sortedCat[0], false)
             }
             else if (selectedCat == null) {
 
                 const _selectedCat = _sortedCat.filter((cat) => cat[0] == pathID?.catID)[0]
                 selectCategory(_selectedCat, false)
-                console.log('Yes pathCatId: ', _selectedCat)
+                // console.log('Yes pathCatId: ', _selectedCat)
             }
 
         }
         fetchChapterCateory()
-        console.log('-----Nav Path----:', pathID)
+        // console.log('-----Nav Path----:', pathID)
     }, [categories])
 
     const getSortedCourseID = (catID) => {
@@ -208,7 +201,7 @@ const NavCategoreis = () => {
 
     useEffect(() => {
 
-        console.log('selectedCat: ', selectedCat)
+        // console.log('selectedCat: ', selectedCat)
     }, [selectedCat])
     // console.log('navCategories: pathCatID && courseID && chapterID', pathID)
     /*

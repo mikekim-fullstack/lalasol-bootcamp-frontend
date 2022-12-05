@@ -20,13 +20,11 @@ const UpdateCourse = ({ showLabel, clickedCourse, handleSuccessUploading }) => {
         // setInputData({...inputData, course_no:})
         let formData = new FormData()
         // 
-        // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         Object.entries(inputData).forEach((input, index) => {
             if (input[1])
                 formData.append(input[0], input[1])
         })
-        console.log('onSubmitUpdateCourseForm: ', inputData, formData)
-        // return
+        // console.log('onSubmitUpdateCourseForm: ', inputData, formData)
         axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/course-update/' + clickedCourse?.course?.id,
@@ -49,17 +47,9 @@ const UpdateCourse = ({ showLabel, clickedCourse, handleSuccessUploading }) => {
             })
 
             .catch(res => { setUploadSuccess(false); console.log('onSubmitUpdateCourseForm--error: ', res.response.data); })
-        // axios.post(axios.defaults.baseURL + '/api/courses-create/',
-        //     formData,
-        //     {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         }
-        //     })
-        //     .then(res => console.log(res))
-        //     .catch(res => console.log('onSubmitUpdateCourseForm--error: ', res.response.data))
+
     }
-    console.log('--UpdateCourse-clickedCourse: ', clickedCourse)
+    // console.log('--UpdateCourse-clickedCourse: ', clickedCourse)
     const onHandleInputChange = (e) => {
         if (e.target.name == 'course_image') {
             setInputData({ ...inputData, [e.target.name]: e.target.files[0] })

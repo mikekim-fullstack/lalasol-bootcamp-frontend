@@ -25,7 +25,7 @@ const chapterSlice = createSlice({
             const chapters = action.payload?.res_data
             const seq = action.payload?.chapter_list_sequence
 
-            console.log('setChapter-slice:', action.payload, chapters, seq)
+            // console.log('setChapter-slice:', action.payload, chapters, seq)
             const sortedChapters = []
 
             // --- sort chapters by chapter_no in the ascending order. --- 
@@ -39,7 +39,7 @@ const chapterSlice = createSlice({
                         foundChapter.length == 1 && sortedChapters.push(foundChapter[0])
                     })
                     state.data = sortedChapters
-                    console.log('sortedChapters: ', sortedChapters)
+                    // console.log('sortedChapters: ', sortedChapters)
                 }
                 else {
                     state.data = chapters
@@ -79,7 +79,7 @@ const chapterSlice = createSlice({
                 }
                 else {
                     for (const contentItem of action.payload?.content) {
-                        console.log('contentItem: ', contentItem)
+                        // console.log('contentItem: ', contentItem)
                         const item = {}
                         Object.keys(contentItem).map(key => {
                             if (key != 'created_date') item[key] = contentItem[key]
@@ -97,21 +97,20 @@ const chapterSlice = createSlice({
             else {
                 state.contentActionList = null
             }
-            console.log('slice - setClickedChapter: ', action.payload, ', ', contentList,)
+            // console.log('slice - setClickedChapter: ', action.payload, ', ', contentList,)
         },
         setChapterCategory: (state, action) => {
             state.category = action.payload
         },
         setClickedContent: (state, action) => {
             state.clickedContent = action.payload
-            console.log('::slice - set Clicked Content: ', action.payload)
+            // console.log('::slice - set Clicked Content: ', action.payload)
         },
         setContentAction: (state, action) => {
             state.contentActionList = action.payload
-            console.log('slice - setContentAction: ', action.payload)
+            // console.log('slice - setContentAction: ', action.payload)
         },
         resetContentAction: (state, action) => {
-            // state.clickedContent = action.payload
             // console.log('slice - setClickedChapter: ', action.payload)
             /** --1. Populate content array to store the status of action for content history-- */
             const contentList = []
@@ -204,7 +203,7 @@ const chapterSlice = createSlice({
                 _newContentActionList.push(newItem)
             }
             state.contentActionList = _newContentActionList
-            console.log('slice - createContentAction: _newContentActionList: ', _newContentActionList)
+            // console.log('slice - createContentAction: _newContentActionList: ', _newContentActionList)
 
         },
         deleteContentAction: (state, action) => {

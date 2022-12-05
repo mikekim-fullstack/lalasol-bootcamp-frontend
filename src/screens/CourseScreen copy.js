@@ -69,10 +69,10 @@ const CourseScreen = () => {
             }
         )
             .then(res => {
-                console.log(res.data, res.data.html, res.data.category.title)
-                // setHtml(res.data)
+                // console.log(res.data, res.data.html, res.data.category.title)
+
                 fetchFile(res.data.html)
-                console.log('------', res.data.category)
+                // console.log('------', res.data.category)
                 setChapter(res.data)
             })
             .catch(err => console.log('error: ', err))
@@ -87,7 +87,7 @@ const CourseScreen = () => {
         const url4 = 'mikekim-fullstack/seytech-css-agency/blob/master/index.html'
         const url = urlBase + url1.replace('/blob/', '/')
 
-        console.log('-- url Github: ', url)
+        // console.log('-- url Github: ', url)
         await axios.get(url,
             {
                 headers: {
@@ -108,14 +108,14 @@ const CourseScreen = () => {
 
 
     useEffect(() => {
-        console.log('useEffect-------1')
+        // console.log('useEffect-------1')
         const _chapter = chapters?.filter((chapter) => {
             return chapter.id == course_id
         })
-        console.log('useEffect', ', courses', course_id, _chapter)
+        // console.log('useEffect', ', courses', course_id, _chapter)
         if (_chapter?.length > 0) {
             if (course_id > 0 && chapters) {
-                console.log('chapters: ', _chapter[0].html)
+                // console.log('chapters: ', _chapter[0].html)
                 setChapter(_chapter[0])
                 fetchFile(_chapter[0].html)
             }

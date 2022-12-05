@@ -14,7 +14,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
     const [fileExtension, setFileExtension] = useState(null)
     const fetchGithub = async (url, content_id) => {
 
-        console.log('-- url Github: ', url)
+        // console.log('-- url Github: ', url)
         const ext = url.split('.').pop().toLocaleLowerCase()
         await axios.get(url,
             {
@@ -40,7 +40,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
     }
 
     useEffect(() => {
-        console.log('<<<< useEffect-PreviewContent: -isCreateContentMode-', isCreateContentMode, ', contentAction', contentAction)
+        // console.log('<<<< useEffect-PreviewContent: -isCreateContentMode-', isCreateContentMode, ', contentAction', contentAction)
         if (isCreateContentMode) {
             /** In Add(Create) mode, only show the new content in preview area
              *  otherwise it shows all in preview area.
@@ -53,13 +53,13 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
     }, [contentAction, isCreateContentMode])
     return (
         <div className='content__preview'>
-            {console.log('localContentAction: ', localContentAction)}
+            {/* {console.log('localContentAction: ', localContentAction)} */}
             {localContentAction && localContentAction.map(content => {
 
                 switch (content.chapter_category) {
                     case 1: // html file
                     case 3: // PDF file
-                        console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
+                        // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
                         return <div key={content.id} className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
                             <iframe
@@ -97,7 +97,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                             const url = content.action == '' ?
                                 (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
                                 : content.url.split('=').pop()
-                            console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
+                            // console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
                             // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
                             return <div key={content.id} className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
                                 <iframe
@@ -126,7 +126,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                     // return <p className='main_paragraph'>{content.text}</p>
                     case 12: // Break line
                         {
-                            console.log('case - content.action -break', content)
+                            // console.log('case - content.action -break', content)
                             return <hr key={content.id} style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
                         }
                     case 13:// Code Block
@@ -145,7 +145,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                 URL.createObjectURL(content?.image)
                                 : (content?.image?.includes('http') ? content?.image : axios.defaults.baseURL + content?.image)
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
-                            console.log('image: ', src, content)
+                            // console.log('image: ', src, content)
                             // return;
                             return <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
                         }

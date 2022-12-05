@@ -32,7 +32,7 @@ const ProgressBarChapter = () => {
         else navigate('screen404')
 
 
-        console.log('handleSelectedChapter--click: ', chapter, chapterId)
+        // console.log('handleSelectedChapter--click: ', chapter, chapterId)
     }
 
     // -----------------------------------
