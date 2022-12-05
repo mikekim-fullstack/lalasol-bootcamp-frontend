@@ -12,6 +12,21 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
     const [localContentAction, setLocalContentAction] = useState(null)
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
+
+
+    const resolveBlockMixedActivity = (file) => {
+        let url = null
+        if (file.includes('https://127.0.0.1')) {
+            url = (file.replace('https:', 'http:'))
+        }
+        else if (file.includes('http://lalasol')) {
+            url = (file.replace('http:', 'https:'))
+        }
+        else {
+            url = (file)
+        }
+        return url
+    }
     const fetchGithub = async (url, content_id) => {
 
         // console.log('-- url Github: ', url)
@@ -73,7 +88,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                 // src={axios.defaults.baseURL + content.file}
                                 src={(content.action == 'updated' || content.action == 'created') ?
                                     URL.createObjectURL(content?.file) :
-                                    (content.file.includes('http') ? content.file : axios.defaults.baseURL + content.file)}
+                                    (content.file.includes('http') ? resolveBlockMixedActivity(content.file) : resolveBlockMixedActivity(axios.defaults.baseURL) + content.file)}
                                 title="description">
 
                             </iframe>
@@ -143,7 +158,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                             // const imageURL = 
                             const src = (content.action == 'updated' || content.action == 'created') ?
                                 URL.createObjectURL(content?.image)
-                                : (content?.image?.includes('http') ? content?.image : axios.defaults.baseURL + content?.image)
+                                : (content?.image?.includes('http') ? resolveBlockMixedActivity(content?.image) : resolveBlockMixedActivity(axios.defaults.baseURL) + content?.image)
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
                             // console.log('image: ', src, content)
                             // return;
