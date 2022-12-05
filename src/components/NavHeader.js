@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setCat, setSelectedCatStatus, getSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
 import NavSubmenu from './NavSubmenu'
 import { getUser, logout } from '../slices/userSlices'
+import { resetPathAll } from '../slices/pathSlice'
 
 
 const NavHeader = () => {
@@ -32,6 +33,7 @@ const NavHeader = () => {
         console.log('click Home button')
     }
     const handleLogout = () => {
+        dispatch(resetPathAll())
         dispatch(logout())
         navigate('/', { replace: true })
         window.location.reload()

@@ -103,7 +103,8 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 data: formData,
             })
                 .then(res => {
-
+                    fetchContentByCourseID()
+                    dispatch(setPathContentID(null))
                     dispatch(setChapterUpdatedStatus())
 
                 })
@@ -404,6 +405,11 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
             const card = content_card_outline[i]
             const id = card.className.split(' ').pop()
+
+            /** Reset previous outline to nothing */
+            card.style['box-shadow'] = ''
+            card.style['-webkit-box-shadow'] = ''
+            card.style['-moz-box-shadow'] = ''
             /** Once find the clicled element and highlight outline(box-shadow) */
             if (contentID && Number(id) == contentID) {
                 // card.style['border-radius'] = '5px'
@@ -418,13 +424,8 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                     card.style['-moz-box-shadow'] = shadowColor
                 }
             }
-            /** Reset previous outline to nothing */
-            else {
-                // card.style['border-radius'] = '0px'
-                card.style['box-shadow'] = ''
-                card.style['-webkit-box-shadow'] = ''
-                card.style['-moz-box-shadow'] = ''
-            }
+
+
         }
     }
     const handleClickContent = (e, content) => {//clickedChapter?.content
@@ -493,6 +494,18 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         // dispatch(deleteContentAction(6)) // for test
     }
 
+    const fetchContentByCourseID = async () => {
+        const url = axios.defaults.baseURL + `/api/chapter/${pathID.chapterID}`
+        await axios.get(url)
+            .then(res => {
+                console.log('fetchContentByCourseID: ' + url, ', response:', res.data)
+                dispatch(setClickedChapter(res.data))
+
+            })
+
+            .catch(e => console.log('error-fetch-chapter: ' + url, e))
+    }
+
     const onSubmitUpdateContentForm = (e) => {
         e.preventDefault()
         /** reset inputContent */
@@ -507,13 +520,10 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
 
         let formData = new FormData()
-        // formData.append('chapter_category', Number(contentChoice.id))
-        // formData.append('creater', Number(teacherId))
-
         const contentId = clickedContent.id
-        const _contentAction = contentAction?.filter((item) => item.action == 'updated')
-        console.log('+++===> onSubmitUpdateContentFor:-contentAction', contentAction, ', contentChoice', contentChoice)
-        if (_contentAction.length !== 1) return;
+
+        console.log('+++===> onSubmitUpdateContentFor:-contentAction', contentAction, ', contentChoice', contentChoice,)
+
         if (contentChoice.id == 12) {// Break Line
             formData.append('title', contentChoice.title)
             formData.append('file', '')
@@ -522,13 +532,14 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             formData.append('image', '')
         }
         else {
+            const _contentAction = contentAction?.filter((item) => item.action == 'updated')
+            if (_contentAction.length !== 1) return;
             formData.append('file', _contentAction[0].file)
             formData.append('url', _contentAction[0].url)
             formData.append('text', _contentAction[0].text)
             formData.append('image', _contentAction[0].image)
             formData.append('title', _contentAction[0].title)
         }
-
 
         formData.append('chapter_category', contentChoice.id)
 
@@ -543,6 +554,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             .then(res => {
                 console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
                 fetchChapters()
+                fetchContentByCourseID()
                 setTriggerUseEffect(!triggerUseEffect)
             })
             .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
@@ -558,6 +570,8 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         )
 
     }
+
+
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()
 
@@ -601,6 +615,8 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         })
             .then(res => {
                 console.log('Success - End point-/api/chapter-content/', res.data)
+
+                dispatch(setPathContentID(res.data.id))
                 const formData = new FormData()
                 formData.append('chapter_id', clickedChapter?.id)
                 formData.append('content_id', res.data.id)
@@ -614,8 +630,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 })
                     .then(res => {
                         console.log('Success-End point-/api/chapter-content-add/', res.data)
+
                         /** For rerendering to update */
-                        // dispatch(setClickedChapter(null))
+                        fetchContentByCourseID()
                         dispatch(setChapterUpdatedStatus())
                     })
                     .catch(err => console.log('Error-End point-/api/chapter-content-add/', err))
@@ -641,27 +658,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 code: _clickedContent.code,
             })
         }
-        /**
-                 * Show filename in input file
-                 */
-        // const inputFileLabel = document.getElementById('fileinput_label')
-        // console.log('inputFileLabel: ', inputFileLabel)
-        // if (inputFileLabel && _clickedContent?.file) inputFileLabel.innerHTML = _clickedContent.file.split('/').pop()
 
-        /*
-                const contentListsEle = document.querySelector('.add_chapter__component .content_lists_item')
-                console.log('contentListsEle: ', contentListsEle)
-                if (contentListsEle) {
-                    console.log(' --- contentListsEle: ---')
-                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-                    contentListsEle.style['box-shadow'] = shadowColor
-                    contentListsEle.style['-webkit-box-shadow'] = shadowColor
-                    contentListsEle.style['-moz-box-shadow'] = shadowColor
-                    setPreviousClickedContent(contentListsEle)
-                }
-                */
 
-        outlinedContentCard(pathID?.contentID)
+        outlinedContentCard(_clickedContent.id)
         dispatch(setClickedContent(_clickedContent))
         /**
          * selectionRef.current.value is for initial value of select tag
@@ -697,7 +696,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             }
         }
 
-    }, [clickedChapter, triggerUseEffect])
+    }, [clickedChapter, triggerUseEffect, clickedCourse?.course?.chapter_list_sequence])
 
 
     useEffect(() => {
@@ -725,7 +724,8 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                     {/* -- edit sign -- */}
                     {contentAction?.length > 0 && operateContent && <svg onClick={e => handleUpdateContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                     {/*-- add expend + sign --*/}
-                    {operateContent && <svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
+                    {/* {operateContent && <svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>} */}
+                    {operateContent && <svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M11.25 16.75h1.5v-4h4v-1.5h-4v-4h-1.5v4h-4v1.5h4ZM5.3 20.5q-.75 0-1.275-.525Q3.5 19.45 3.5 18.7V5.3q0-.75.525-1.275Q4.55 3.5 5.3 3.5h13.4q.75 0 1.275.525.525.525.525 1.275v13.4q0 .75-.525 1.275-.525.525-1.275.525Zm0-1.5h13.4q.1 0 .2-.1t.1-.2V5.3q0-.1-.1-.2t-.2-.1H5.3q-.1 0-.2.1t-.1.2v13.4q0 .1.1.2t.2.1ZM5 5v14V5Z" /></svg>}
                     {/* close add - sign */}
                     {!operateContent && <svg onClick={e => handleClickCloseContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                 </div>
@@ -785,7 +785,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 <div className='content_lists'>
 
                     <div className='content_lists_body'>
-                        {console.log('content_lists_body: ', contentAction)}
+                        {/* {console.log('content_lists_body: ', contentAction)} */}
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 

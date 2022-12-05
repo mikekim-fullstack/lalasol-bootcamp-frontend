@@ -42,6 +42,7 @@ const AddChapter = ({ teacherId }) => {
      * 2. clickedAddChapter: When add(+sign) clicked set it to true
      * 3. clickedUpdateChapter: When update(pen sign) clicked set it to true
      *  */
+    const [updateRender, setUpdateRender] = useState(false)
     const [clickedAddChapter, setClickedAddChapter] = useState(false)
     const [clickedUpdateChapter, setClickedUpdateChapter] = useState(false)
     const [operateChapter, setOperateChapter] = useState(true)
@@ -49,6 +50,7 @@ const AddChapter = ({ teacherId }) => {
     const clickedContent = useSelector(getClickedContent)
 
     const [isChapterUpdated, setIsChapterUpdated] = useState(false)
+    const [operationStage, setOperationStage] = useState('')
     const [dialogDeleteChapter, setDialogDeleteChapter] = useState({
         message: "",
         isLoading: false,
@@ -60,6 +62,7 @@ const AddChapter = ({ teacherId }) => {
         name: '',
         description: '',
     })
+    const [toggleRefresh, setToggleRefresh] = useState(false)
 
 
     const copyObject = (_clickedCourseItem, objItem) => {
@@ -93,68 +96,51 @@ const AddChapter = ({ teacherId }) => {
 
         /** -- Initially highlight the first chapter and make a sure the rest of chapters aren't highlighted. -- */
         outlinedChapterCard(pathID?.chapterID)
-        // const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
-        // const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-
-        // for (let i = 0; i < chapterListsEle.length; i++) {
-        //     if (i == 0) {
-        //         chapterListsEle[i].style['box-shadow'] = shadowColor
-        //         chapterListsEle[i].style['-webkit-box-shadow'] = shadowColor
-        //         chapterListsEle[i].style['-moz-box-shadow'] = shadowColor
-        //         setPreviousClickedChapter(chapterListsEle[i])
-        //     }
-        //     else {
-        //         chapterListsEle[i].style['box-shadow'] = ''
-        //         chapterListsEle[i].style['-webkit-box-shadow'] = ''
-        //         chapterListsEle[i].style['-moz-box-shadow'] = ''
-        //     }
-        // }
     }
 
     /** Gell all chapters by userID and courseID from server */
-    const fetchChapters = async (updated) => {
-        if (!clickedCourse?.course?.id) return
-        setCreateChapter(false)
-        const url = axios.defaults.baseURL + `/api/course-chapter/${clickedCourse?.course?.id}`
-        // await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${userId}&course_id=${clickedCourse?.course?.id}`)
+    const fetchChapters = async (mode, course, seq) => {
+        if (!course) return
+        // setCreateChapter(false)
+        setOperateChapter(true)
+        const url = axios.defaults.baseURL + `/api/course-chapter/${course.id}`
         await axios({
             method: 'GET',
             url,
-            // headers: {
-            //     'Content-Type': 'Application/json'
-            // }
         })
             .then(res => {
 
-                console.log('fetchChapters:  course-', clickedCourse?.course, ', response: ', res.data, ', endpoint-', url)
-                const chapterListData = res.data
+                const chapters = res.data
+                console.log('fetchChapters:  course-', course, ', response-chapters: ', chapters, ', endpoint-', url)
+                dispatch(setChapters({ chapter_list_sequence: course?.chapter_list_sequence, res_data: chapters }))
 
-                // setChapterLists(chapterListData)
-                // dispatch(setChapters(res.data))
-                dispatch(setChapters({ chapter_list_sequence: clickedCourse?.course?.chapter_list_sequence, res_data: res.data }))
-                if (false) {
-                    // setClickedAddChapter({ ...clickedAddChapter })
-                    if (clickedChapter == null && chapterListData.length > 0) {
-                        dispatch(setClickedChapter(chapterListData[0]))
+                /** When chapter was deleted select first chapter */
+                if (mode == 'refresh' || mode == 'delete') {
+                    if (chapters.length > 0) {
+                        // const seq = course?.chapter_list_sequence
+                        if (seq) {
+                            const keyChapters = Object.keys(seq)
+                            if (keyChapters.length > 0) {
+                                // select the first chapter
+                                const sortedChapterKeys = keyChapters.sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                                const chapterId = Number(sortedChapterKeys[0])
+                                dispatch(setPathChapterID(chapterId))
+                                const firstChapter = chapters.filter(chapter => chapter.id == chapterId)
+                                dispatch(setClickedChapter(firstChapter[0]))
+                            }
+                            else {
+                                dispatch(setPathChapterID(null))
+                            }
+                        }
                     }
                     else {
-
-                        const clickCht = chapterListData.filter((chapter) => chapter.id == clickedChapter.id)
-                        console.log('------updated------chapterListData:', chapterListData, ', chapterLists-', clickCht)
-                        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
+                        dispatch(setClickedChapter(null))
+                        dispatch(setPathChapterID(null))
+                        dispatch(setPathContentID(null))
                     }
                 }
-                // else {
-                //     setIsCompleteFetchChapter(!isCompleteFetchChapter)
-                // }
-
-                // if (!updated) setIsCompleteFetchChapter(!isCompleteFetchChapter)
                 setIsCompleteFetchChapter(!isCompleteFetchChapter)
-                // if (res.data.length > 1) {
-                //     _sortedData.sort((a, b) => a.chapter_no > b.chapter_no ? 1 : a.chapter_no < b.chapter_no ? -1 : 0)
-                // }
 
-                // setChapterLists(_sortedData)
 
 
             })
@@ -170,6 +156,10 @@ const AddChapter = ({ teacherId }) => {
 
             const card = chapter_card_outline[i]
             const id = card.className.split(' ').pop()
+            /** Reset previous outline to nothing */
+            card.style['box-shadow'] = ''
+            card.style['-webkit-box-shadow'] = ''
+            card.style['-moz-box-shadow'] = ''
             /** Once find the clicled element and highlight outline(box-shadow) */
             if (chapterID && Number(id) == chapterID) {
                 // card.style['border-radius'] = '5px'
@@ -184,50 +174,63 @@ const AddChapter = ({ teacherId }) => {
                     card.style['-moz-box-shadow'] = shadowColor
                 }
             }
-            /** Reset previous outline to nothing */
-            else {
-                // card.style['border-radius'] = '0px'
-                card.style['box-shadow'] = ''
-                card.style['-webkit-box-shadow'] = ''
-                card.style['-moz-box-shadow'] = ''
-            }
+
+
         }
     }
 
     const handleClickChapter = (e, chapterId) => {
         const clickCht = chapterLists.filter((chapter) => chapter.id == chapterId)
+        // fetchChapters('', clickCht.length > 0 ? clickCht[0].course : null)
+        fetchChapters('', clickedCourse?.course)
         dispatch(setPathChapterID(chapterId))
-        dispatch(setPathContentID(null))
-
         outlinedChapterCard(chapterId)
         // clickCht.length > 0 && selectChapter(clickCht[0])
 
-        clickCht.length > 0 && dispatch(setClickedChapter(clickCht[0]))
-        /*
-                const chapterListsEle = document.querySelectorAll('.add_chapter__component .chapter_lists')
-                let clickedEle = null
-                for (let i = 0; i < chapterListsEle.length; i++) {
-                    if (chapterListsEle[i].contains(e.target)) {
-                        clickedEle = chapterListsEle[i]
-                        break
-                    }
-                }
-                if (previousClickedChapter) {
-                    previousClickedChapter.style['box-shadow'] = ''
-                    previousClickedChapter.style['-webkit-box-shadow'] = ''
-                    previousClickedChapter.style['-moz-box-shadow'] = ''
-        
-                }
-                if (clickedEle) {
-                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-                    clickedEle.style['box-shadow'] = shadowColor
-                    clickedEle.style['-webkit-box-shadow'] = shadowColor
-                    clickedEle.style['-moz-box-shadow'] = shadowColor
-                    setPreviousClickedChapter(clickedEle)
-                }
-                //  */
+        // if (clickCht.length > 0 && clickCht[0].content_list_sequence) {
+        //     const keyContent = Object.keys(clickCht[0]?.content_list_sequence)
+        //     if (keyContent.length > 0) {
+        //         // select the first chapter
+        //         dispatch(setPathContentID(Number(keyContent[0])))
+        //     }
+        //     else {
+        //         dispatch(setPathContentID(null))
+        //     }
+        //     dispatch(setClickedChapter(clickCht[0]))
+        // }
+        // else {
+        //     dispatch(setClickedChapter(clickCht[0]))
+        //     dispatch(setPathContentID(null))
+        // }
+        //-----------------------------
 
-        console.log('handleClickChapter- clickCht:', clickCht, ', chapter id: ', chapterId, ', chapterLists: ', chapterLists)
+        if (clickCht.length > 0) {
+            // dispatch(setPathChapterID(clickCht[0].id))
+            dispatch(setClickedChapter(clickCht[0]))
+            if (clickCht[0].content_list_sequence) {
+                const keyContent = Object.keys(clickCht[0]?.content_list_sequence)
+                if (keyContent.length > 0) {
+                    // select the first chapter
+                    dispatch(setPathContentID(Number(keyContent[0])))
+                }
+                else {
+                    dispatch(setPathContentID(null))
+                }
+            }
+            else {
+                dispatch(setPathContentID(null))
+            }
+
+        }
+        else {
+            dispatch(setClickedChapter(null))
+            dispatch(setPathChapterID(null))
+            dispatch(setPathContentID(null))
+        }
+
+
+        // setUpdateRender(!updateRender)
+        console.log('handleClickChapter- clickCht:', clickCht, ', chapter id: ', chapterId, ', chapterLists: ', chapterLists, ', pathID', pathID)
     }
 
 
@@ -261,7 +264,7 @@ const AddChapter = ({ teacherId }) => {
                     // -- Remove map(deletedCourseID:orderNumber) from course_list_sequence. ---
                     const chapterListSequence = clickedCourse?.course?.chapter_list_sequence
                     const seqChapterData = { "chapter_list_sequence": {} }
-                    let maxVal = -1
+                    setOperationStage('delete')
                     if (chapterListSequence) {
                         // -- Copy all current courseID:order into seqChapterData{}. --
                         Object.keys(chapterListSequence)
@@ -279,11 +282,13 @@ const AddChapter = ({ teacherId }) => {
                     // --------------------------------------------------------
                     updateCourseChapterSequence(seqChapterData)
 
-                    setClickedChapter(null)
+                    // setClickedChapter(null)
 
-                    fetchChapters(true)
+                    fetchChapters('delete', clickedCourse?.course, seqChapterData.chapter_list_sequence)
                     setClickedAddChapter(false)
 
+
+                    setUpdateRender(!updateRender)
 
                 })
                 .catch(err => console.log(err))
@@ -337,25 +342,8 @@ const AddChapter = ({ teacherId }) => {
             data: chapterSeqData
         })
             .then(res => {
-                // handleSuccessUpdateChapterSeq(true)
                 dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, course: res.data }))
-                // --- Reset input fields. ---
-                // setInputData({ ...inputData, title: '', description: '' })
-                // fileRef.current.value = "";//Resets the file name of the file input 
-
-                // const _clickedCouseInfo = clickedCourse
-                // _clickedCouseInfo.course.chapter_list_sequence = chapterSeqData
-                // const _clickedCourseInfo = {}
-                // copyObject(_clickedCourseInfo)
-                // _clickedCourseInfo.course.chapter_list_sequence = chapterSeqData
-                // dispatch(setClickedCourse(_clickedCourseInfo))
                 setIsChapterUpdated(true)
-                // console.log('_clickedCourseInfo: ', _clickedCourseInfo)
-
-                // setUploadSuccess(true)
-                //status, courseID, catID, teacherID
-                // handleSuccessUploading(true, clickedCourse?.courseId, clickedCourse?.catId, teacherId)
-
                 console.log('onSubmitUpdateCourseForm:', res.data)
 
             })
@@ -374,7 +362,7 @@ const AddChapter = ({ teacherId }) => {
             e.target.style.height = (e.target.scrollHeight) + "px";
         }
     }
-    const onSubmitAddChapterForm = (e) => {
+    const onSubmitAddChapterForm = async (e) => {
         e.preventDefault()
         let formData = new FormData()
 
@@ -382,7 +370,7 @@ const AddChapter = ({ teacherId }) => {
         formData.append('course', clickedCourse?.course?.id)
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
         console.log('------------- onSubmitAddCourseForm--:', formData)
-        axios({
+        await axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/chapters/',
             headers: {
@@ -416,10 +404,15 @@ const AddChapter = ({ teacherId }) => {
                 // --------------------------------------------------------
                 updateCourseChapterSequence(seqChapterData)
                 // fileRef.current.value = "";//Resets the file name of the file input 
-
+                // fetchChapters('', clickedCourse?.course)
 
                 setIsChapterUpdated(true)
                 setClickedAddChapter(false)
+                setOperateChapter(true)
+
+                dispatch(setPathChapterID(res.data.id))
+                dispatch(setPathContentID(null))
+
                 // setUploadSuccess(true)
                 // handleSuccessUploadingChapter(true, res.data.id, res.data.category, res.data.teacher)
                 console.log('onSubmitAddChapterForm:', res)
@@ -451,20 +444,10 @@ const AddChapter = ({ teacherId }) => {
             .then(res => {
                 // --- Reset input fields. ---
                 setInputData({ name: '', description: '' })
-
-                // updateCourseChapterSequence()
-                // fileRef.current.value = "";//Resets the file name of the file input 
-
-                if (previousClickedChapter) {
-                    previousClickedChapter.style['box-shadow'] = ''
-                    previousClickedChapter.style['-webkit-box-shadow'] = ''
-                    previousClickedChapter.style['-moz-box-shadow'] = ''
-
-                }
                 setIsChapterUpdated(true)
                 setClickedUpdateChapter(false)
-                // setUploadSuccess(true)
-                // handleSuccessUploadingChapter(true, res.data.id, res.data.category, res.data.teacher)
+                fetchChapters('', clickedCourse?.course)
+                setToggleRefresh(!toggleRefresh)
                 console.log('onSubmitUpdateChapterForm:', res)
 
             })
@@ -474,23 +457,35 @@ const AddChapter = ({ teacherId }) => {
     /**
      * -------------------------------------------------------------------------------------
      */
+    // useEffect(() => {
+    //     fetchChapters('refresh', clickedCourse?.course)
+    // }, [clickedCourse?.course?.id])
     useEffect(() => {
-        setClickedChapter(null)
+        if (operationStage == 'delete') {
+            setOperationStage('')
+        }
+        else {
 
-        fetchChapters(true)
+            fetchChapters('', clickedCourse?.course)
+        }
+    }, [clickedCourse?.course?.chapter_list_sequence])
 
-        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
-    }, [clickedCourse?.course?.id, isChapterUpdated, clickedCourse?.course?.chapter_list_sequence])
+
+    // useEffect(() => {
+    //     // setClickedChapter(null)
+    //     // fetchChapters('refresh')
+    //     console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id, ', chapterLists-', chapterLists, ', operateChapter-', operateChapter)
+    // }, [isChapterUpdated,])
+
     useEffect(() => {
-        // setClickedChapter(null)
 
-        fetchChapters(true)
+        // fetchChapters('refresh')
 
-        console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
-    }, [chapterUpdatedStatus])
+        console.log('useEffect - 2. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
+    }, [chapterUpdatedStatus], toggleRefresh)
 
     useEffect(() => {
-        setIsChapterUpdated(false)
+        // setIsChapterUpdated(false)
         setClickedChapter(null)
         dispatch(setContentAction([]))
         if (chapterLists?.length > 0) {
@@ -502,71 +497,16 @@ const AddChapter = ({ teacherId }) => {
 
 
         // chapterLists?.length > 0 && console.log('useEffect- chapterLists: ', chapterLists, chapterLists[0])
-        console.log('useEffect - 2. AddChapter->chapterLists: setClickedChapter')
-    }, [isCompleteFetchChapter])
-
-    /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
-    // useEffect(() => {
-    //     console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
-
-    //     if (!createChapter && clickedChapter?.content?.length > 0) {
-
-    //         // test to delete item in contentAction
-    //         // dispatch(deleteContentAction(8))
-    //         // dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
-    //         // dispatch(updateContentActionById({ catId: 1, id: 16, type: 'url', data: 'https:www.youtube.com' }))
-
-    //         /** --2. Initialize Content with first one.-- */
-    //         contentAction.length > 0 && initSelectContent(contentAction[0])
-    //     }
-
-    // }, [clickedChapter])
-
-    // useEffect(() => {
-    //     // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
-    //     if (contentChoice?.title.includes('Break Line')) {
-    //         console.log('useEffect --- contentChoice.title')
-    //         dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: '' }))
-    //     }
-    // }, [contentChoice?.title])
-
-
-    // useEffect(() => {
-    //     console.log('useEffect --- contentAction.action updated')
-
-
-    // }, [contentAction?.action])
+        console.log('useEffect - 3. AddChapter->chapterLists: setClickedChapter-pathID?.chapterID', pathID?.chapterID)
+    }, [isCompleteFetchChapter, updateRender])
 
     useEffect(() => {
 
-        console.log('useEffect - inputData:', inputData)
+        // console.log('useEffect - inputData:', inputData)
         // contentFileRef && contentFileRef.current.files[0].name
     }, [inputData])
 
 
-    // // --------------------------------------------------
-    /*
-        const mouseOverListener = (e) => {
-            // console.log('mouseover', isAddMode)
-            if (clickedAddChapter) document.getElementById('id_edit_chapter').innerText = 'Add Chapter'
-            else document.getElementById('id_edit_chapter').innerText = 'Close Edit Chapter'
-        }
-        const mouseLeaveListener = (e) => {
-            // console.log('mouseover', isAddMode)
-            document.getElementById('id_edit_chapter').innerText = 'Chapter Modifier'
-        }
-        const id_plus_sign = document.getElementById('id_plus_sign')
-        useEffect(() => {
-            console.log('id_plus_sign: ', id_plus_sign)
-            id_plus_sign?.addEventListener('mouseover', mouseOverListener)
-            id_plus_sign?.addEventListener('mouseleave', mouseLeaveListener)
-            return () => {
-                id_plus_sign?.removeEventListener('mouseover', mouseOverListener)
-                id_plus_sign?.removeEventListener('mouseleave', mouseLeaveListener)
-            }
-    
-        }, [id_plus_sign])
-    */
     useEffect(() => {
 
         setClickedAddChapter(false)
@@ -575,21 +515,6 @@ const AddChapter = ({ teacherId }) => {
     }, [clickedCourse])
 
     useEffect(() => {
-        // const txHeight = 16;
-        // const tx = document.getElementsByTagName("textarea");
-        // console.log('textarea: ', tx)
-        // for (let i = 0; i < tx?.length; i++) {
-        //     if (tx[i].value == '') {
-        //         tx[i].setAttribute("style", "height:" + txHeight + "px;overflow-y:hidden;");
-        //     } else {
-        //         tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-        //     }
-        //     tx[i].addEventListener("input", e => eventListenerInput(e, tx), false);
-        // }
-        // // return () => {
-        // //     tx.removeEventListener("input", eventListenerInput, false);
-        // // }
-
 
     }, [clickedUpdateChapter, clickedAddChapter, isCreateContentMode, isPreViewMode, clickedChapter])
 
@@ -601,52 +526,33 @@ const AddChapter = ({ teacherId }) => {
     }
 
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
+    // useEffect(() => {
+    //     console.log('useEffect - 4. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
+
+    //     setClickedAddChapter(false)
+    //     setClickedUpdateChapter(false)
+    //     setOperateChapter(true)
+
+    // }, [clickedChapter])
+
     useEffect(() => {
-        console.log('useEffect - 4. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
 
-        setClickedAddChapter(false)
-        setClickedUpdateChapter(false)
-        setOperateChapter(true)
+        // if (chapterLists?.length > 0 && chapterLists[0].content_list_sequence) {
+        //     const keyContent = Object.keys(chapterLists[0].content_list_sequence)
+        //     if (keyContent.length > 0) {
+        //         // select the first content
+        //         dispatch(setPathContentID(Number(keyContent[0])))
+        //     }
+        //     else {
+        //         dispatch(setPathContentID(null))
 
-        //  -- test...
-        /*
-        let _course = {}
-        const setKey = 'chapter_list_sequence'
-        const setValue = null
-        const objectCourse = clickedCourse.course
-        Object.keys(objectCourse).map(key => {
-            if (typeof (objectCourse[key]) == 'object') {
-                _course[key] = {}
-                // console.log('setkey', setKey, setValue, key, typeof (clickedCourse[key]) == 'object')
-
-                if (key == setKey) {
-
-                    if (typeof (setValue) == 'Object') {
-                        Object.keys(setValue).map(k1 => {
-                            _course[key][k1] = setValue[k1]
-                        })
-
-                    }
-                    else _course[key] = setValue
-                }
-                else
-                    copyObject(_course[key], objectCourse[key])
-
-            }
-            else {
-
-                _course[key] = objectCourse[key]
-            }
-
-        })
-        // dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.course.id, foundCard: clickedCourse.foundCard, course: _course }))
-        // fetchChapters()
-        // copyObject(_course, 'chapter_list_sequence', null)
-        // _course.course.chapter_list_sequence = null
-        console.log('_course: ', _course)
-        */
-
-    }, [clickedChapter])
+        //     }
+        // }
+        // else {
+        //     dispatch(setPathContentID(null))
+        // }
+        console.log('useEffect - pathID:', pathID, ', chapterLists:', chapterLists)
+    }, [chapterLists])
 
     console.log('<<<< refreshed in AddChapter - contentAction', contentAction, ', chapterLists:', chapterLists)
     // ----------------------------------------------------
@@ -669,7 +575,7 @@ const AddChapter = ({ teacherId }) => {
                             {!operateChapter && <svg id='id_plus_sign' onClick={e => handleClickCloseChapter(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
 
                             {/* //add expend + sign */}
-                            {operateChapter && <svg id='id_plus_sign' onClick={e => handleAddChapter(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
+                            {operateChapter && <svg id='id_plus_sign' onClick={e => handleAddChapter(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M11.25 16.75h1.5v-4h4v-1.5h-4v-4h-1.5v4h-4v1.5h4ZM5.3 20.5q-.75 0-1.275-.525Q3.5 19.45 3.5 18.7V5.3q0-.75.525-1.275Q4.55 3.5 5.3 3.5h13.4q.75 0 1.275.525.525.525.525 1.275v13.4q0 .75-.525 1.275-.525.525-1.275.525Zm0-1.5h13.4q.1 0 .2-.1t.1-.2V5.3q0-.1-.1-.2t-.2-.1H5.3q-.1 0-.2.1t-.1.2v13.4q0 .1.1.2t.2.1ZM5 5v14V5Z" /></svg>}
                         </div>
 
                     </div>

@@ -15,7 +15,7 @@ const CourseCard = ({ cat, course, handleCourseClick, isTeacher }) => {
                 <div className='image'>
                     {/* {console.log('course: ', course)} */}
                     {/* <img width='36px' height='36px' className={course.enrolled || isTeacher ? '' : 'svg_image_gray'} src={axios.defaults.baseURL + course.course_image}></img> */}
-                    <img width='36px' height='36px' className={course.enrolled || user.role == 'teacher' ? '' : 'svg_image_gray'} src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
+                    <img width='36px' height='36px' className={course.enrolled || user?.role == 'teacher' ? '' : 'svg_image_gray'} src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
                 </div>
                 <div className='title'><span>{course.title}</span></div>
             </div>

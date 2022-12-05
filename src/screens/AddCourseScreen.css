@@ -12,7 +12,13 @@
 .add_update_course__screen_content {
     /* margin: 100px 0px; */
     padding-top: var(--nav-height);
+}
 
+.add_update_course__screen_content>h1 {
+    background-color: rgb(84, 12, 185);
+    padding: 10px 0;
+    color: white;
+    font-weight: 300;
 }
 
 .add_update_course__screen_content .categories {

@@ -9,6 +9,7 @@ import './LoginScreen.css'
 // import SignUpScreen from './SignUpScreen'
 import { useSelector, useDispatch } from 'react-redux'
 import { login, getUser } from '../slices/userSlices';
+import { resetPathAll } from '../slices/pathSlice'
 const LoginScreen = () => {
     const [toggleIcon, setToggleIcon] = useState(true)
     const [singUp, setSingUp] = useState(false)
@@ -47,6 +48,7 @@ const LoginScreen = () => {
             })
             // console.log('res: ', res.data)
             dispatch(login(res.data))
+            dispatch(resetPathAll())
         }
         catch (e) {
             console.log('error: /api/student-login/, /api/teacher-login/', e.response.data, ', message=', e.message)

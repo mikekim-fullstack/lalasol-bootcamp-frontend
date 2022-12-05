@@ -133,10 +133,11 @@
     border-left: 10px solid rgba(100, 100, 100, 0.4);
     /* border-radius: 5px; */
     text-align: start;
-    padding: 5px;
+    padding: 10px 20px;
     background-color: rgb(52, 52, 52);
     cursor: pointer;
     transition: all 0.2s ease;
+    margin-bottom: 10px;
 }
 
 .add_course:hover {
@@ -145,12 +146,12 @@
 }
 
 .add_course>svg {
-    fill: white;
+    fill: yellowgreen;
 }
 
 .add_course>span {
     font-size: 1.1rem;
     color: white;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 
 }

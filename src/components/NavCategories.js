@@ -133,7 +133,7 @@ const NavCategoreis = () => {
 
         dispatch(setSelectedCat(_sortedCat))
         openSideMenu && dispatch(setSelectedCatStatus(true))
-        dispatch(resetPathAll())
+        // dispatch(resetPathAll())
         dispatch(setPathCatID(catId))
         // dispatch(setChapters(null))
         dispatch(setChapters({ chapter_list_sequence: null, res_data: null }))

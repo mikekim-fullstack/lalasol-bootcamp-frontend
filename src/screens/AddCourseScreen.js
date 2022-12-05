@@ -5,8 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getAllCategories, setAllCategories, getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCourses, getCourses, getCoursesEnrolledStatus, setCoursesEnrolledStatus, setClickedCourse, getClickedCourse } from '../slices/courseSlice'
 import { setChapters, getChapters, setClickedChapter, setChapterUpdatedStatus, getChapterUpdatedStatus, getChapterLists } from '../slices/chapterSlice'
-import { setPathCourseID, setPathCatID, getPathCatID, setPathCourseCardIndex, getPathCourseCardIndex, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
-// import { setPathCatID, setPathCourseID, getPathCatID, getPathCourseID } from '../slices/pathSlice'
+import { setPathCourseID, setPathCatID, getPathID, getPathCatID, setPathCourseCardIndex, getPathCourseCardIndex, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './AddCourseScreen.css'
@@ -22,6 +21,7 @@ const AddCourseScreen = () => {
 
     const dispatch = useDispatch()
     const user = useSelector(getUser)
+    const pathID = useSelector(getPathID)
     const categories = useSelector(getCats)
     const allCategories = useSelector(getAllCategories)
     const courses = useSelector(getCourses)
@@ -215,9 +215,10 @@ const AddCourseScreen = () => {
     }
     const handleAddCourse = (e, cat, index) => {
         /** -- [setCatID] stores boolean showing which category clicked(true) in array [true, false, ...]. --*/
-        const _selCatID = [...selCatID]
-        _selCatID[index] = !_selCatID[index]
+        const _selCatID = selCatID.map(sel => false)
+        _selCatID[index] = true
         setSelCatID([..._selCatID])
+        dispatch(setPathCatID(cat[0]))
 
         /** -- Change color targeting the clicked category + sign. -- */
         // const catid = cat[0]
@@ -230,10 +231,11 @@ const AddCourseScreen = () => {
             console.log(courses[key].course_no, courses[key].title)
         })
 
-        console.log('add_courseScreen-cat:', typeof (courses), courses, _selCatID, cat, index, _selCatID[index],)
+        console.log('add_courseScreen-courses:', courses, ', _selCatID', _selCatID, ', cat:', cat, ', coursesEnrolled', coursesEnrolled)
     }
     const handleClickCloseCourse = (e, cat, index) => {
-        const _selCatID = [...selCatID]
+        const _selCatID = selCatID.map(sel => false)
+        // const _selCatID = [...selCatID]
         _selCatID[index] = false//!_selCatID[index]
         setSelCatID([..._selCatID])
 
@@ -270,7 +272,43 @@ const AddCourseScreen = () => {
             }
         }
     }
+    /** -- After added/deleted chapter, reload course info especially sequence data*/
+    const fetchCourse = async (course_id) => {
+        if (!course_id) return
+        const url = axios.defaults.baseURL + `/api/course/${course_id}`
+        await axios({
+            method: 'GET',
+            url,
+        })
+            .then(res => {
+                const course = res.data
+                console.log('fetchCourse:  course-', clickedCourse?.course, ', response: ', course, ', endpoint-', url)
+                dispatch(setClickedCourse({ catId: course.category, courseId: course.id, course: course }))
+                dispatch(setPathCatID(course.category))
+                dispatch(setPathCourseID(course.id))
+                outlinedCourseCard(course.id)
+                const seq = course.chapter_list_sequence
+                if (seq) {
+                    const keyChapters = Object.keys(seq)
+                    if (keyChapters.length > 0) {
+                        // select the first chapter
+                        const sortedChapterKeys = keyChapters.sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                        dispatch(setPathChapterID(Number(sortedChapterKeys[0])))
+                    }
+                    else {
+                        dispatch(setPathChapterID(null))
+                    }
+                }
+                else {
+                    dispatch(setPathChapterID(null))
+                }
+                dispatch(setClickedChapter(null))
 
+
+                //setIsCompleteFetchChapter(!isCompleteFetchChapter)
+            })
+            .catch(err => console.log('error: ' + url, err))
+    }
     const handleClickCourse = (e, course, index) => {
         const catId = course.category
         const courseId = course.id
@@ -280,22 +318,37 @@ const AddCourseScreen = () => {
         setSelCatID([..._selCatID])
 
 
+        fetchCourse(course.id)// -- Update Course infomation... --
+
         setIsEditMode(false)
         setIsAddMode(false)
 
-        outlinedCourseCard(course.id)
+        // outlinedCourseCard(course.id)
 
-        dispatch(setPathCatID(catId))
+        // dispatch(setPathCatID(catId))
 
-        dispatch(setPathCourseID(courseId))
-        dispatch(setPathChapterID(null))
+        // dispatch(setPathCourseID(courseId))
 
+        /*
+        const keyChapters = Object.keys(course.chapter_list_sequence)
+        if (keyChapters.length > 0) {
+            // select the first chapter
+            dispatch(setPathChapterID(Number(keyChapters[0])))
+        }
+        else {
+            dispatch(setPathChapterID(null))
+        }
         dispatch(setClickedChapter(null))
+        */
+
+
 
         // const foundCourse = coursesEnrolled.filter(course => course.id == courseId)
         /** Save catId, courseId, foundCard info and use it in rendering <div> */
         // dispatch(setClickedCourse({ catId, courseId, course: foundCourse && foundCourse[0] }))
-        dispatch(setClickedCourse({ catId, courseId, course }))
+
+        // dispatch(setClickedCourse({ catId, courseId, course }))
+
         // setClickedCourseInfo({ catId, courseId, foundCard, course })
         console.log('handleClickCourse: catid:', catId, 'courseid:', courseId, ', course: ', course)// e.target, foundCard, (course__edit_card_outline))
 
@@ -397,12 +450,12 @@ const AddCourseScreen = () => {
             fetchAllCourses()
         }
     }, [allCategories])
-    console.log('<<< Refresh - AddCourseScreen: clickedCourse', clickedCourse, ',coursesEnrolled:', coursesEnrolled)
+    console.log('<<< Refresh - AddCourseScreen: clickedCourse', clickedCourse, ',coursesEnrolled:', coursesEnrolled, ', selCatID:', selCatID, ', categories:', categories, ', PathID', pathID)
     return (
 
         <div className='add_update_course__screen'>
             <div className='add_update_course__screen_content'>
-                <h1>Seup Course</h1>
+                <h1>Course Management Panel</h1>
                 {
                     categories && categories.map((cat, index) => {
                         // console.log('add_courseScreen-cat:', cat)
@@ -419,7 +472,7 @@ const AddCourseScreen = () => {
                                         {/* -- edit sign -- */}
                                         {selCatID[index] || clickedCourse?.catId == catId && <svg onClick={e => handleUpdateCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.15 19H6.4l9.25-9.25-1.225-1.25-9.275 9.275Zm13.7-10.35L15.475 5.3l1.3-1.3q.45-.425 1.088-.425.637 0 1.062.425l1.225 1.225q.425.45.45 1.062.025.613-.425 1.038Zm-1.075 1.1L7.025 20.5H3.65v-3.375L14.4 6.375Zm-2.75-.625-.6-.625 1.225 1.25Z" /></svg>}
                                         {/*-- add expend + sign --*/}
-                                        {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M10.85 19.15v-6h-6v-2.3h6v-6h2.3v6h6v2.3h-6v6Z" /></svg>}
+                                        {selCatID[index] || <svg onClick={e => handleAddCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M11.25 16.75h1.5v-4h4v-1.5h-4v-4h-1.5v4h-4v1.5h4ZM5.3 20.5q-.75 0-1.275-.525Q3.5 19.45 3.5 18.7V5.3q0-.75.525-1.275Q4.55 3.5 5.3 3.5h13.4q.75 0 1.275.525.525.525.525 1.275v13.4q0 .75-.525 1.275-.525.525-1.275.525Zm0-1.5h13.4q.1 0 .2-.1t.1-.2V5.3q0-.1-.1-.2t-.2-.1H5.3q-.1 0-.2.1t-.1.2v13.4q0 .1.1.2t.2.1ZM5 5v14V5Z" /></svg>}
                                         {/* close add - sign */}
                                         {selCatID[index] && <svg onClick={e => handleClickCloseCourse(e, cat, index)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
                                     </div>
@@ -428,9 +481,10 @@ const AddCourseScreen = () => {
                                 {selCatID[index] && isEditMode && <UpdateCourse clickedCourse={clickedCourse} handleSuccessUploading={handleSuccessUpdated} />}
                             </div>
                             {/** When delete button clicked on course it pops up */}
-                            {dialogDeleteCourse.isLoading && <DialogBox
-                                dialogData={dialogDeleteCourse} onDialog={handleDeleteCourseResponse}
-                            />
+                            {
+                                dialogDeleteCourse.isLoading && <DialogBox
+                                    dialogData={dialogDeleteCourse} onDialog={handleDeleteCourseResponse}
+                                />
                             }
                             {/* -- Under categories it shows all courses in card. -- */}
                             <div className='courses'>
@@ -462,7 +516,7 @@ const AddCourseScreen = () => {
                     })
                 }
             </div>
-        </div>
+        </div >
 
     )
 }
