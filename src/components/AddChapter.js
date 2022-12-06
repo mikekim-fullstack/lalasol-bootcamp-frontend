@@ -276,7 +276,7 @@ const AddChapter = ({ teacherId }) => {
 
                     }
 
-                    console.log('  ----Delete chapter seqChapterData---', seqChapterData, ', after deleted chapter: ', res.data)
+                    // console.log('  ----Delete chapter seqChapterData---', seqChapterData, ', after deleted chapter: ', res.data)
                     // --------------------------------------------------------
                     updateCourseChapterSequence(seqChapterData)
 
@@ -290,7 +290,7 @@ const AddChapter = ({ teacherId }) => {
 
                 })
                 .catch(err => console.log(err))
-            console.log('delete chapter', messageData.chapter)
+            // console.log('delete chapter', messageData.chapter)
         } else {
         }
         setDialogDeleteChapter({ message: "", isLoading: false, itemName: '', chapter: null, });
@@ -342,7 +342,7 @@ const AddChapter = ({ teacherId }) => {
             .then(res => {
                 dispatch(setClickedCourse({ catId: clickedCourse.catId, courseId: clickedCourse.courseId, course: res.data }))
                 setIsChapterUpdated(true)
-                console.log('onSubmitUpdateCourseForm:', res.data)
+                // console.log('onSubmitUpdateCourseForm:', res.data)
 
             })
 

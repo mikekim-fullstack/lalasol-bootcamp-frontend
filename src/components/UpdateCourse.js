@@ -42,7 +42,7 @@ const UpdateCourse = ({ showLabel, clickedCourse, handleSuccessUploading }) => {
 
                 setUploadSuccess(true)
                 handleSuccessUploading(true, res.data.id, res.data.category, res.data.teacher)
-                console.log('onSubmitUpdateCourseForm:', res.data)
+                // console.log('onSubmitUpdateCourseForm:', res.data)
 
             })
 

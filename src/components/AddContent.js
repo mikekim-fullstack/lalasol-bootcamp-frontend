@@ -59,6 +59,10 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const paragraphRef = useRef(null)
     const codeRef = useRef(null)
 
+    const [itemState, setItemState] = useState({ isHover: false, isDone: false })
+    const dragStartedItem = useRef(null)
+    const dragOverItem = useRef(null)
+
     const fetchChapters = async () => {
         if (!clickedCourse?.course?.id) return
         // setCreateChapter(false)
@@ -431,31 +435,6 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         }
         outlinedContentCard(content.id)
         dispatch(setPathContentID(content.id))
-
-        /*
-                const contentListsEle = document.querySelectorAll('.add_chapter__component .content_lists_item')
-                let clickedEle = null
-                for (let i = 0; i < contentListsEle.length; i++) {
-                    if (contentListsEle[i].contains(e.target)) {
-                        clickedEle = contentListsEle[i]
-                        break
-                    }
-                }
-                if (previousClickedContent) {
-                    previousClickedContent.style['box-shadow'] = ''
-                    previousClickedContent.style['-webkit-box-shadow'] = ''
-                    previousClickedContent.style['-moz-box-shadow'] = ''
-        
-                }
-                if (clickedEle) {
-                    const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
-                    clickedEle.style['box-shadow'] = shadowColor
-                    clickedEle.style['-webkit-box-shadow'] = shadowColor
-                    clickedEle.style['-moz-box-shadow'] = shadowColor
-                    setPreviousClickedContent(clickedEle)
-                }
-                */
-
         dispatch(setClickedContent(content))
         /**
          * selectionRef.current.value is for initial value of select tag
@@ -471,13 +450,6 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             image: content.image,
             code: content.code,
         })
-
-
-
-        // const inputFileLabel = document.getElementById('fileinput_label')
-        // if (inputFileLabel) inputFileLabel.innerHTML = content.file.split('/').pop()
-
-        // dispatch(deleteContentAction(6)) // for test
     }
 
     const fetchContentByCourseID = async () => {
@@ -491,7 +463,28 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
             .catch(e => console.log('error-fetch-chapter: ' + url, e))
     }
+    const updateContentSequence = async (seq) => {
+        let formData = new FormData()
+        formData.append('content_list_sequence', JSON.stringify(seq))
+        console.log('updateContentSequence - formData: ', formData)
+        axios({
+            method: 'PATCH',
+            url: axios.defaults.baseURL + '/api/chapter/' + clickedChapter.id,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+        })
+            .then(res => {
+                // fetchChapters('', clickedCourse?.course)
+                fetchChapters()
+                fetchContentByCourseID()
+                setTriggerUseEffect(!triggerUseEffect)
+                console.log('updateContentSequence:', res)
+            })
 
+            .catch(res => { console.log('updateContentSequence--error: ', res); })
+    }
     const onSubmitUpdateContentForm = (e) => {
         e.preventDefault()
         /** reset inputContent */
@@ -502,7 +495,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         setClickedAddContent(false)
         setClickedUpdateContent(false)
         funcSetCreateMode(false)
-        setTriggerUseEffect(!triggerUseEffect)
+        // setTriggerUseEffect(!triggerUseEffect)
 
 
         let formData = new FormData()
@@ -647,6 +640,67 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
 
     }
+
+
+
+
+    const handleDragStart = (e, index) => {
+        console.log('handleDragStart-index', index)
+        dragStartedItem.current = index
+        setItemState({ isHover: false, isDone: false })
+    }
+    const handleDragEnter = (e, index) => {
+        console.log('handleDragEnter-index', index)
+        e.preventDefault()
+        if (dragStartedItem.current === index) return;
+        dragOverItem.current = index
+        setItemState({ ...itemState, isHover: !itemState.isHover })
+    }
+    const handleDragEnd = (e) => {
+        console.log('handleDragEnd')
+        e.preventDefault()
+        if (dragStartedItem.current === null) return
+        // console.log('handleDragEnd: ')
+        dragStartedItem.current = null
+        dragOverItem.current = null
+        setItemState({ isHover: false, isDone: true })
+    }
+    const handleDrop = (e, index) => {
+        console.log('handleDrop-index', index, ', contentAction:', contentAction, ', dragStartedItem:', dragStartedItem.current, ', dragOverItem', dragOverItem.current, ', clickedChapter', clickedChapter)
+        e.preventDefault()
+
+        const seq = clickedChapter.content_list_sequence
+        if (seq && Object.keys(seq).length > 0) {
+            const keys = Object.keys(seq)
+                .sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                .map(key => Number(key))
+            console.log('before keys: ', keys)
+
+            const deletedItem = keys.splice(dragStartedItem.current, 1)[0]
+
+            keys.splice(index, 0, deletedItem)
+
+            console.log('after keys: ', keys)
+
+            let newSeq = {}
+            keys.forEach((key, index) => newSeq[String(key)] = index + 1)
+            console.log('newSeq: ', newSeq)
+            updateContentSequence(newSeq)
+
+        }
+        // updateContentSequence()
+        // const _fruitItems = fruitItems
+
+        // // Delete started item and save it into draggedItem
+        // const draggedItem = _fruitItems.splice(dragStartedItem.current, 1)[0]
+
+        // // Insert the graggedItem into the dropped item position..
+        // _fruitItems.splice(index, 0, draggedItem)
+
+        // setFruitItems([..._fruitItems])
+        // setItemState({ isHover: false, isDone: true })
+
+    }
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     useEffect(() => {
         dispatch(setClickedContent(null))
@@ -766,7 +820,15 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 
-                                return <div key={content.id} className='content_lists_block'>
+                                return <div key={content.id}
+                                    className='content_lists_block'
+                                    draggable
+                                    onDragStart={e => handleDragStart(e, index)}
+                                    onDragEnter={(e) => handleDragEnter(e, index)}
+                                    onDragOver={e => e.preventDefault()}
+                                    onDragEnd={e => handleDragEnd(e)}
+                                    onDrop={(e) => handleDrop(e, index)}
+                                >
                                     <div className={`content_lists_item ${content.id}`} key={content.id} onClick={e => handleClickContent(e, content)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
                                         <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>

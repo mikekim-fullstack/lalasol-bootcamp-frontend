@@ -155,6 +155,7 @@ const ChapterScreen = () => {
             // console.log('useEffect - eventListener - scroll -- viewed',)
         }
     }
+
     useEffect(() => {
         document.addEventListener("scroll", isViewedContent)
         return () => document.removeEventListener("scroll", isViewedContent)
