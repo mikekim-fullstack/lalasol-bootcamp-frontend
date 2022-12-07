@@ -38,7 +38,6 @@ const NavSubmenu = ({ className, clickedCat }) => {
             .then(res => {
                 // console.log('--fetchEnrolledCourses:', res.data)
                 const sortedCourses = []
-                // const seq = categories[selectedCatId].course_list_sequence
                 const seq = categories.filter(cat => cat.id == selectedCatId)[0].course_list_sequence
                 const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
                 sortedSeqKeys.forEach(key => {

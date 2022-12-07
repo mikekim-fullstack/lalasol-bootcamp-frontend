@@ -90,7 +90,7 @@
     display: block;
     object-fit: cover;
     width: 80%;
-    margin: auto;
+    margin: 15px auto;
     /* border: 2px dashed green; */
 }
 
@@ -106,7 +106,7 @@
     font-size: 14px;
     line-height: 20px;
     margin: 0 2px;
-    background-color: #f2f3f6;
+    background-color: #e6e8f0;
 
 }
 
@@ -118,6 +118,7 @@
     background-color: #f8faff;
     /* border: none; */
 
+
     overflow-x: auto;
     width: 100%;
     display: block;
@@ -125,12 +126,15 @@
     box-shadow: 0 0 0 1px #d3dce6;
     border-radius: 4px;
     background-color: #f8faff;
+    /* padding-left: 10%;
+    padding-right: 10%; */
 
 }
 
 .content__preview .main_paragraph table tbody,
 .content__preview .note table tbody {
     border-top: 1px solid #ccc;
+
 }
 
 .content__preview .main_paragraph table td,
@@ -138,7 +142,9 @@
     padding: 12px 8px;
     border-bottom: 1px solid rgba(0, 0, 0, .1);
     min-width: 100px;
+
     color: rgba(37, 38, 94, .7);
+
 }
 
 .content__preview .main_paragraph table th,
@@ -151,6 +157,10 @@
 
 .content__preview .main_paragraph strong {
     color: red;
+}
+
+.content__preview .main_paragraph b {
+    font-weight: 600;
 }
 
 .content__preview .main_paragraph ul {
@@ -178,6 +188,7 @@
     border-left-width: 1px;
     border-left: 4px solid #0556f3;
     border-radius: 4px;
+    text-align: left;
 }
 
 @media screen and (min-width:1200px) {
