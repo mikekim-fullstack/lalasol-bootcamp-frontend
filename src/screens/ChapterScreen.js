@@ -1,13 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { getChapters, getChapter, setChapters } from '../slices/chapterSlice'
+import { getChapters, getChapter, setChapters, setClickedChapter, getContentAction } from '../slices/chapterSlice'
 import { login, getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './ChapterScreen.css'
 import { Warning } from '@mui/icons-material'
 import ProgressBarChapter from '../components/ProgressBarChapter'
 import { setCat, setSelectedCatStatus, getSelectedCat, getSelectedCatStatus } from '../slices/categorySlice'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
+// import js from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript'
+// import html from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript'
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import a11yDark from "react-syntax-highlighter/dist/esm/styles/prism/a11y-dark"
+import '../components/PreviewContent.css'
+
 const ChapterScreen = () => {
     const TYPE_Text = 7
     const TYPE_NONE = 6
@@ -18,9 +26,11 @@ const ChapterScreen = () => {
     const TYPE_HTML_File = 1
 
     const { chapter_id, user_id } = useParams()
+    const dispatch = useDispatch()
     const selectedCatStatus = useSelector(getSelectedCatStatus)
     // const { user } = useSelector(getUser)
     const [chapter, setChapter] = useState(useSelector((state) => getChapter(state, chapter_id)))
+    const contentAction = useSelector(getContentAction)
     const [contentData, setContentData] = useState(null)
     const [chapterContentLength, setChapterContentLength] = useState(0)
     const [currentContentIndex, setCurrentContentIndex] = useState(0)
@@ -29,6 +39,8 @@ const ChapterScreen = () => {
     const [youtube, setYoutube] = useState(null)
     const [filePath, setFilePath] = useState(null)
     const previousContentIndex = useRef();
+    const [gitHubFile, setGitHubFile] = useState(null)
+    const [fileExtension, setFileExtension] = useState(null)
 
 
     const resolveBlockMixedActivity = (file) => {
@@ -44,6 +56,33 @@ const ChapterScreen = () => {
         }
         return url
     }
+    const fetchGithub = async (url, content_id) => {
+
+        // console.log('-- url Github: ', url)
+        const ext = url.split('.').pop().toLocaleLowerCase()
+        await axios.get(url,
+            {
+                headers: {
+                    "Content-type": "Application/Json",
+                    // 'Access-Control-Allow-Origin': '*',
+                }
+            }
+        )
+            .then(res => {
+
+                // console.log('------github----', res.data)
+                setGitHubFile(res.data)
+                setFileExtension(ext)
+
+
+            })
+            .catch(err => {
+                console.log('error: ' + url, err)
+                // return <div>Not Found</div>
+            })
+
+    }
+
     const fetchUpdateContentViewed = async (content_id) => {
         await axios({
             method: 'POST',
@@ -88,15 +127,17 @@ const ChapterScreen = () => {
                 // console.log('fetchChapterContent: ', res.data)
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
-                    const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
-                    // console.log('fetchChapterContent: ', res.data.content)
-                    previousContentIndex.current = 0
-                    setCurrentContentIndex(0)
-                    setChapterContentLength(sortedChapterContent.length)
-                    setContentData(sortedChapterContent)
-                    if (sortedChapterContent.length > 0) {
-                        selectContentFromChapter(sortedChapterContent[0])
-                    }
+                    dispatch(setClickedChapter(res.data))
+                    // const sortedChapterContent = res.data.content.sort((a, b) => a.content_no > b.content_no ? 1 : (a.content_no < b.content_no) ? -1 : 0)
+                    // // console.log('fetchChapterContent: ', res.data.content)
+
+                    // previousContentIndex.current = 0
+                    // setCurrentContentIndex(0)
+                    // setChapterContentLength(sortedChapterContent.length)
+                    // setContentData(sortedChapterContent)
+                    // if (sortedChapterContent.length > 0) {
+                    //     selectContentFromChapter(sortedChapterContent[0])
+                    // }
                 }
 
             })
@@ -151,9 +192,9 @@ const ChapterScreen = () => {
     //-----------------------------------------------
     const isViewedContent = (e) => {
         // console.log('useEffect - eventListener - scroll', document.querySelector('.chapter__screen').getBoundingClientRect().bottom, window.innerHeight)
-        if (document.querySelector('.chapter__screen').getBoundingClientRect().bottom <= window.innerHeight) {
-            // console.log('useEffect - eventListener - scroll -- viewed',)
-        }
+        // if (document.querySelector('.chapter__screen').getBoundingClientRect().bottom <= window.innerHeight) {
+        //     // console.log('useEffect - eventListener - scroll -- viewed',)
+        // }
     }
 
     useEffect(() => {
@@ -161,78 +202,174 @@ const ChapterScreen = () => {
         return () => document.removeEventListener("scroll", isViewedContent)
     }, [])
 
-    // // --- Trigger when window is refleshed. ---
-    // useEffect(() => {
-    //     window.addEventListener("beforeunload", alertUser);
-    //     return () => {
-    //         window.removeEventListener("beforeunload", alertUser);
-    //     };
-    // }, []);
-    // const alertUser = (e) => {
-    //     e.preventDefault();
-    //     e.returnValue = "";
-    //     // console.log('selectedCat: ', selectedCat)
-    //     // dispatch(setSelectedCatStatus(false))
-    // };
+
     return (
         <div className='chapter__screen'>
-            {!selectedCatStatus && <ProgressBarChapter />}
-            {
-                chapter && (
-                    <div className='chapter__screen_container'>
-                        <div className='chapter__screen_body'>
-                            <h1>{chapter.title}</h1>
-                            <h2>{chapter.sub_title}</h2>
-                            <p>{chapter.description}</p>
-                            {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
-                            {true && filePath &&
-                                <div id='top' className='iframe_container_file' >
-                                    {/* <iframe id='scaled-frame' src={filePath} ></iframe> */}
+            <ProgressBarChapter />
+            <div className='content__preview'>
 
-                                    <iframe
-                                        id='iframe_file'
-                                        frameBorder="0"
-                                        border='0'
-                                        // width="1024"
-                                        width='100%'
-                                        // scrolling="no"
-                                        className='iframe__view'
-                                        src={filePath}
-                                        title="description">
+                {/* {console.log('contentAction: ', contentAction)} */}
+                {contentAction && contentAction.map(content => {
 
-                                    </iframe>
-                                </div>
+                    switch (content.chapter_category) {
+                        case 1: // html file
+                        case 3: // PDF file
+                            // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
+                            return <div key={content.id} className='iframe_container_file' >
+
+                                <iframe
+                                    // id='iframe_file'
+                                    frameBorder="0"
+                                    border='0'
+                                    // width="1024"
+                                    width='100%'
+                                    // scrolling="no"
+                                    className='iframe__view'
+                                    // src={axios.defaults.baseURL + content.file}
+                                    src={(content.action == 'updated' || content.action == 'created') ?
+                                        URL.createObjectURL(content?.file) :
+                                        (content.file.includes('http') ? resolveBlockMixedActivity(content.file) : resolveBlockMixedActivity(axios.defaults.baseURL) + content.file)}
+                                    title="description">
+
+                                </iframe>
+                            </div>
+                        // case 3: // PDF file
+
+
+                        case 4:// Github
+                            {
+                                const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
+                                fetchGithub(url, content.id)
+                                return contentAction && contentAction.length > 0 && gitHubFile && <div key={content.id}  ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                                    customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                                    children={gitHubFile && gitHubFile}
+                                /></div>
                             }
 
-                            {youtube &&
-                                <div id='top' className='iframe_container_youtube'>
+                        // return;
+                        case 5:// youtube link
+                            {
+                                const url = content.action == '' ?
+                                    (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
+                                    : content.url.split('=').pop()
+                                // console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
+                                // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
+                                return <div key={content.id} className='iframe_container_youtube' >
                                     <iframe
                                         frameBorder="0"
                                         border='0'
                                         scrolling="no"
                                         className='iframe__view'
-                                        src={`https://www.youtube.com/embed/${youtube.split('/').pop()}`}
+                                        src={`https://www.youtube.com/embed/${url}`}
                                         title="YouTube video player"
 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
                                     </iframe>
                                 </div>
                             }
-                        </div>
-                        {chapterContentLength > 1 &&
-                            <div className='chapter__screen_footer'>
-                                <div className='chapter__screen_footer_buttons'>
-                                    <a href='#top' name='left' onClick={handleContentNavigation}>left</a>
-                                    <a href='#top' name='right' onClick={handleContentNavigation}>right</a>
-                                </div>
-                            </div>
-                        }
+                        case 8:// main title
+                            // console.log('case - content.action - main title', content, content.title)
+                            return <h1 key={content.id} className='main_title'>{content.title}</h1>
+                        case 9:// sub title 1
+                            return <h2 key={content.id} className='sub_title_1'>{content.title}</h2>
+                        case 10:// sub title 2
+                            return <h3 key={content.id} className='sub_title_2'>{content.title}</h3>
+                        case 11:// Paragraph
+                            // console.log('case - content.action -Paragraph', content, content.text.split('.'))
+                            // return content.text.split('.')
+                            return <div key={content.id} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
+                        // return <p className='main_paragraph'>{content.text}</p>
+                        case 12: // Break line
+                            {
+                                // console.log('case - content.action -break', content)
+                                return <hr key={content.id} />
+                            }
+                        case 13:// Code Block
+                            // console.log('case - content.action', content.action, content.file)
+                            return <div key={content.id} ><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
+                                customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                                children={content.text}
+                            /></div>
+                        case 14:// Note
+                            return <div key={content.id} ><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
+                        // console.log('case - content.action', content.action, content)
+                        case 15:// Image
+                            {
+                                // const imageURL = 
+                                const src = (content.action == 'updated' || content.action == 'created') ?
+                                    URL.createObjectURL(content?.image)
+                                    : (content?.image?.includes('http') ? resolveBlockMixedActivity(content?.image) : resolveBlockMixedActivity(axios.defaults.baseURL) + content?.image)
+                                // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
+                                // console.log('image: ', src, content)
+                                // return;
+                                return <img key={content.id} src={src} />
+                            }
+                        default:
+                            <div key={content.id}></div>
+                    }
 
-                    </div>
-                )
-            }
+                })}
+            </div>
         </div>
     )
 }
+// <div className='chapter__screen'>
+//     {!selectedCatStatus && <ProgressBarChapter />}
+//     {
+//         chapter && (
+//             <div className='chapter__screen_container'>
+//                 <div className='chapter__screen_body'>
+//                     <h1>{chapter.title}</h1>
+//                     <h2>{chapter.sub_title}</h2>
+//                     <p>{chapter.description}</p>
+//                     {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
+//                     {true && filePath &&
+//                         <div id='top' className='iframe_container_file' >
+
+//                             <iframe
+//                                 id='iframe_file'
+//                                 frameBorder="0"
+//                                 border='0'
+//                                 // width="1024"
+//                                 width='100%'
+//                                 // scrolling="no"
+//                                 className='iframe__view'
+//                                 src={filePath}
+//                                 title="description">
+
+//                             </iframe>
+//                         </div>
+//                     }
+
+//                     {youtube &&
+//                         <div id='top' className='iframe_container_youtube'>
+//                             <iframe
+//                                 frameBorder="0"
+//                                 border='0'
+//                                 scrolling="no"
+//                                 className='iframe__view'
+//                                 src={`https://www.youtube.com/embed/${youtube.split('/').pop()}`}
+//                                 title="YouTube video player"
+
+//                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
+//                             </iframe>
+//                         </div>
+//                     }
+//                 </div>
+//                 {chapterContentLength > 1 &&
+//                     <div className='chapter__screen_footer'>
+//                         <div className='chapter__screen_footer_buttons'>
+//                             <a href='#top' name='left' onClick={handleContentNavigation}>left</a>
+//                             <a href='#top' name='right' onClick={handleContentNavigation}>right</a>
+//                         </div>
+//                     </div>
+//                 }
+
+//             </div>
+//         )
+//     }
+// </div>
+//     )
+// }
 
 export default ChapterScreen

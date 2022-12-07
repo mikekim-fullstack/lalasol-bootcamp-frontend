@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getSelectedCat, setCat, getCats, setSelectedCat, getSelectedCatStatus, setSelectedCatStatus } from '../slices/categorySlice'
 import { setCoursesEnrolledStatus, getCourses, getCoursesEnrolledStatus, getClickedCourse, setClickedCourse } from '../slices/courseSlice'
 import { setChapters, getChapters, getChapterLists } from '../slices/chapterSlice'
-import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
+import { setPathCourseID, setPathCatID, resetPathAll, setPathChapterID, getPathCatID, getPathCourseID, getPathChapterID } from '../slices/pathSlice'
 import { getUser } from '../slices/userSlices'
 import axios from 'axios'
 import './HomeScreen.css'
@@ -19,15 +19,20 @@ const HomeScreen = () => {
     const chapters = useSelector(getChapters)
     const chapterLists = useSelector(getChapterLists)
     const clickedCourse = useSelector(getClickedCourse)
+    const catID = useSelector(getPathCatID)
+    const courseID = useSelector(getPathCourseID)
+
 
     // console.log('---HomeScreen ---courses: ', coursesEnrolled)
 
 
-    const fetchEnrolledCourses = async (userId, selectedCatId) => {
+    const fetchEnrolledCourses = async (userId, course) => {
+        const catId = course.category
+        const courseid = course.id
         // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
         const url = user.role == 'teacher' ? `/api/courses-all-by-teacher/${user?.id}` :
-            axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`
+            axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${catId}`
         await axios.get(url,
             {
                 headers: {
@@ -36,12 +41,22 @@ const HomeScreen = () => {
             }
         )
             .then(res => {
-                // console.log('--fetchEnrolledCourses:', res.data)
+                console.log('--fetchEnrolledCourses:-categories', categories, ', res.data', res.data)
                 // dispatch(setCourses(res.data))
-                dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
-                // console.log('done-homescreen')
+                // dispatch(setCoursesEnrolledStatus({ 'categories': categories, 'courses': res.data }))
+
+                dispatch(setClickedCourse({ catId: catId, courseId: courseid, course }))
+
+
+                dispatch(setSelectedCat(catId))
+                dispatch(resetPathAll())
+                dispatch(setPathCatID(catId))
+
+                fetchChapters(course)
+                dispatch(setPathCourseID(courseid))
+                dispatch(setSelectedCatStatus(true))
             })
-            .catch(err => console.log('error: ' + `/api/student-course-enrollment/${userId}/${selectedCatId}`, err))
+            .catch(err => console.log('error: ' + `/api/student-course-enrollment/${userId}/${catId}`, err))
     }
 
     const fetchChapters = async (course) => {
@@ -56,12 +71,31 @@ const HomeScreen = () => {
             .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
     }
 
+    const selectCategory = async (_sortedCat, openSideMenu = true) => {
+        if (!catID) return
+        // const _sortedCat = sortedCat[cat_id]
+        // console.log('handleSelectCategoryClick: ', _sortedCat)
 
+        // -- For letting the submenu(sideBar) to only show the subject lists not showing 
+        //    previous items of selected subject. --
+
+        await fetchEnrolledCourses(user.id, catID)
+
+        // dispatch(setSelectedCat(_sortedCat))
+        // openSideMenu && dispatch(setSelectedCatStatus(true))
+        // dispatch(resetPathAll())
+        // dispatch(setPathCatID(catID))
+        // dispatch(setChapters(null))
+        // dispatch(setChapters({ chapter_list_sequence: null, res_data: null }))
+
+    }
 
     const handleCourseClick = async (e, cat, course) => {
         const catId = course.category
         const courseid = course.id
-        // console.log('handleCourseClick: ', cat, catId, courseid)
+        console.log('handleCourseClick: cat-', cat, ', catID', catId, ', courseid', courseid)
+        // fetchEnrolledCourses(user.id, course)
+
         dispatch(setClickedCourse({ catId: catId, courseId: courseid, course }))
 
 
@@ -91,7 +125,7 @@ const HomeScreen = () => {
 
                                     coursesEnrolled && coursesEnrolled
                                         .filter((course) => course.category == cat[0])
-                                        .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
+                                        // .sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
                                         .map((course) => {
                                             // console.log('course: ', course)
                                             return <CourseCard id='id_course_card' key={course.id} cat={cat} course={course} handleCourseClick={handleCourseClick} />

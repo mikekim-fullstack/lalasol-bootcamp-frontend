@@ -1,5 +1,31 @@
 .progressbar_chapters {
-    margin: 0;
+    /* margin: 0; */
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    /* flex-direction: column; */
     padding: 0;
-    border: 1px dashed pink;
+    /* border: 1px dashed pink; */
+    /* margin-top: var(--nav-height); */
+    margin-top: 60px;
+
+    /* max-width: 300px; */
+    /* margin-left: auto;
+    margin-right: auto; */
+
+
+}
+
+.progressbar_chapters .content__subject {
+    padding: 7px 14px;
+    border-radius: 5px;
+    background-color: rgb(212, 255, 0);
+    border-style: none;
+    border: 1px solid rgb(183, 219, 1);
+    outline: none;
+}
+
+.progressbar_chapters .content__subject:hover {
+    background-color: rgb(114, 133, 18) !important;
+    color: white;
 }

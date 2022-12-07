@@ -177,10 +177,16 @@
     border-radius: 5px;
 }
 
+/* .chapter_content__view .content_lists {
+    display: flex;
+    flex-wrap: wrap;
+} */
+
 .chapter_content__view .content_lists_block {
     display: flex;
     align-items: center;
     cursor: move;
+
 }
 
 .chapter_content__view .content_lists_block>svg {

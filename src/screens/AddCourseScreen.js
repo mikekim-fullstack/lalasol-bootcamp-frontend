@@ -108,27 +108,7 @@ const AddCourseScreen = () => {
             })
             .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
     }
-    const fetchEnrolledCourses = async (userId, selectedCatId) => {
-        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
-        // await axios.get(process.env.REACT_APP_BASE_URL + `/api/course/${subjectId}`,
 
-        await axios.get(axios.defaults.baseURL + `/api/student-course-enrollment/${userId}/${selectedCatId}`,
-            {
-                headers: {
-                    "Content-type": "Application/Json",
-                }
-            }
-        )
-            .then(res => {
-                // console.log('--fetchEnrolledCourses:', res.data)
-                // console.log('--fetchEnrolledCourses:', res.data.sort((a, b) => a.course_no >= b.course ? -1 : 1))
-                const _courses = [...res.data]
-                const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
-                dispatch(setCourses(_sortedCourses, res.data))
-                // console.log('done:', _sortedCourses)
-            })
-            .catch(err => console.log('error: ', err))
-    }
 
 
 

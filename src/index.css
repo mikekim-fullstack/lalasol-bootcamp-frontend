@@ -90,6 +90,7 @@
 :root {
   --bg-primary-color: #212121;
   --nav-height: 56px;
+  --nav-height-add: 100px;
   --side-menu-width: 250px;
   --side-menu-width-on-off: 0;
   /* --mobile-size-tabloid: 600px; */

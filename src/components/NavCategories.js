@@ -54,22 +54,35 @@ const NavCategoreis = () => {
             })
             .catch(err => console.log('error: ' + axios.defaults.baseURL + '/api/course-category/', err))
     }
-    // const [categories, catError, catLoading] = useAxios({
-    //     method: 'GET',
-    //     url: '/api/course-category/',
-    //     headers: {
-    //         'Content-Type': 'Application/Json'
-    //     },
 
-    // })
-    // const [coursesEnrolled, coursesEnrolledError, coursesEnrolledLoading] = useAxios({
-    //     method: 'GET',
-    //     url: user.role == 'student' ? `/api/courses-enrolled-status/${user?.id}` 
-    //     : `/api/courses-all-by-teacher/${user?.id}`,
-    //     headers: {
-    //         'Content-Type': 'Application/Json'
-    //     },
-    // })
+    const fetchEnrolledCourses = async (userId, selectedCatId) => {
+        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
+        const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
+            : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`
+        await axios.get(url,
+            {
+                headers: {
+                    "Content-type": "Application/Json",
+                }
+            }
+        )
+            .then(res => {
+                const sortedCourses = []
+                const seq = categories.filter(cat => cat.id == selectedCatId)[0].course_list_sequence
+                const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                sortedSeqKeys.forEach(key => {
+                    const foundCourse = res.data.filter(course => course.id == Number(key))
+                    if (foundCourse.length > 0) {
+                        sortedCourses.push(foundCourse[0])
+                    }
+                })
+
+                dispatch(setCourses(sortedCourses))
+                // console.log('done-NavCategories:', _sortedCourses)
+            })
+            .catch(err => console.log('error: ', err))
+    }
+
 
     const fetchChapterCateory = async () => {
         await axios({
@@ -84,27 +97,6 @@ const NavCategoreis = () => {
                 dispatch(setChapterCategory(_sortedChapterCat))
             })
             .catch(e => console.log('fetchChapterCategory-Error:', e))
-    }
-
-    const fetchEnrolledCourses = async (userId, selectedCatId) => {
-        // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
-        const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
-            : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`
-        await axios.get(url,
-            {
-                headers: {
-                    "Content-type": "Application/Json",
-                }
-            }
-        )
-            .then(res => {
-                // console.log('--fetchEnrolledCourses:', res.data)
-                const _courses = [...res.data]
-                const _sortedCourses = _courses?.sort((a, b) => a.course_no > b.course_no ? 1 : a.course_no < b.course_no ? -1 : 0)
-                dispatch(setCourses(_sortedCourses))
-                // console.log('done-NavCategories:', _sortedCourses)
-            })
-            .catch(err => console.log('error: ', err))
     }
 
     const updateCategory = async (catId, cat) => {

@@ -50,6 +50,10 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     const [clickedUpdateContent, setClickedUpdateContent] = useState(false)
     const [operateContent, setOperateContent] = useState(true)
 
+    const [selectContent, setSelectContent] = useState(false)
+
+
+
 
     const contentFileRef = useRef(null)
     const contentLinkRef = useRef(null)
@@ -249,7 +253,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'file', data: e.target.files[0] }))
         }
         else if (type == 'image') {
-            // console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
+            console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'image', data: e.target.files[0] }))
             e.target.nextSibling.innerHTML = e.target.files[0].name
@@ -296,7 +300,10 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             const sel = null;
             // console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
-                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputAdd(e, 'image')} />
+                <input required ref={contentFileRef}
+
+                    type='file' accept="image/*" name='image'
+                    onChange={e => handleOnChangeInputAdd(e, 'image')} />
                 <label id='fileinput_label'>{(inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label>
             </div>
         }
@@ -347,7 +354,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             const sel = contentAction.filter(content => content.id == contentId)[0]
             // console.log('clickedContent.Image File: ', inputContent?.image?.name, contentAction, sel, clickedContent)
             return <div className='element_input'>
-                <input required ref={contentFileRef} type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputUpdate(e, 'image')} />
+                <input required ref={contentFileRef}
+
+                    type='file' accept="image/*" name='image' onChange={e => handleOnChangeInputUpdate(e, 'image')} />
                 {/* <label id='fileinput_label'>{sel && sel?.action == 'updated' ? (inputContent?.image?.name) : getFileName(inputContent?.image) || 'Choose File'}</label> */}
                 <label id='fileinput_label'>{sel && sel?.action == 'updated' && (inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label>
                 {/* <label id='fileinput_label'>{(inputContent?.image?.name) ? (inputContent?.image?.name) : 'Choose File'}</label> */}
@@ -476,15 +485,47 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             data: formData
         })
             .then(res => {
-                // fetchChapters('', clickedCourse?.course)
-                fetchChapters()
+
                 fetchContentByCourseID()
                 setTriggerUseEffect(!triggerUseEffect)
-                console.log('updateContentSequence:', res)
+                // console.log('updateContentSequence:', res)
             })
 
             .catch(res => { console.log('updateContentSequence--error: ', res); })
     }
+    /** -- onPasteCaptureImage triggered when copy and paste image  */
+    const onPasteCaptureImage = (e) => {
+        if (contentChoice?.id != 15) return;
+        e.preventDefault()
+        console.log('onPasteCaptureImage', e.clipboardData, ', contentChoice', contentChoice)
+        const clipboardItems = e.clipboardData.items;
+
+        const items = [].slice.call(clipboardItems).filter(function (item) {
+            // Filter the image items only
+            return /^image\//.test(item.type);
+        });
+        if (items.length === 0) {
+            return;
+        }
+
+        const item = items[0];
+        const blob = item.getAsFile();
+
+        let file = new File([blob], "clipboard.jpg", { type: "image/jpeg", lastModified: new Date().getTime() }, 'utf-8');
+        let container = new DataTransfer();
+        container.items.add(file);
+        setInputContent({ ...inputContent, file: container.files[0] })
+        dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'image', data: container.files[0] }))
+
+        setCopidClickedContent('image')
+        contentFileRef.current.required = false
+        const fileInputEle = document.getElementById('fileinput_label')
+        if (fileInputEle) fileInputEle.innerHTML = 'copied clipboard image'
+
+        console.log('e.clipboardData.files', e, container.files)
+    }
+
+
     const onSubmitUpdateContentForm = (e) => {
         e.preventDefault()
         /** reset inputContent */
@@ -520,7 +561,9 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             formData.append('title', _contentAction[0].title)
         }
 
+
         formData.append('chapter_category', contentChoice.id)
+        console.log('---- onSubmitUpdateContentForm-formData: ', formData)
 
         axios({
             method: 'PATCH',
@@ -571,9 +614,13 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             _contentAction[0].image && formData.append('image', _contentAction[0].image)
             _contentAction[0].title && formData.append('title', _contentAction[0].title)
         }
-        // console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
-        //     'contentAction: ', contentAction, ', formData', formData
-        // )
+        if (copidClickedContent == 'image') {
+            formData.append('image', inputContent.file)
+            setCopidClickedContent(null)
+        }
+        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
+            'contentAction: ', contentAction, ', formData', formData
+        )
 
         axios({
             method: 'POST',
@@ -666,7 +713,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         setItemState({ isHover: false, isDone: true })
     }
     const handleDrop = (e, index) => {
-        console.log('handleDrop-index', index, ', contentAction:', contentAction, ', dragStartedItem:', dragStartedItem.current, ', dragOverItem', dragOverItem.current, ', clickedChapter', clickedChapter)
+        // console.log('handleDrop-index', index, ', contentAction:', contentAction, ', dragStartedItem:', dragStartedItem.current, ', dragOverItem', dragOverItem.current, ', clickedChapter', clickedChapter)
         e.preventDefault()
 
         const seq = clickedChapter.content_list_sequence
@@ -674,32 +721,20 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             const keys = Object.keys(seq)
                 .sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
                 .map(key => Number(key))
-            console.log('before keys: ', keys)
+            // console.log('before keys: ', keys)
 
             const deletedItem = keys.splice(dragStartedItem.current, 1)[0]
 
             keys.splice(index, 0, deletedItem)
 
-            console.log('after keys: ', keys)
+            // console.log('after keys: ', keys)
 
             let newSeq = {}
             keys.forEach((key, index) => newSeq[String(key)] = index + 1)
-            console.log('newSeq: ', newSeq)
+            // console.log('newSeq: ', newSeq)
             updateContentSequence(newSeq)
 
         }
-        // updateContentSequence()
-        // const _fruitItems = fruitItems
-
-        // // Delete started item and save it into draggedItem
-        // const draggedItem = _fruitItems.splice(dragStartedItem.current, 1)[0]
-
-        // // Insert the graggedItem into the dropped item position..
-        // _fruitItems.splice(index, 0, draggedItem)
-
-        // setFruitItems([..._fruitItems])
-        // setItemState({ isHover: false, isDone: true })
-
     }
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     useEffect(() => {
@@ -736,13 +771,18 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     }, [contentChoice?.title, operateContent,])// contentAction])
 
     // console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
-
+    // const pasteEvent = (e) => {
+    //     console.log('pasteEvent: ', e, e.clipboardData.files)
+    // }
     useEffect(() => {
+        console.log('useEffect AddContent- refresh: ')
         if (contentChoice?.title.includes('Break Line')) {
             console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         }
-        // console.log('useEffect AddContent-clickedContent: ', clickedContent)
+        // document.addEventListener('paste', pasteEvent)
+        // return () => window.removeEventListener('paste', pasteEvent)
+
     }, [])
     return (
         <div className='chapter_content__view'>
@@ -763,12 +803,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
             </div>
             {/* -- When the Add Chapter + sign pressed.-- */}
             {clickedAddContent &&
-                <form className='add_content_form' onSubmit={onSubmitAddContentForm}>
-                    {/* <div className='input_content_name'>
-                        <label>Content Name</label>
-                        
-                        <input type='text' name='content_name' value={inputContent.content_name} onChange={e => handleOnChangeInputAdd(e, 'content_name')} required placeholder='Enter Content Name*' />
-                    </div> */}
+                <form className='add_content_form' onSubmit={onSubmitAddContentForm} onPasteCapture={onPasteCaptureImage}>
                     <div className='chapter_categories'>
                         <label className='descpriton'>Select Content Element</label>
                         <div className='chapter_categories_content'>
@@ -784,10 +819,13 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                     {<button disabled={contentChoice ? false : true} type='submit'>Add Content</button>}
                 </form>
 
+
+
             }
             {/* -- When the Add Chapter + sign pressed.-- */}
-            {clickedUpdateContent &&
-                <form className='add_content_form' onSubmit={onSubmitUpdateContentForm}>
+            {
+                clickedUpdateContent &&
+                <form className='add_content_form' onSubmit={onSubmitUpdateContentForm} onPasteCapture={onPasteCaptureImage}>
 
                     <div className='chapter_categories'>
                         <label className='descpriton'>Select Content Element</label>
@@ -807,12 +845,14 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
             }
             {/** When delete button clicked on course it pops up */}
-            {dialogDeleteContent.isLoading && <DialogBox
-                dialogData={dialogDeleteContent} onDialog={handleDeleteContentResponse} backgroundColor={'rgba(0,0,0,0.6)'}
-            />
+            {
+                dialogDeleteContent.isLoading && <DialogBox
+                    dialogData={dialogDeleteContent} onDialog={handleDeleteContentResponse} backgroundColor={'rgba(0,0,0,0.6)'}
+                />
             }
             {/* ---------------------- 4. Detail of Content of Chapter ------------------------- */}
-            {!clickedAddContent && !clickedUpdateContent &&
+            {
+                !clickedAddContent && !clickedUpdateContent &&
                 <div className='content_lists'>
 
                     <div className='content_lists_body'>
@@ -846,7 +886,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
 
 
-        </div>
+        </div >
     )
 }
 
