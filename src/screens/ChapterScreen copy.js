@@ -100,7 +100,7 @@ const ChapterScreen = () => {
                 }
 
             })
-            .then(res => console.log('----- content Viewed updated: ', res))
+            // .then(res => console.log('----- content Viewed updated: ', res))
             .catch(e => console.log('error-fetch-chapter: ', e))
     }
     //-----------------------------------------------
