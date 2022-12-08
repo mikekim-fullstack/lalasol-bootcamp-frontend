@@ -160,7 +160,9 @@
 }
 
 .content__preview .main_paragraph b {
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .content__preview .main_paragraph ul {

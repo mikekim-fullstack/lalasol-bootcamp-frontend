@@ -24,6 +24,8 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const user = useSelector(getUser)
     const categories = useSelector(getAllCategories)
 
+    const [toggleRender, setToggleRender] = useState(false)
+
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
         const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
@@ -58,15 +60,32 @@ const NavSubmenu = ({ className, clickedCat }) => {
             : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
         await axios.get(url)
             .then(res => {
-                // console.log('fetchChapters: ', res.data)
+                // console.log('fetchChapters: ', res.data, ', course.chapter_list_sequence', course.chapter_list_sequence)
                 dispatch(setChapters({ chapter_list_sequence: course.chapter_list_sequence, res_data: res.data }))
+
+                const seq = course.chapter_list_sequence
+                if (seq) {
+                    const sortedKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                    if (sortedKeys.length > 0) {
+                        const chapterId = Number(sortedKeys[0])
+                        dispatch(setPathChapterID(chapterId))
+                        if (res.data?.length > 0) navigate(`chapter/${chapterId}/${user.id}`)
+                        else navigate('screen404')
+                    }
+                }
+
+                setToggleRender(!toggleRender)
             })
             .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
     }
 
 
     const handleCourseClick = async (e, course) => {
-        // console.log('handleCourseClick: ', courseid)
+        // console.log('handleCourseClick:-course ', course)
+        if (course?.chapter_list_sequence == null ||
+            Object.keys(course.chapter_list_sequence).length < 1) {
+            return
+        }
         await fetchChapters(course)
         dispatch(setPathCourseID(course.id))
         // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
@@ -99,6 +118,9 @@ const NavSubmenu = ({ className, clickedCat }) => {
         }
         // console.log('------- refreshed --------')
     }, [pathCatID])
+    useEffect(() => {
+        // console.log('useEffectchapters', chapters)
+    }, [toggleRender])
     // console.log('--NavSubmenu - ', pathChapterID, ', selectedCat=', selectedCat)
     return (
         // -- Display courses. --
@@ -114,6 +136,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 {courses?.map((course) => (
                     <div key={course.id}>
                         <div
+
                             className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`}
                             onClick={(e) => handleCourseClick(e, course)}>
                             <img width='30px' height='30px' src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
@@ -121,10 +144,12 @@ const NavSubmenu = ({ className, clickedCat }) => {
 
                         </div>
                         {/* -- Display chapters from selected chaper. -- */}
+
                         {!selectedCat.status && pathCourseID == course.id && (
                             <div className='submenu__course_content'>
                                 {
-                                    chapters && chapters.length > 0 && chapters.map((chapter, index) => {
+
+                                    chapters && chapters.length > 0 ? chapters.map((chapter, index) => {
                                         return <button onClick={handleSelectedChapter}
                                             key={chapter.id}
                                             name={` ${chapter.name}, ${chapter.id}`}
@@ -133,7 +158,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                             {chapter.name}:{chapter.viewed}/{chapter.content.length}
                                         </button>
 
-                                    })
+                                    }) : <div></div>
                                 }
                             </div>
                         )}

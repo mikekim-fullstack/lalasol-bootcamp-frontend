@@ -83,7 +83,7 @@ const ProgressBarChapter = () => {
         await axios.get(url)
             // await axios.get(axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${pathCourseID}`)
             .then(res => {
-                console.log('fetchChapters: ', res.data, ', clickedCourse', course)
+                // console.log('fetchChapters: ', res.data, ', clickedCourse', course)
                 // dispatch(setChapters(res.data))
                 // if (selectedCourse?.length == 1) navigate(`${subject}/${subjectId}`)
                 // else navigate('screen404')
@@ -106,7 +106,7 @@ const ProgressBarChapter = () => {
         else if (!pathCourseID || !pathChapterID) {
             navigate('/', { replace: true })
         }
-        console.log('--- ProgressBarChapter-useEffect - chapters=', chapters, ', userid: ', user.id, ', courseId:', pathCourseID, ', chapterid', pathChapterID)
+        // console.log('--- ProgressBarChapter-useEffect - chapters=', chapters, ', userid: ', user.id, ', courseId:', pathCourseID, ', chapterid', pathChapterID)
     }, [])
 
 

@@ -15,6 +15,7 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import a11yDark from "react-syntax-highlighter/dist/esm/styles/prism/a11y-dark"
 import '../components/PreviewContent.css'
+import HomeScreen from './HomeScreen'
 
 const ChapterScreen = () => {
     const TYPE_Text = 7
@@ -28,6 +29,7 @@ const ChapterScreen = () => {
     const { chapter_id, user_id } = useParams()
     const dispatch = useDispatch()
     const selectedCatStatus = useSelector(getSelectedCatStatus)
+    const chapters = useSelector(getChapters)
     // const { user } = useSelector(getUser)
     const [chapter, setChapter] = useState(useSelector((state) => getChapter(state, chapter_id)))
     const contentAction = useSelector(getContentAction)
@@ -141,7 +143,7 @@ const ChapterScreen = () => {
                 }
 
             })
-            .then(res => console.log('----- content Viewed updated: ', res))
+            // .then(res => console.log('----- content Viewed updated: ', res))
             .catch(e => console.log('error-fetch-chapter: ', e))
     }
     //-----------------------------------------------
@@ -204,112 +206,116 @@ const ChapterScreen = () => {
 
 
     return (
-        <div className='chapter__screen'>
-            <ProgressBarChapter />
-            <div className='content__preview'>
+        <div >
+            {(!chapters || !contentAction) ? <HomeScreen /> :
+                <div className='chapter__screen'>
+                    <ProgressBarChapter />
+                    <div className='content__preview'>
 
-                {/* {console.log('contentAction: ', contentAction)} */}
-                {contentAction && contentAction.map(content => {
+                        {/* {console.log('contentAction: ', contentAction)} */}
 
-                    switch (content.chapter_category) {
-                        case 1: // html file
-                        case 3: // PDF file
-                            // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
-                            return <div key={content.id} className='iframe_container_file' >
+                        {chapters && contentAction && contentAction.map(content => {
 
-                                <iframe
-                                    // id='iframe_file'
-                                    frameBorder="0"
-                                    border='0'
-                                    // width="1024"
-                                    width='100%'
-                                    // scrolling="no"
-                                    className='iframe__view'
-                                    // src={axios.defaults.baseURL + content.file}
-                                    src={(content.action == 'updated' || content.action == 'created') ?
-                                        URL.createObjectURL(content?.file) :
-                                        (content.file.includes('http') ? resolveBlockMixedActivity(content.file) : resolveBlockMixedActivity(axios.defaults.baseURL) + content.file)}
-                                    title="description">
+                            switch (content.chapter_category) {
+                                case 1: // html file
+                                case 3: // PDF file
+                                    // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
+                                    return <div key={content.id} className='iframe_container_file' >
 
-                                </iframe>
-                            </div>
-                        // case 3: // PDF file
+                                        <iframe
+                                            // id='iframe_file'
+                                            frameBorder="0"
+                                            border='0'
+                                            // width="1024"
+                                            width='100%'
+                                            // scrolling="no"
+                                            className='iframe__view'
+                                            // src={axios.defaults.baseURL + content.file}
+                                            src={(content.action == 'updated' || content.action == 'created') ?
+                                                URL.createObjectURL(content?.file) :
+                                                (content.file.includes('http') ? resolveBlockMixedActivity(content.file) : resolveBlockMixedActivity(axios.defaults.baseURL) + content.file)}
+                                            title="description">
+
+                                        </iframe>
+                                    </div>
+                                // case 3: // PDF file
 
 
-                        case 4:// Github
-                            {
-                                const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
-                                fetchGithub(url, content.id)
-                                return contentAction && contentAction.length > 0 && gitHubFile && <div key={content.id}  ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
-                                    customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
-                                    children={gitHubFile && gitHubFile}
-                                /></div>
-                            }
+                                case 4:// Github
+                                    {
+                                        const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
+                                        fetchGithub(url, content.id)
+                                        return contentAction && contentAction.length > 0 && gitHubFile && <div key={content.id}  ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                                            customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                                            children={gitHubFile && gitHubFile}
+                                        /></div>
+                                    }
 
-                        // return;
-                        case 5:// youtube link
-                            {
-                                const url = content.action == '' ?
-                                    (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
-                                    : content.url.split('=').pop()
-                                // console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
-                                // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
-                                return <div key={content.id} className='iframe_container_youtube' >
-                                    <iframe
-                                        frameBorder="0"
-                                        border='0'
-                                        scrolling="no"
-                                        className='iframe__view'
-                                        src={`https://www.youtube.com/embed/${url}`}
-                                        title="YouTube video player"
-
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
-                                    </iframe>
-                                </div>
-                            }
-                        case 8:// main title
-                            // console.log('case - content.action - main title', content, content.title)
-                            return <h1 key={content.id} className='main_title'>{content.title}</h1>
-                        case 9:// sub title 1
-                            return <h2 key={content.id} className='sub_title_1'>{content.title}</h2>
-                        case 10:// sub title 2
-                            return <h3 key={content.id} className='sub_title_2'>{content.title}</h3>
-                        case 11:// Paragraph
-                            // console.log('case - content.action -Paragraph', content, content.text.split('.'))
-                            // return content.text.split('.')
-                            return <div key={content.id} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
-                        // return <p className='main_paragraph'>{content.text}</p>
-                        case 12: // Break line
-                            {
-                                // console.log('case - content.action -break', content)
-                                return <hr key={content.id} />
-                            }
-                        case 13:// Code Block
-                            // console.log('case - content.action', content.action, content.file)
-                            return <div key={content.id} ><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
-                                customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
-                                children={content.text}
-                            /></div>
-                        case 14:// Note
-                            return <div key={content.id} ><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
-                        // console.log('case - content.action', content.action, content)
-                        case 15:// Image
-                            {
-                                // const imageURL = 
-                                const src = (content.action == 'updated' || content.action == 'created') ?
-                                    URL.createObjectURL(content?.image)
-                                    : (content?.image?.includes('http') ? resolveBlockMixedActivity(content?.image) : resolveBlockMixedActivity(axios.defaults.baseURL) + content?.image)
-                                // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
-                                // console.log('image: ', src, content)
                                 // return;
-                                return <img key={content.id} src={src} />
-                            }
-                        default:
-                            <div key={content.id}></div>
-                    }
+                                case 5:// youtube link
+                                    {
+                                        const url = content.action == '' ?
+                                            (content.url.includes('watch') ? content.url.split('=').pop() : content.url.split('/').pop())
+                                            : content.url.split('=').pop()
+                                        // console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
+                                        // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
+                                        return <div key={content.id} className='iframe_container_youtube' >
+                                            <iframe
+                                                frameBorder="0"
+                                                border='0'
+                                                scrolling="no"
+                                                className='iframe__view'
+                                                src={`https://www.youtube.com/embed/${url}`}
+                                                title="YouTube video player"
 
-                })}
-            </div>
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
+                                            </iframe>
+                                        </div>
+                                    }
+                                case 8:// main title
+                                    // console.log('case - content.action - main title', content, content.title)
+                                    return <h1 key={content.id} className='main_title'>{content.title}</h1>
+                                case 9:// sub title 1
+                                    return <h2 key={content.id} className='sub_title_1'>{content.title}</h2>
+                                case 10:// sub title 2
+                                    return <h3 key={content.id} className='sub_title_2'>{content.title}</h3>
+                                case 11:// Paragraph
+                                    // console.log('case - content.action -Paragraph', content, content.text.split('.'))
+                                    // return content.text.split('.')
+                                    return <div key={content.id} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
+                                // return <p className='main_paragraph'>{content.text}</p>
+                                case 12: // Break line
+                                    {
+                                        // console.log('case - content.action -break', content)
+                                        return <hr key={content.id} />
+                                    }
+                                case 13:// Code Block
+                                    // console.log('case - content.action', content.action, content.file)
+                                    return <div key={content.id} ><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
+                                        customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
+                                        children={content.text}
+                                    /></div>
+                                case 14:// Note
+                                    return <div key={content.id} ><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
+                                // console.log('case - content.action', content.action, content)
+                                case 15:// Image
+                                    {
+                                        // const imageURL = 
+                                        const src = (content.action == 'updated' || content.action == 'created') ?
+                                            URL.createObjectURL(content?.image)
+                                            : (content?.image?.includes('http') ? resolveBlockMixedActivity(content?.image) : resolveBlockMixedActivity(axios.defaults.baseURL) + content?.image)
+                                        // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
+                                        // console.log('image: ', src, content)
+                                        // return;
+                                        return <img key={content.id} src={src} />
+                                    }
+                                default:
+                                    <div key={content.id}></div>
+                            }
+
+                        })}
+                    </div>
+                </div>}
         </div>
     )
 }

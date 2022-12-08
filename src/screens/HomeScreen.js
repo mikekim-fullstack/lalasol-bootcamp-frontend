@@ -93,7 +93,7 @@ const HomeScreen = () => {
     const handleCourseClick = async (e, cat, course) => {
         const catId = course.category
         const courseid = course.id
-        console.log('handleCourseClick: cat-', cat, ', catID', catId, ', courseid', courseid)
+        // console.log('handleCourseClick: cat-', cat, ', catID', catId, ', courseid', courseid)
         // fetchEnrolledCourses(user.id, course)
 
         dispatch(setClickedCourse({ catId: catId, courseId: courseid, course }))
