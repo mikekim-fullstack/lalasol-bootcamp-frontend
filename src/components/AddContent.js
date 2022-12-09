@@ -18,7 +18,7 @@ import PreviewContent from './PreviewContent'
 import DialogBox from './DialogBox'
 import { Form } from 'react-router-dom'
 
-const AddContent = ({ funcSetCreateMode, teacherId }) => {
+const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) => {
     const dispatch = useDispatch()
     const pathID = useSelector(getPathID)
     const clickedChapter = useSelector(getClickedChapter)
@@ -395,7 +395,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         }
     }
     /** Find current Content Card by the card index and cat ID */
-    const outlinedContentCard = (contentID) => {
+    const outlinedContentCard = (contentID, isFromPreview = false) => {
         // console.log('outlinedChapterCard - contentID', contentID)
         const content_card_outline = document.querySelectorAll('.add_chapter__component .content_lists_item')
         const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
@@ -415,6 +415,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
                 card.style['box-shadow'] = shadowColor
                 card.style['-webkit-box-shadow'] = shadowColor
                 card.style['-moz-box-shadow'] = shadowColor
+                isFromPreview && card.scrollIntoView();
             }
             else if (contentID == null || typeof (contentID) == 'undefined') {
                 if (i == 0) {
@@ -432,6 +433,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         /**
          * Show filename in input file
          */
+        // 
         const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
         const linkInput = document.querySelector('input_url')
         if (urlFilter && urlFilter[0]?.title.includes('Link')) {
@@ -659,7 +661,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
     }
 
     /** When refresh window it automatically selects the first content */
-    const initSelectContent = (_clickedContent) => {
+    const initSelectContent = (_clickedContent, isFromPreview = false) => {
 
         // dispatch(setClickedContent(_clickedContent))
         // console.log('>>>>----initSelectContent: ', _clickedContent)
@@ -677,7 +679,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         }
 
 
-        outlinedContentCard(_clickedContent.id)
+        outlinedContentCard(_clickedContent.id, isFromPreview)
         dispatch(setClickedContent(_clickedContent))
         /**
          * selectionRef.current.value is for initial value of select tag
@@ -736,6 +738,11 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
 
         }
     }
+    //-----------------------------------------------------------------------
+    // useEffect(() => {
+    //     selectedContentInPreview && handleClickContent(null, selectedContentInPreview)
+    //     console.log('useEffect - ', selectedContentInPreview)
+    // }, selectedContentInPreview)
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     useEffect(() => {
         dispatch(setClickedContent(null))
@@ -744,7 +751,7 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         setClickedAddContent(false)
         setClickedUpdateContent(false)
 
-        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
+        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
 
         if (clickedChapter?.content?.length > 0) {
 
@@ -763,6 +770,22 @@ const AddContent = ({ funcSetCreateMode, teacherId }) => {
         }
 
     }, [clickedChapter, triggerUseEffect, clickedCourse?.course?.chapter_list_sequence])
+    useEffect(() => {
+        dispatch(setClickedContent(null))
+
+        setOperateContent(true)
+        setClickedAddContent(false)
+        setClickedUpdateContent(false)
+
+        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
+
+        if (clickedChapter?.content?.length > 0) {
+
+            initSelectContent(selectedContentInPreview, true)
+            // selectedContentInPreview.scrollIntoView()
+        }
+
+    }, [selectedContentInPreview])
 
 
     useEffect(() => {

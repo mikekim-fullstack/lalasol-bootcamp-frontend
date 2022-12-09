@@ -29,6 +29,17 @@
     /* border: 1px dashed pink; */
 }
 
+.content__preview .element a {
+    text-decoration: none;
+}
+
+.content__preview .element:hover {
+    /* border: 1px dashed pink; */
+    box-shadow: 0px 0px 0px 6px rgba(0, 200, 200, 0.95);
+    -webkit-box-shadow: 0px 0px 0px 6px rgba(0, 200, 200, 0.95);
+    -moz-box-shadow: 0px 0px 0px 6px rgba(0, 200, 200, 0.95);
+}
+
 .content__preview .sub_title_1 {
     font-size: 24px;
     line-height: 36px;
@@ -86,7 +97,7 @@
     /* transform: translateX(0%); */
 }
 
-.content__preview>img {
+.content__preview img {
     display: block;
     object-fit: cover;
     max-width: 70%;

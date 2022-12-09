@@ -63,6 +63,7 @@ const AddChapter = ({ teacherId }) => {
         description: '',
     })
     const [toggleRefresh, setToggleRefresh] = useState(false)
+    const [selectedContentInPreview, setSelectedContentInPreview] = useState(null)
 
 
     const copyObject = (_clickedCourseItem, objItem) => {
@@ -455,9 +456,12 @@ const AddChapter = ({ teacherId }) => {
     /**
      * -------------------------------------------------------------------------------------
      */
-    // useEffect(() => {
-    //     fetchChapters('refresh', clickedCourse?.course)
-    // }, [clickedCourse?.course?.id])
+    const onClickedElement = (e, content) => {
+        // console.log('onClickedElement-', content.id, e)
+        // dispatch(setPathContentID(content.id))
+
+        setSelectedContentInPreview(content)
+    }
     useEffect(() => {
         if (operationStage == 'delete') {
             setOperationStage('')
@@ -538,7 +542,7 @@ const AddChapter = ({ teacherId }) => {
     // console.log('<<<< refreshed in AddChapter - contentAction', contentAction, ', chapterLists:', chapterLists)
     // ----------------------------------------------------
     return (
-        <div className='add_chapter__view'>
+        <div id='id_element' className='add_chapter__view'>
             <h2 id='id_edit_chapter'> Chapter Modifier </h2>
             <div className={`add_chapter__component`}>
                 <div className='chapters_view'>
@@ -621,7 +625,7 @@ const AddChapter = ({ teacherId }) => {
                 </div> */}
 
                 {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
-                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} teacherId={teacherId} />}
+                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} teacherId={teacherId} selectedContentInPreview={selectedContentInPreview} />}
 
 
             </div >
@@ -637,7 +641,7 @@ const AddChapter = ({ teacherId }) => {
 
                 </div>
                 {isPreViewMode && <div >
-                    <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} />
+                    <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} onClickedElement={onClickedElement} />
                 </div>}
             </div>
         </div >

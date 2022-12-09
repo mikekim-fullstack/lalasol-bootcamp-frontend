@@ -8,7 +8,7 @@ import a11yDark from "react-syntax-highlighter/dist/esm/styles/prism/a11y-dark"
 import axios from 'axios'
 import './PreviewContent.css'
 
-const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }) => {
+const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, onClickedElement }) => {
     const [localContentAction, setLocalContentAction] = useState(null)
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
@@ -70,12 +70,12 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
         <div className='content__preview'>
             {/* {console.log('localContentAction: ', localContentAction)} */}
             {localContentAction && localContentAction.map(content => {
-
+                let element = ''
                 switch (content.chapter_category) {
                     case 1: // html file
                     case 3: // PDF file
                         // console.log('case - content.action - html', content, ', clickedContentId:', clickedContentId, axios.defaults.baseURL + content.file)
-                        return <div key={content.id} className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
+                        element = <div key={content.id} className='iframe_container_file' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
 
                             <iframe
                                 // id='iframe_file'
@@ -93,17 +93,18 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
 
                             </iframe>
                         </div>
-                    // case 3: // PDF file
+                        break
 
 
                     case 4:// Github
                         {
                             const url = content.url?.replace('https://github.com/', 'https://raw.githubusercontent.com/')?.replace('/blob/', '/')
                             fetchGithub(url, content.id)
-                            return localContentAction && localContentAction.length > 0 && gitHubFile && <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
+                            element = localContentAction && localContentAction.length > 0 && gitHubFile && <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
                                 customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
                                 children={gitHubFile && gitHubFile}
                             /></div>
+                            break
                         }
 
                     // return;
@@ -114,7 +115,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                 : content.url.split('=').pop()
                             // console.log('youtube: ', `https://www.youtube.com/embed/${url}`, url, content)
                             // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=Lax; Secure;"
-                            return <div key={content.id} className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
+                            element = <div key={content.id} className='iframe_container_youtube' style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}>
                                 <iframe
                                     frameBorder="0"
                                     border='0'
@@ -126,32 +127,40 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; " allowFullScreen>
                                 </iframe>
                             </div>
+                            break
                         }
                     case 8:// main title
                         // console.log('case - content.action - main title', content, content.title)
-                        return <h1 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
+                        element = <h1 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_title'>{content.title}</h1>
+                        break
                     case 9:// sub title 1
-                        return <h2 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_1'>{content.title}</h2>
+                        element = <h2 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_1'>{content.title}</h2>
+                        break
                     case 10:// sub title 2
-                        return <h3 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_2'>{content.title}</h3>
+                        element = <h3 key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='sub_title_2'>{content.title}</h3>
+                        break
                     case 11:// Paragraph
                         // console.log('case - content.action -Paragraph', content, content.text.split('.'))
                         // return content.text.split('.')
-                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
+                        element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} className='main_paragraph' dangerouslySetInnerHTML={{ __html: content.text }} />
+                        break
                     // return <p className='main_paragraph'>{content.text}</p>
                     case 12: // Break line
                         {
                             // console.log('case - content.action -break', content)
-                            return <hr key={content.id} style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
+                            element = <hr key={content.id} style={clickedContentId == content.id ? { border: '1px dashed pink', padding: '2px' } : {}} />
+                            break
                         }
                     case 13:// Code Block
                         // console.log('case - content.action', content.action, content.file)
-                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
+                        element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><SyntaxHighlighter language={'js'} style={a11yDark} showLineNumbers="true"
                             customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
                             children={content.text}
                         /></div>
+                        break
                     case 14:// Note
-                        return <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
+                        element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='note' dangerouslySetInnerHTML={{ __html: '<strong>Note:</strong>' + content.text }} /></div>
+                        break
                     // console.log('case - content.action', content.action, content)
                     case 15:// Image
                         {
@@ -162,17 +171,17 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode }
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
                             // console.log('image: ', src, content)
                             // return;
-                            return <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
+                            element = <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
+                            break
                         }
                     default:
-                        <div key={content.id}></div>
+                        element = <div key={content.id}></div>
+                        break
                 }
+                return <div key={content.id} className='element' onClick={e => onClickedElement(e, content)}><a href='#id_element'>{element}</a></div>
 
             })}
-            {/* {localContentAction && localContentAction.length > 0 && gitHubFile && <div ><SyntaxHighlighter language={fileExtension && fileExtension} style={a11yDark} showLineNumbers="true"
-                customStyle={{ border: 'none', borderRadius: '5px', boxShadow: 'none', width: '100%', padding: '15px 5px', height: 'auto' }}
-                children={gitHubFile && gitHubFile}
-            /></div>} */}
+
         </div>
     )
 }
