@@ -368,7 +368,7 @@ const AddChapter = ({ teacherId }) => {
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         formData.append('course', clickedCourse?.course?.id)
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
-        console.log('------------- onSubmitAddCourseForm--:', formData)
+        // console.log('------------- onSubmitAddCourseForm--:', formData)
         await axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/chapters/',
@@ -431,7 +431,7 @@ const AddChapter = ({ teacherId }) => {
 
         // Object.entries(inputData).forEach((input, index) => console.log(input, index))
         Object.entries(inputData).forEach((input, index) => formData.append(input[0], input[1]))
-        console.log('------------- onSubmitAddCourseForm--:', formData)
+        // console.log('------------- onSubmitAddCourseForm--:', formData)
         axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/chapter/' + clickedChapter.id,

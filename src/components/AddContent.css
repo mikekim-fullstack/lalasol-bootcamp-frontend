@@ -19,7 +19,8 @@
     align-items: center;
 
     padding: 10px;
-    background-color: rgb(42, 30, 97);
+    /* background-color: rgb(42, 30, 97); */
+    background-color: #231c44;
     color: white;
     text-align: center;
 
@@ -36,10 +37,10 @@
 
 .chapter_content__view .title .t2 {
     display: inline-block;
-    border: 0.5px solid rgb(180, 5, 255);
-    background-color: rgb(55, 0, 166);
+    /* border: 0.5px solid #049ea1; */
+    background-color: #6900d2;
     color: white;
-    padding: 4px 8px;
+    padding: 7px 10px;
     border-radius: 5px;
 }
 

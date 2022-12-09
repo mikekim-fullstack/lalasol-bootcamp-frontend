@@ -9,7 +9,9 @@
 
 .add_chapter__view .chapters_view {
     box-sizing: border-box;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
+    background-color: #13111c;
+    padding-bottom: 10px;
 }
 
 .add_chapter__view .chapters_view .title {
@@ -106,17 +108,19 @@
     border-radius: 5px;
     color: white;
     /* width: 100%; */
+    min-width: 200px;
     max-width: 100%;
     align-self: stretch;
+
 }
 
 .add_chapter__component .chapter_lists:hover {
     background-color: rgb(79, 1, 157);
     /* color: gray; */
 
-    box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0px 0px 0px 2px rgb(142, 150, 165);
     -webkit-box-shadow: 0px 0px 0px 2px rgb(142, 150, 165);
-    -moz-box-shadow: 0px 0px 0px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0px 0px 0px 2px rgb(142, 150, 165);
     border-radius: 5px;
 }
 
