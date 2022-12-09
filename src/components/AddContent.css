@@ -15,12 +15,13 @@
 
 .chapter_content__view .title {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 
     padding: 10px;
     background-color: rgb(42, 30, 97);
     color: white;
+    text-align: center;
 
 }
 
@@ -42,11 +43,20 @@
     border-radius: 5px;
 }
 
-.chapter_content__view .title .svg_icon svg {
+.chapter_content__view .svg_icon {
+    padding: 10px 10px 0 0;
+}
+
+.chapter_content__view .svg_icon svg {
     fill: white;
     cursor: pointer;
     margin-left: 5px;
     /* border: 1px dashed pink; */
+}
+
+.chapter_content__view .svg_icon svg:hover {
+    fill: turquoise;
+    transform: scale(1.2);
 }
 
 .chapter_content__view .input_content_name {

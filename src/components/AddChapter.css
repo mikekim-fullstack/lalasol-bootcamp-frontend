@@ -14,7 +14,7 @@
 
 .add_chapter__view .chapters_view .title {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 
     padding: 10px;
@@ -44,7 +44,17 @@
     border-radius: 5px;
 }
 
-.add_chapter__view .chapters_view .title .svg_icon svg {
+.add_chapter__view .chapters_view .svg_icon {
+    background-color: #13111c;
+    padding: 10px 10px 0 0;
+}
+
+.add_chapter__view .chapters_view .svg_icon svg:hover {
+    fill: turquoise;
+    transform: scale(1.2);
+}
+
+.add_chapter__view .chapters_view .svg_icon svg {
     fill: white;
     cursor: pointer;
     margin-left: 5px;
@@ -58,7 +68,7 @@
     overflow-x: scroll;
     background-color: rgb(19, 17, 28);
     box-sizing: border-box;
-    border-top: 0.5px solid rgb(49, 47, 88);
+    /* border-top: 0.5px solid rgb(49, 47, 88); */
 
 
     border-radius: 0;
