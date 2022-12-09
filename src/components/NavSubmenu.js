@@ -96,15 +96,15 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const handleSelectedChapter = (e) => {
         // -- Get subject name and id to pass them to the page through 
         //    the Navigation and Route to fetch data from server. --
-        const path = e.target.name?.split(',')
+        // const path = e.target.name?.split(',').pop()
         const chapter = 'chapter'//path[0].trim()
-        const chapterId = parseInt(path[1].trim())
+        const chapterId = parseInt(e.target.name?.split(',').pop().trim())
         dispatch(setPathChapterID(chapterId))
         // fetchCourse(chapter, chapterId)
         // const selectedCourse = courses?.filter((course) => course.id == chapterId)
         if (chapters?.length > 0) navigate(`${chapter}/${chapterId}/${user.id}`)
         else navigate('screen404')
-        // console.log('handleSelectedChapter--click: ', chapter, chapterId)
+        // console.log('handleSelectedChapter--click: ', chapter, chapterId, ', e.target.name', e.target.name, ', ', e.target.name?.split(',').pop())
     }
     const handleAddCourse = (e) => {
         // console.log('handleAddCourse-clicked')
@@ -152,10 +152,11 @@ const NavSubmenu = ({ className, clickedCat }) => {
                                     chapters && chapters.length > 0 ? chapters.map((chapter, index) => {
                                         return <button onClick={handleSelectedChapter}
                                             key={chapter.id}
-                                            name={` ${chapter.name}, ${chapter.id}`}
+                                            name={`${chapter.name},${chapter.id}`}
                                             // className={`content__subject btn_chapter_selected`}>
                                             className={`content__subject ${pathChapterID == chapter.id && 'btn_selected'}`}>
-                                            {chapter.name}:{chapter.viewed}/{chapter.content.length}
+                                            {/* {chapter.name}:{chapter.viewed}/{chapter.content.length} */}
+                                            <span>{index + 1}</span>{chapter.name}
                                         </button>
 
                                     }) : <div></div>

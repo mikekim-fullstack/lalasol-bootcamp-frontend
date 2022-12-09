@@ -477,7 +477,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     const updateContentSequence = async (seq) => {
         let formData = new FormData()
         formData.append('content_list_sequence', JSON.stringify(seq))
-        console.log('updateContentSequence - formData: ', formData)
+        // console.log('updateContentSequence - formData: ', formData)
         axios({
             method: 'PATCH',
             url: axios.defaults.baseURL + '/api/chapter/' + clickedChapter.id,
@@ -565,7 +565,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
 
         formData.append('chapter_category', contentChoice.id)
-        console.log('---- onSubmitUpdateContentForm-formData: ', formData)
+        // console.log('---- onSubmitUpdateContentForm-formData: ', formData)
 
         axios({
             method: 'PATCH',
@@ -577,9 +577,13 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         })
             .then(res => {
                 // console.log('Success UPDATE CONTENT- End point-/api/chapter-content/' + contentId, res.data)
+
+
                 fetchChapters()
                 fetchContentByCourseID()
                 setTriggerUseEffect(!triggerUseEffect)
+
+
             })
             .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
 
@@ -620,9 +624,9 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
             formData.append('image', inputContent.file)
             setCopidClickedContent(null)
         }
-        console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
-            'contentAction: ', contentAction, ', formData', formData
-        )
+        // console.log('+++===> onSubmitAddContentFor: - contentChoice:', contentChoice,
+        //     'contentAction: ', contentAction, ', formData', formData
+        // )
 
         axios({
             method: 'POST',
@@ -636,6 +640,13 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 // console.log('Success - End point-/api/chapter-content/', res.data)
 
                 dispatch(setPathContentID(res.data.id))
+                const id_content_select = document.getElementById('id_content_select')
+                if (id_content_select) {
+                    // outlinedContentCard()
+                    id_content_select.scrollIntoView()
+                }
+                // console.log('id_content_select:', id_content_select)
+
                 const formData = new FormData()
                 formData.append('chapter_id', clickedChapter?.id)
                 formData.append('content_id', res.data.id)
@@ -676,37 +687,37 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 image: _clickedContent.image,
                 code: _clickedContent.code,
             })
+
+
+
+            outlinedContentCard(_clickedContent.id, isFromPreview)
+            dispatch(setClickedContent(_clickedContent))
+            /**
+             * selectionRef.current.value is for initial value of select tag
+             */
+            if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
+            // console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
+            setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
         }
-
-
-        outlinedContentCard(_clickedContent.id, isFromPreview)
-        dispatch(setClickedContent(_clickedContent))
-        /**
-         * selectionRef.current.value is for initial value of select tag
-         */
-        if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
-        // console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
-        setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
-
     }
 
 
 
 
     const handleDragStart = (e, index) => {
-        console.log('handleDragStart-index', index)
+        // console.log('handleDragStart-index', index)
         dragStartedItem.current = index
         setItemState({ isHover: false, isDone: false })
     }
     const handleDragEnter = (e, index) => {
-        console.log('handleDragEnter-index', index)
+        // console.log('handleDragEnter-index', index)
         e.preventDefault()
         if (dragStartedItem.current === index) return;
         dragOverItem.current = index
         setItemState({ ...itemState, isHover: !itemState.isHover })
     }
     const handleDragEnd = (e) => {
-        console.log('handleDragEnd')
+        // console.log('handleDragEnd')
         e.preventDefault()
         if (dragStartedItem.current === null) return
         // console.log('handleDragEnd: ')
@@ -798,7 +809,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     //     console.log('pasteEvent: ', e, e.clipboardData.files)
     // }
     useEffect(() => {
-        console.log('useEffect AddContent- refresh: ')
+        // console.log('useEffect AddContent- refresh: ')
         if (contentChoice?.title.includes('Break Line')) {
             console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
@@ -884,6 +895,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                             if (content.action != 'deleted') {
 
                                 return <div key={content.id}
+                                    id={pathID?.contentID == content.id ? 'id_content_select' : ''}
                                     className='content_lists_block'
                                     draggable
                                     onDragStart={e => handleDragStart(e, index)}

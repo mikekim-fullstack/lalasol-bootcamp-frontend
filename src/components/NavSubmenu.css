@@ -113,7 +113,20 @@
     cursor: pointer;
     margin: 10px auto;
     border-radius: 2px;
+    text-align: left;
     transition: all 200ms ease-in-out;
+}
+
+.submenu__course_content .content__subject span {
+    display: inline-block;
+    padding: 5px;
+    background-color: cyan;
+    width: 30px;
+    line-height: 1.2rem;
+    border-radius: 50%;
+    margin-right: 5px;
+    text-align: center;
+    color: black;
 }
 
 .submenu__course_content .content__subject.btn_selected {

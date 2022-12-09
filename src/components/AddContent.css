@@ -189,6 +189,19 @@
 
 }
 
+a {
+    color: inherit;
+}
+
+
+a:visited {
+    color: inherit;
+}
+
+a:active {
+    color: inherit;
+}
+
 .chapter_content__view .content_lists_block>svg {
     fill: yellow;
 }

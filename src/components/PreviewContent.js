@@ -178,7 +178,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                         element = <div key={content.id}></div>
                         break
                 }
-                return <div key={content.id} className='element' onClick={e => onClickedElement(e, content)}><a href='#id_element'>{element}</a></div>
+                return <div key={content.id} className={(content.action == '') ? 'element' : ''} onClick={e => onClickedElement(e, content)}><a href='#id_element'>{element}</a></div>
 
             })}
 

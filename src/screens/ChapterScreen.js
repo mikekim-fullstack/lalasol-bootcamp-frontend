@@ -123,8 +123,8 @@ const ChapterScreen = () => {
     }
 
     const fetchChapterContent = async (chapterId) => {
-        // 
-        await axios.get(axios.defaults.baseURL + `/api/chapter/${chapterId}`)
+        const url = axios.defaults.baseURL + `/api/chapter/${chapterId}`
+        await axios.get(url)
             .then(res => {
                 // console.log('fetchChapterContent: ', res.data)
                 setChapter(res.data)
@@ -144,7 +144,7 @@ const ChapterScreen = () => {
 
             })
             // .then(res => console.log('----- content Viewed updated: ', res))
-            .catch(e => console.log('error-fetch-chapter: ', e))
+            .catch(e => console.log('error-fetch-chapter: ' + url, e.request, e.response))
     }
     //-----------------------------------------------
     const fetchFile = async (file) => {

@@ -69,7 +69,7 @@ const AddCourseScreen = () => {
         })
             .then(res => {
 
-                console.log('----- AddCourseScreen-fetchAllCourses', res.data, categories)
+                // console.log('----- AddCourseScreen-fetchAllCourses', res.data, categories)
                 dispatch(setCoursesEnrolledStatus({ 'categories': allCategories, 'courses': res.data }))
                 setIsUpdatedCourse(false)
 
