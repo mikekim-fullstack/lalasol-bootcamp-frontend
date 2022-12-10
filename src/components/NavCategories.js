@@ -69,16 +69,18 @@ const NavCategoreis = () => {
             .then(res => {
                 const sortedCourses = []
                 const seq = categories.filter(cat => cat.id == selectedCatId)[0].course_list_sequence
-                const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
-                sortedSeqKeys.forEach(key => {
-                    const foundCourse = res.data.filter(course => course.id == Number(key))
-                    if (foundCourse.length > 0) {
-                        sortedCourses.push(foundCourse[0])
-                    }
-                })
-
+                // console.log('fetchEnrolledCourses:-seq: ', seq)
+                if (seq && seq?.seq) {
+                    // console.log('fetchEnrolledCourses:-seq: ', seq.seq)
+                    seq.seq.forEach(key => {
+                        const foundCourse = res.data.filter(course => course.id == Number(key))
+                        if (foundCourse.length > 0) {
+                            sortedCourses.push(foundCourse[0])
+                        }
+                    })
+                }
                 dispatch(setCourses(sortedCourses))
-                // console.log('done-NavCategories:', _sortedCourses)
+                // console.log('done-NavCategories:', sortedCourses)
             })
             .catch(err => console.log('error: ', err))
     }
@@ -147,7 +149,7 @@ const NavCategoreis = () => {
             fetchAllCourses(categories)
             const _sortedCat = Object.entries(categories)
                 .sort(([, a], [, b]) => (a.order - b.order)) // ascending by order
-                .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence }])
+                .map(([key, value_cat]) => [value_cat.id, value_cat.title, value_cat.description, , { 'course_list_sequence': value_cat.course_list_sequence?.seq }])
             // console.log('-----_sortedCat----:', _sortedCat)
             dispatch(setCat(_sortedCat))
             setSortedCat(_sortedCat)

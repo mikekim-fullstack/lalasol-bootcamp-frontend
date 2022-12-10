@@ -628,6 +628,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         //     'contentAction: ', contentAction, ', formData', formData
         // )
 
+        /** ++ create content database in server. ++ */
         axios({
             method: 'POST',
             url: axios.defaults.baseURL + '/api/chapter-content/',
@@ -640,13 +641,18 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 // console.log('Success - End point-/api/chapter-content/', res.data)
 
                 dispatch(setPathContentID(res.data.id))
+
+                /** ++ After add content the view point changes to show current current card.++ */
                 const id_content_select = document.getElementById('id_content_select')
                 if (id_content_select) {
-                    // outlinedContentCard()
                     id_content_select.scrollIntoView()
                 }
+                //-- end --
+
+
                 // console.log('id_content_select:', id_content_select)
 
+                /** ++ Add the created content into the chapter DB in server. ++*/
                 const formData = new FormData()
                 formData.append('chapter_id', clickedChapter?.id)
                 formData.append('content_id', res.data.id)

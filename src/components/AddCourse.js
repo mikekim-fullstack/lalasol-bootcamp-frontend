@@ -54,7 +54,7 @@ const AddCourse = ({ showLabel, category_id, teacher_id, course_no, handleSucces
         //     .then(res => console.log(res))
         //     .catch(res => console.log('onSubmitAddCourseForm--error: ', res.response.data))
     }
-    console.log('category_id: ', category_id)
+    // console.log('category_id: ', category_id)
     const onHandleInputChange = (e) => {
         if (e.target.name == 'course_image') {
             setInputData({ ...inputData, [e.target.name]: e.target.files[0] })

@@ -41,13 +41,22 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 // console.log('--fetchEnrolledCourses:', res.data)
                 const sortedCourses = []
                 const seq = categories.filter(cat => cat.id == selectedCatId)[0].course_list_sequence
-                const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
-                sortedSeqKeys.forEach(key => {
-                    const foundCourse = res.data.filter(course => course.id == Number(key))
-                    if (foundCourse.length > 0) {
-                        sortedCourses.push(foundCourse[0])
-                    }
-                })
+                // const sortedSeqKeys = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                // sortedSeqKeys.forEach(key => {
+                //     const foundCourse = res.data.filter(course => course.id == Number(key))
+                //     if (foundCourse.length > 0) {
+                //         sortedCourses.push(foundCourse[0])
+                //     }
+                // })
+                if (seq && seq?.seq) {
+                    // console.log('fetchEnrolledCourses:-seq: ', seq.seq)
+                    seq.seq.forEach(key => {
+                        const foundCourse = res.data.filter(course => course.id == Number(key))
+                        if (foundCourse.length > 0) {
+                            sortedCourses.push(foundCourse[0])
+                        }
+                    })
+                }
 
                 dispatch(setCourses(sortedCourses))
                 // dispatch(setCourses(res.data))

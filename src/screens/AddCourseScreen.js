@@ -103,7 +103,7 @@ const AddCourseScreen = () => {
             .then(res => {
                 // -- Updating categories needed. --
                 fetchAllCategories()
-                console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
+                // console.log('Successfully patched -  /api/course-category-detail/ ', res.data)
 
             })
             .catch(err => console.log('error: api/course-category-detail/<int:pk>', err))
@@ -152,26 +152,23 @@ const AddCourseScreen = () => {
                 .then(res => {
 
                     // -- Remove map(deletedCourseID:orderNumber) from course_list_sequence. ---
-                    const seqCatData = { "course_list_sequence": {} }
+                    const seqCatData = { "course_list_sequence": { "seq": [] } }
                     const courseID = messageData.course.id
                     const selectedCat = allCategories?.filter(cat => cat.id == messageData.catId)[0]
-                    if (selectedCat?.course_list_sequence) {
+                    if (selectedCat?.course_list_sequence?.seq) {
                         // -- Copy all current courseID:order into seqCatData{}. --
-                        Object.keys(selectedCat.course_list_sequence)
-                            .forEach(key => {
-                                if (courseID != key) {
-
-                                    const val = Number(selectedCat.course_list_sequence[key])
-                                    seqCatData.course_list_sequence[key] = Number(val)
-                                }
-                            })
+                        const seq = [...selectedCat.course_list_sequence.seq]
+                        const index = seq.findIndex(ele => ele == courseID)
+                        seq.splice(index, 1)
+                        seqCatData.course_list_sequence['seq'] = seq
+                        // console.log('handleDeleteCourseResponse- seqCatData', seqCatData, courseID)
                         updateCourseSequenceInCategory(messageData.catId, seqCatData)
                     }
 
                     successfullyDeleted(res, messageData)
 
                 })
-                .catch(err => console.log(err.reponse.data))
+                .catch(err => console.log(err))
             // console.log('delete course', messageData.course)
         } else {
         }
@@ -351,21 +348,15 @@ const AddCourseScreen = () => {
 
         if (status) {
             const addedCat = allCategories?.filter(cat => cat.id == catID)[0]
-            const seqCatData = { "course_list_sequence": {} }
+            const seqCatData = { "course_list_sequence": { "seq": [] } }
             let maxVal = -1
-            if (addedCat?.course_list_sequence) {
-                // -- Copy all current courseID:order into seqCatData{}. --
-                Object.keys(addedCat.course_list_sequence)
-                    .forEach(key => {
-                        const val = Number(addedCat.course_list_sequence[key])
-                        seqCatData.course_list_sequence[key] = Number(val)
-                        maxVal = (maxVal > val) ? maxVal : val
-                    })
-                // -- Add new key:value pair which is created by new one. --
-                seqCatData.course_list_sequence[String(courseID)] = Number(maxVal + 1)
+            if (addedCat?.course_list_sequence?.seq) {
+                const seq = [...addedCat?.course_list_sequence?.seq]
+                seq.push(courseID)
+                seqCatData.course_list_sequence.seq = seq
             }
             else {
-                seqCatData.course_list_sequence[String(courseID)] = Number(1)
+                seqCatData.course_list_sequence['seq'] = [courseID]
             }
             // console.log('handleSuccessUploading: -seqCatData', seqCatData, JSON.stringify(seqCatData))
             updateCourseSequenceInCategory(catID, seqCatData)

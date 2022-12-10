@@ -543,7 +543,8 @@ const AddChapter = ({ teacherId }) => {
     // ----------------------------------------------------
     return (
         <div id='id_element' className='add_chapter__view'>
-            <h2 id='id_edit_chapter'> Chapter Modifier </h2>
+            {/* <h2 id='id_edit_chapter'> Chapter Modifier </h2> */}
+            {/* <h2 id='id_edit_chapter'> Chapter Modifier </h2> */}
             <div className={`add_chapter__component`}>
                 <div className='chapters_view'>
                     {/* -- Display chapter Header Bar. --- */}

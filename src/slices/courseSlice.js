@@ -26,14 +26,14 @@ const courseSlice = createSlice({
             // console.log('_sorted: ', _sorted)
             _sorted.forEach(cat => {
                 // const r = getSortedCourseID(cat.id)
-                const seq = cat.course_list_sequence
+                const keyCourseID = cat.course_list_sequence?.seq
                 // console.log('catID:', cat.id, ', seq: ', seq)
-                let keyCourseID = null
-                if (seq) {
-                    keyCourseID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
-                    // console.log('[keyCourseID]: ', keyCourseID)
-                }
-                if (seq != null && keyCourseID != null) {
+                // let keyCourseID = null
+                // if (seq) {
+                //     keyCourseID = Object.keys(seq).sort((k1, k2) => seq[k1] > seq[k2] ? 1 : seq[k1] < seq[k2] ? -1 : 0)
+                //     // console.log('[keyCourseID]: ', keyCourseID)
+                // }
+                if (keyCourseID != null) {
                     for (let i = 0; i < keyCourseID.length; i++) {
 
                         const res = courses.filter(course => (course?.category == cat.id && course.id == Number(keyCourseID[i])))[0]
@@ -42,7 +42,7 @@ const courseSlice = createSlice({
                     }
 
                 }
-                if (seq == null || Object.keys(seq).length == 0) {
+                if (keyCourseID.length == 0) {
                     const res = courses.filter(course => (course?.category == cat.id))
                     // console.log('cat.id', cat.id, 'no order seq: ', res)
                     res?.forEach(course => _coursesEnrolled.push(course))
