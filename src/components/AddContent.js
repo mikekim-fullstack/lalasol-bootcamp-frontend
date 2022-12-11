@@ -39,6 +39,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         itemName: "",
         content: null,
     });
+    const [clickedContentId, setClickedContentId] = useState(null)
 
     /** 
     * -- 
@@ -104,6 +105,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 data: formData,
             })
                 .then(res => {
+                    // console.log('/api/chapter-content-delete/: ', res.data)
+                    if (!res.data.content_list_sequence) {
+                        setClickedContentId(null)
+                    }
                     fetchContentByCourseID()
                     dispatch(setPathContentID(null))
                     dispatch(setChapterUpdatedStatus())
@@ -428,12 +433,13 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
         }
     }
-    const handleClickContent = (e, content) => {//clickedChapter?.content
+    const handleClickContent = (e, content, index) => {//clickedChapter?.content
         // console.log('handleClickContent: ', content)
         /**
          * Show filename in input file
          */
         // 
+        setClickedContentId(content.id)
         const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
         const linkInput = document.querySelector('input_url')
         if (urlFilter && urlFilter[0]?.title.includes('Link')) {
@@ -478,9 +484,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         let formData = new FormData()
         formData.append('content_list_sequence', JSON.stringify(seq))
         // console.log('updateContentSequence - formData: ', formData)
+        const url = axios.defaults.baseURL + '/api/chapter/' + clickedChapter.id
         axios({
             method: 'PATCH',
-            url: axios.defaults.baseURL + '/api/chapter/' + clickedChapter.id,
+            url: url,
             headers: {
                 'Content-Type': 'multipart/form-data'
             },
@@ -488,9 +495,9 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         })
             .then(res => {
 
-                fetchContentByCourseID()
+                console.log('updateContentSequence:' + url, res.data)
+                dispatch(setClickedChapter(res.data))
                 setTriggerUseEffect(!triggerUseEffect)
-                // console.log('updateContentSequence:', res)
             })
 
             .catch(res => { console.log('updateContentSequence--error: ', res); })
@@ -650,12 +657,14 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 //-- end --
 
 
-                // console.log('id_content_select:', id_content_select)
+                console.log('clickedContentId:', clickedContentId, clickedContent?.id)
 
                 /** ++ Add the created content into the chapter DB in server. ++*/
                 const formData = new FormData()
                 formData.append('chapter_id', clickedChapter?.id)
                 formData.append('content_id', res.data.id)
+                clickedContent?.id && formData.append('content_insert_id', clickedContent?.id)
+
                 axios({
                     method: 'PUT',
                     url: axios.defaults.baseURL + '/api/chapter-content-add/',
@@ -912,7 +921,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                                     onDragEnd={e => handleDragEnd(e)}
                                     onDrop={(e) => handleDrop(e, index)}
                                 >
-                                    <div className={`content_lists_item ${content.id}`} key={content.id} onClick={e => handleClickContent(e, content)}>
+                                    <div className={`content_lists_item ${content.id}`} key={content.id} onClick={e => handleClickContent(e, content, index)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
                                         <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>
                                     </div>

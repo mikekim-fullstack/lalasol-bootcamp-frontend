@@ -9,6 +9,7 @@ import { setPathCourseID, setPathChapterID, getPathCourseID, getPathCatID, getPa
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { getUser } from '../slices/userSlices'
+import LoadingSpinner from './LoadingSpinner'
 
 const NavSubmenu = ({ className, clickedCat }) => {
 
@@ -25,9 +26,12 @@ const NavSubmenu = ({ className, clickedCat }) => {
     const categories = useSelector(getAllCategories)
 
     const [toggleRender, setToggleRender] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchEnrolledCourses = async (userId, selectedCatId) => {
         // console.log('user info:', process.env.REACT_APP_DEBUG, process.env.REACT_APP_BASE_URL, userId, selectedCatId)
+        setIsLoading(true);
+        // document.body.style.cursor = 'wait'
         const url = user.role == 'student' ? `/api/student-course-enrollment/${userId}/${selectedCatId}`
             : `/api/courses-all-by-teacher-cat/${userId}/${selectedCatId}`
         await axios.get(url,
@@ -63,8 +67,14 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 // console.log('done-NavCategories:', sortedCourses, res.data)
             })
             .catch(err => console.log('error: ', err))
+            .finally(() => {
+                setIsLoading(false);
+                // document.body.style.cursor = 'default'
+            })
     }
     const fetchChapters = async (course) => {
+        setIsLoading(true);
+        // document.body.style.cursor = 'wait'
         const url = user?.role == 'teacher' ? axios.defaults.baseURL + `/api/course-chapter/${course.id}`
             : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
         await axios.get(url)
@@ -86,11 +96,16 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 setToggleRender(!toggleRender)
             })
             .catch(err => console.log('error: ' + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`, err))
+            .finally(() => {
+                setIsLoading(false);
+                // document.body.style.cursor = 'default'
+            })
     }
 
 
     const handleCourseClick = async (e, course) => {
         // console.log('handleCourseClick:-course ', course)
+
         if (course?.chapter_list_sequence == null ||
             Object.keys(course.chapter_list_sequence).length < 1) {
             return
@@ -134,6 +149,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
     return (
         // -- Display courses. --
         <div className={`nav__submenu ${className}`}>
+            {/* {isLoading && <LoadingSpinner />} */}
             {user.role == 'teacher' &&
                 <div className='add_course' onClick={handleAddCourse}>
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.25 3.25h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm8.5-1.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm-11.5 8.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm11.5-1.5h1.5v3h3v1.5h-3v3h-1.5v-3h-3v-1.5h3Zm-1.5-8.5v4.5h4.5v-4.5Zm-10 0v4.5h4.5v-4.5Zm0 10v4.5h4.5v-4.5Z" /></svg>
@@ -145,7 +161,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 {courses?.map((course) => (
                     <div key={course.id}>
                         <div
-
+                            style={isLoading ? { cursor: 'wait' } : { cursor: 'default' }}
                             className={`submenu__course_btn ${pathCourseID == course.id && 'btn_selected'}`}
                             onClick={(e) => handleCourseClick(e, course)}>
                             <img width='30px' height='30px' src={course.course_image.includes('http') ? course.course_image : axios.defaults.baseURL + course.course_image}></img>
@@ -160,6 +176,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
 
                                     chapters && chapters.length > 0 ? chapters.map((chapter, index) => {
                                         return <button onClick={handleSelectedChapter}
+
                                             key={chapter.id}
                                             name={`${chapter.name},${chapter.id}`}
                                             // className={`content__subject btn_chapter_selected`}>
