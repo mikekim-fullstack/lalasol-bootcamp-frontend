@@ -130,8 +130,8 @@ const chapterSlice = createSlice({
             else state.contentActionList = null
         },
         setBackupContentAction: (state, action) => {
-            state.backupContentAction.splice(0, state.backupContentAction.length)
-            state.contentActionList.forEach(contentItem => {
+            state.backupContentAction?.splice(0, state.backupContentAction?.length)
+            state.contentActionList?.forEach(contentItem => {
 
                 const item = {}
                 Object.keys(contentItem).map(key => {
@@ -223,7 +223,7 @@ const chapterSlice = createSlice({
             // {id:'',catId='', type:'', data:''}
             // action.payload.id, action.payload.action
             // action: delete, updated,created
-            state.contentActionList = state.contentActionList.map(item => {
+            state.contentActionList = state.contentActionList?.map(item => {
                 if (item.id == action.payload.id) {
                     item.action = 'updated'
                     item.file = ''

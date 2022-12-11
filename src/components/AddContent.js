@@ -31,7 +31,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     const [copidClickedContent, setCopidClickedContent] = useState(null)
     const [contentChoice, setContentChoice] = useState(null)
     const [inputContent, setInputContent] = useState({ file: null, url: null, text: null })
-    const [previousClickedContent, setPreviousClickedContent] = useState(null)
+    // const [previousClickedContent, setPreviousClickedContent] = useState(null)
     const [triggerUseEffect, setTriggerUseEffect] = useState(false)
     const [dialogDeleteContent, setDialogDeleteContent] = useState({
         message: "",
@@ -51,7 +51,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     const [clickedUpdateContent, setClickedUpdateContent] = useState(false)
     const [operateContent, setOperateContent] = useState(true)
 
-    const [selectContent, setSelectContent] = useState(false)
+    // const [selectContent, setSelectContent] = useState(false)
 
 
 
@@ -138,8 +138,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         fetchChapters()
 
         dispatch(setBackupContentAction())
-        // setInputContent({ file: null, url: null, text: null })
-        // setContentChoice(null)
+
         setOperateContent(false)
         setClickedAddContent(false)
         setClickedUpdateContent(true)
@@ -163,6 +162,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     }
 
     const handleAddContent = (e) => {
+        dispatch(setBackupContentAction())
         setInputContent({ file: null, url: null, text: null })
         setContentChoice(null)
         setOperateContent(false)
@@ -175,6 +175,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         if (clickedUpdateContent) {
             dispatch(setRestoreContentAction())
             setClickedUpdateContent(false)
+        }
+        else if (clickedAddContent) {
+            dispatch(setRestoreContentAction())
+            setInputContent({ file: null, url: null, text: null })
         }
         else {
 
@@ -506,7 +510,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     const onPasteCaptureImage = (e) => {
         if (contentChoice?.id != 15) return;
         e.preventDefault()
-        console.log('onPasteCaptureImage', e.clipboardData, ', contentChoice', contentChoice)
+        console.log('onPasteCaptureImage', e.clipboardData, ', contentChoice', contentChoice, ', clickedContent?.id', clickedContent?.id)
         const clipboardItems = e.clipboardData.items;
 
         const items = [].slice.call(clipboardItems).filter(function (item) {
@@ -524,7 +528,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         let container = new DataTransfer();
         container.items.add(file);
         setInputContent({ ...inputContent, file: container.files[0] })
-        dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'image', data: container.files[0] }))
+        dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent?.id, type: 'image', data: container.files[0] }))
+
+        // The below line causes problem later on fix it to show it to preview.
+        // clickedAddContent && dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: container.files[0], creater: teacherId }))
 
         setCopidClickedContent('image')
         contentFileRef.current.required = false
