@@ -169,7 +169,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                                 URL.createObjectURL(content?.image)
                                 : (content?.image?.includes('http') ? resolveBlockMixedActivity(content?.image) : resolveBlockMixedActivity(axios.defaults.baseURL) + content?.image)
                             // const src = (content.action == 'updated' || content.action == 'created') ? URL.createObjectURL(content?.image) : 'https://lalasol-bootcamp-backend-production.up.railway.app' + content?.image
-                            console.log('image: ', src, content)
+                            // console.log('image: ', src, content)
                             // return;
                             element = <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
                             break

@@ -39,8 +39,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         itemName: "",
         content: null,
     });
-    const [clickedContentId, setClickedContentId] = useState(null)
-
+    const [isCreatedContent, setIsCreatedContent] = useState(false)
     /** 
     * -- 
     * 1. operateContent: show on and off for + and - sign 
@@ -106,9 +105,9 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
             })
                 .then(res => {
                     // console.log('/api/chapter-content-delete/: ', res.data)
-                    if (!res.data.content_list_sequence) {
-                        setClickedContentId(null)
-                    }
+                    // if (!res.data.content_list_sequence) {
+                    //     setClickedContentId(null)
+                    // }
                     fetchContentByCourseID()
                     dispatch(setPathContentID(null))
                     dispatch(setChapterUpdatedStatus())
@@ -443,7 +442,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
          * Show filename in input file
          */
         // 
-        setClickedContentId(content.id)
+        setIsCreatedContent(false)
         const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
         const linkInput = document.querySelector('input_url')
         if (urlFilter && urlFilter[0]?.title.includes('Link')) {
@@ -656,15 +655,9 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
                 dispatch(setPathContentID(res.data.id))
 
-                /** ++ After add content the view point changes to show current current card.++ */
-                const id_content_select = document.getElementById('id_content_select')
-                if (id_content_select) {
-                    id_content_select.scrollIntoView()
-                }
-                //-- end --
+                // console.log('clickedContentId:', clickedContentId, clickedContent?.id, ', res.data.id', res.data.id)
 
 
-                console.log('clickedContentId:', clickedContentId, clickedContent?.id)
 
                 /** ++ Add the created content into the chapter DB in server. ++*/
                 const formData = new FormData()
@@ -686,6 +679,18 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                         /** For rerendering to update */
                         fetchContentByCourseID()
                         dispatch(setChapterUpdatedStatus())
+
+                        /** ++ After add content the view point changes to show current current card.++ */
+                        setIsCreatedContent(true)
+                        // const id_content_select = document.getElementById('id_content_select')
+                        // if (id_content_select) {
+                        //     id_content_select.scrollIntoView()
+                        // }
+                        // console.log('getPathID', pathID, ', id_content_select', id_content_select)
+
+                        //-- end --
+
+
                     })
                     .catch(err => console.log('Error-End point-/api/chapter-content-add/', err))
             })
@@ -771,6 +776,15 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
         }
     }
+
+    const scrollIntoView = () => {
+        /** ++ After add content the view point changes to show current current card.++ */
+        const id_content_select = document.getElementById('id_content_select')
+        if (id_content_select) {
+            id_content_select.scrollIntoView()
+        }
+        // setIsCreatedContent(false)
+    }
     //-----------------------------------------------------------------------
     // useEffect(() => {
     //     selectedContentInPreview && handleClickContent(null, selectedContentInPreview)
@@ -813,7 +827,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
 
         if (clickedChapter?.content?.length > 0) {
-
+            setIsCreatedContent(false)
             initSelectContent(selectedContentInPreview, true)
             // selectedContentInPreview.scrollIntoView()
         }
@@ -826,6 +840,16 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
     }, [contentChoice?.title, operateContent,])// contentAction])
 
+    useEffect(() => {
+        /** ++ After add content the view point changes to show current current card.++ */
+        const id_content_select = document.querySelectorAll('.content_lists_block')
+        if (id_content_select) {
+
+            // id_content_select.scrollIntoView()
+        }
+        // console.log('useEffect- id_content_select', id_content_select, pathID)
+        //-- end --
+    }, [pathID?.contentID])
     // console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
     // const pasteEvent = (e) => {
     //     console.log('pasteEvent: ', e, e.clipboardData.files)
@@ -833,7 +857,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     useEffect(() => {
         // console.log('useEffect AddContent- refresh: ')
         if (contentChoice?.title.includes('Break Line')) {
-            console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
+            // console.log('useEffect --- contentChoice: ', contentChoice, ', clickedContent', clickedContent)
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         }
         // document.addEventListener('paste', pasteEvent)
@@ -914,13 +938,13 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 <div className='content_lists'>
 
                     <div className='content_lists_body'>
-                        {/* {console.log('content_lists_body: ', contentAction)} */}
+                        {/* {console.log('content_lists_body: ', contentAction, ', pathID', pathID)} */}
                         {contentAction?.length > 0 ? contentAction?.map((content, index) => {
                             if (content.action != 'deleted') {
 
                                 return <div key={content.id}
-                                    id={pathID?.contentID == content.id ? 'id_content_select' : ''}
-                                    className='content_lists_block'
+                                    id={(pathID?.contentID == content.id) ? 'id_content_select' : ''}
+                                    className={`content_lists_block ${content.id}`}
                                     draggable
                                     onDragStart={e => handleDragStart(e, index)}
                                     onDragEnter={(e) => handleDragEnter(e, index)}
@@ -939,6 +963,18 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                         )
                             : <div></div>
                         }
+                        {
+                            /** ++ After add content the view point changes to show current current card.++ */
+                            // const id_content_select = document.getElementById('id_content_select')
+                            // if (id_content_select) {
+                            //     id_content_select.scrollIntoView()
+                            // }
+
+                            isCreatedContent && scrollIntoView()
+
+                        }
+
+
                     </div>
                 </div>
             }
