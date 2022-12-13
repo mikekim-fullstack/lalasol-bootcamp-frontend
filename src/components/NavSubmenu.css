@@ -1,9 +1,9 @@
 .nav__submenu {
     position: fixed;
-    top: 56px;
+    top: var(--nav-height);
     left: 0;
     width: var(--side-menu-width);
-    height: 92vh;
+    height: 94vh;
     background-color: #212121;
     color: gray;
     overflow: scroll;
