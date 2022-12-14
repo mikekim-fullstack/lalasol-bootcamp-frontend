@@ -27,6 +27,7 @@ const PracticeScreen = () => {
     const resultRef = useRef(null)
     const [fetchedCode, setFetchedCode] = useState(null)
     const [selCode, setSelCode] = useState(null)
+    const [mode, setMode] = useState(null)
 
     const fetchJSCode = async () => {
         const url = axios.defaults.baseURL + '/api/student-js-view/' + user.id
@@ -39,7 +40,7 @@ const PracticeScreen = () => {
 
         })
             .then(res => {
-                console.log('fetchJSCode:' + url, res.data)
+                // console.log('fetchJSCode:' + url, res.data)
                 setFetchedCode(res.data)
             })
             .catch(err => console.log('fetchJSCode-error:' + url, err))
@@ -47,23 +48,52 @@ const PracticeScreen = () => {
     const onClickFetchedCode = (e, codeId) => {
         const selCodeItem = fetchedCode.filter(item => item.id == codeId)[0]
 
-        console.log('selCodeItem-', selCodeItem)
+        // console.log('selCodeItem-', selCodeItem)
         localStorage.setItem('myValue', selCodeItem.js_code);
         setSelCode(selCodeItem)
 
         setCode(selCodeItem.js_code)
+        resultRef.current.innerHTML = ''
+        setMode('click')
 
     }
+    const onClickCreateCode = (e) => {
+        setSelCode({ title: 'New Code', id: -1, js_code: "// Let\'s start LaLaSol coding!" })
+        resultRef.current.innerHTML = ''
+        setMode('create')
+    }
+    const onClickDeleteCode = (e, id) => {
+        const url = axios.defaults.baseURL + '/api/student-js-delete/' + id
+        axios({
+            method: 'DELETE',
+            url,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+        })
+            .then(res => {
+                // console.log('fetchJSCode:' + url, res.data)
+                fetchJSCode()
+                resultRef.current.innerHTML = ''
+                setSelCode(null)
+                setMode(null)
+                // setFetchedCode(res.data)
+            })
+            .catch(err => console.log('fetchJSCode-error:' + url, err))
+
+    }
+
     const onSubmit = (e, id) => {
         e.preventDefault()
         const js_code = localStorage.getItem('myValue')
 
 
         if (id >= 0) {
-
+            /** Update Mode */
             const url = axios.defaults.baseURL + '/api/student-js-update/' + selCode.id
             const bodyData = { 'title': selCode.title, 'js_code': js_code }
-            console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+            // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
             axios({
                 method: 'PATCH',
                 url,
@@ -75,16 +105,17 @@ const PracticeScreen = () => {
 
             })
                 .then(res => {
-                    console.log('onSubmit-fetchJSCode:' + url, res.data)
+                    // console.log('onSubmit-fetchJSCode:' + url, res.data)
                     fetchJSCode()
                     setSelCode(res.data)
                 })
                 .catch(err => console.log('fetchJSCode-error:' + url, err))
         }
         else {
+            /** Create Mode */
             const url = axios.defaults.baseURL + '/api/student-js-create/'
             const bodyData = { 'title': selCode.title, 'js_code': js_code, 'student': user?.id }
-            console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+            // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
             axios({
                 method: 'POST',
                 url,
@@ -96,33 +127,16 @@ const PracticeScreen = () => {
 
             })
                 .then(res => {
-                    console.log('onSubmit-fetchJSCode:' + url, res.data)
+                    // console.log('onSubmit-fetchJSCode:' + url, res.data)
                     fetchJSCode()
+                    setMode('click')
                     setSelCode(res.data)
                 })
                 .catch(err => console.log('fetchJSCode-error:' + url, err))
         }
     }
 
-    /*
-console.log('hello from postman3')
-console.log('Hello World \n--------------\n')
 
-const display = (data)=>{
-console.log('data=',data)
-}
-
-const data=[10,7,8,1,2,3,4]
-for (c of data){
-display(c)
-}
-const sortedData = data.sort((a,b)=>a>b?1:a<b?-1:0)
-console.log('sortedData=', sortedData)
-    */
-
-    const onClickCreateCode = (e) => {
-        setSelCode({ title: 'New Code', id: -1, js_code: "// Let\'s start LaLaSol coding!" })
-    }
     const onClickRunCode = (e) => {
         const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
         if (!selCode?.js_code) return
@@ -152,20 +166,39 @@ console.log('sortedData=', sortedData)
     return (
 
         <div className='practice__screen'>
-            { }
+
             <div className='code-lists'>
-                <div className='create-code'>
-                    <button onClick={onClickCreateCode}>Create New</button>
+                <div className={mode == 'create' ? 'selected-create' : 'create'}>
+                    <button className='btn-create' onClick={onClickCreateCode}>Create New</button>
+                    {
+                        mode == 'create' &&
+                        <form className='form-create' onSubmit={e => onSubmit(e, selCode?.id)}>
+                            <label>Title</label>
+                            <input type='text' name='title' value={selCode.title} onChange={e => setSelCode({ ...selCode, 'title': e.target.value })} />
+                            <button className='btn-form' type='submit'>Save</button>
+                        </form>
+                    }
                 </div>
                 {fetchedCode?.map(item => {
                     return <div key={item.id} className='item'>
-                        <span>{item.title}</span>
-                        <button onClick={e => onClickFetchedCode(e, item.id)}>Show Code</button>
+                        {/* <span>{item.title}</span> */}
+                        <div className={mode == 'click' && selCode?.id == item.id ? 'selected-item' : ''}>
+                            <button className='btn-click' onClick={e => onClickFetchedCode(e, item.id)}>{item.title}</button>
+                            {
+                                mode == 'click' && selCode?.id == item.id &&
+                                <form className='form-click' onSubmit={e => onSubmit(e, selCode?.id)}>
+                                    <label>Title</label>
+                                    <input type='text' name='title' value={selCode.title} onChange={e => setSelCode({ ...selCode, 'title': e.target.value })} />
+                                    <button className='id-btn-form' type='submit'>Update</button>
+                                    <button type='button' onClick={e => onClickDeleteCode(e, selCode?.id)}>Delete</button>
+                                </form>
+                            }
+                        </div>
 
                     </div>
                 })}
             </div>
-            <CodeMirror
+            <CodeMirror className='code-mirror'
                 value={selCode?.js_code}
                 // initialState={
                 //     serializedState
@@ -191,14 +224,8 @@ console.log('sortedData=', sortedData)
                     localStorage.setItem('myEditorState', JSON.stringify(state));
                 }}
             />
-            <div className='cm-result'>
-                {
-                    selCode?.title &&
-                    <form onSubmit={e => onSubmit(e, selCode?.id)}>
-                        <input type='text' name='title' value={selCode.title} onChange={e => setSelCode({ ...selCode, 'title': e.target.value })} />
-                        <button type='submit'>Save</button>
-                    </form>
-                }
+            <div className='code-result'>
+
                 <button onClick={e => onClickRunCode(e)}>Run Code</button>
                 {<div className='code-result' ref={resultRef}></div>}
 

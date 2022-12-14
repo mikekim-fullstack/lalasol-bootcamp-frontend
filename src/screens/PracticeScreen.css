@@ -1,97 +1,169 @@
-/** OVERRIDE SELECTED TEXT HIGHLIGHT COLOR FOR THEMES: **/
-
-/* isotope theme */
-.cm-s-isotope div.CodeMirror-selected {
-    background: #0004FF !important;
-}
-
-/* colorforth theme */
-.cm-s-colorforth div.CodeMirror-selected {
-    background: #0004FF !important;
-}
-
-/* 3024-night theme */
-.cm-theme .CodeMirror-selected {
-    background: #cbcbdb !important;
-}
-
-.practice__screen .cm-theme .notranslate .CodeMirror-selected {
-    background-color: #CCCCCC !important;
-}
-
-.CodeMirror-selected::-moz-selection {
-    background: rgba(30, 50, 50, 0.1);
-}
-
-.CodeMirror-focused .CodeMirror-selected::-moz-selection {
-    background: rgba(30, 50, 50, 0.2);
-}
-
-/** - - - - - **/
-
 .practice__screen {
+    min-width: 380px;
     margin-top: var(--nav-height);
     width: var(--width-view);
     margin-left: auto;
     margin-right: auto;
     padding: 0;
-    display: flex;
-    flex-direction: column;
 
-}
-
-.practice__screen .code-lists {
-    width: 100%;
-    min-height: 300px;
-}
-
-.practice__screen .cm-theme {
-    width: 100%;
-    /* height: 70vh; */
-}
-
-.practice__screen .cm-result {
-    width: 100%;
-    min-height: 300px;
-
-}
-
-/* 
-// Let's start LaLaSol coding!
-console.log('test')
-
-
-const display = (data)=>{
-  console.log(data)
-}
-
-const data=[1,2,3,4]
-  for (c of data){
-    display(c)
-  }
-   */
-
-.practice__screen .code-lists {
+    /* flex-direction: column; */
     background-color: #1a1b26;
     color: white;
+    background-color: #1a1b26;
+    color: white;
+    display: grid;
+    grid-template-columns: 1fr;
+
 }
+
+.practice__screen .code-lists {
+    /* width: 100%; */
+    min-height: 300px;
+    margin: 10px 20px 10px 7px;
+
+}
+
+.practice__screen .code-lists .selected-create {
+    border: 2px solid pink;
+    border-radius: 5px;
+    margin: 10px 5px;
+    padding: 5px;
+}
+
+.practice__screen .code-lists .create {
+    margin: 10px 5px;
+    padding: 5px;
+    width: 100%
+}
+
+
+.practice__screen .code-lists .btn-create {
+
+    background-color: rgb(80, 28, 169);
+    color: white;
+    border-style: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: all 0.25s ease;
+    margin-bottom: 5px;
+    padding: 12px 0px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.practice__screen .code-lists .btn-create :hover {
+    background-color: rgb(117, 62, 194);
+}
+
+.practice__screen .code-lists .form-create {
+    background-color: rgb(65, 25, 99);
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.practice__screen .code-lists .form-create>input[type='text'] {
+    background-color: rgb(215, 169, 255);
+    padding-left: 5px;
+}
+
+.practice__screen .code-lists .form-create .btn-form {
+    width: 100px;
+    padding: 8px;
+}
+
+/* ------------------------------- */
+
+
+
+
 
 .practice__screen .code-lists .item {
-    margin-top: 5px;
-    margin-left: 5px;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
-.practice__screen .code-lists span {
+.practice__screen .code-lists .item .btn-click {
+    background-color: rgb(155, 28, 169);
+    color: white;
+    border-style: none;
+    padding: 12px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: all 0.25s ease;
+}
+
+.practice__screen .code-lists .item .btn-click:hover {
+    background-color: rgb(205, 16, 226);
+}
+
+.practice__screen .code-lists .item .selected-item {
+    border: 2px solid pink;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+.practice__screen .code-lists .item .selected-item .btn-click {
+    background-color: rgb(205, 16, 226);
+}
+
+.practice__screen .code-lists .item .form-click {
+    background-color: rgb(65, 25, 99);
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.practice__screen .code-lists .form-click>input[type='text'] {
+    background-color: rgb(215, 169, 255);
+    padding-left: 5px;
+}
+
+.practice__screen .code-lists .item .form-click button {
+    width: 100px;
+}
+
+/* .practice__screen .code-lists span {
     display: inline-block;
     margin-right: 5px;
+} */
+
+.practice__screen .code-lists .item button {
+    padding: 8px 14px;
+    width: 100%;
+    /* min-width: 100px;
+    max-width: 150px; */
 }
 
-.practice__screen .code-lists button {
-    padding: 5px 14px;
+/* .practice__screen .code-lists .form-create {
+    border: 1px solid pink;
+} */
+
+.practice__screen .code-mirror {
+    /* width: 100%; */
+    /* height: 70vh; */
+    overflow: scroll;
 }
 
-.practice__screen .cm-result>button {
-    display: inline-block;
+.practice__screen .code-result {
+    width: 100%;
+    min-height: 300px;
+
+    padding: 5px;
+
+    background-color: #292a3c;
+    color: white;
+    /* height: 95.45vh; */
+}
+
+
+.practice__screen .code-result>button {
+    display: block;
     width: 100%;
     background-color: rgb(62, 9, 66);
     color: white;
@@ -100,41 +172,93 @@ const data=[1,2,3,4]
     padding: 10px 0px;
     transition: all 0.2s ease;
     cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
 }
 
-.practice__screen .cm-result>button:hover {
+.practice__screen .code-result>button:hover {
     background-color: rgb(97, 24, 103);
 }
 
-.practice__screen .code-result {
-    width: 100%;
 
-    padding: 20px 40px;
-    background-color: #292a3c;
-    color: white;
-    height: 95.45vh;
-}
 
 
 
 
 @media screen and (min-width:600px) {
     .practice__screen {
-        flex-direction: row;
+        grid-template-columns: 250px auto;
+        grid-auto-rows: auto;
     }
 
     .practice__screen .code-lists {
-        width: 20%;
+        grid-column: 1;
     }
 
-    .practice__screen .cm-theme {
-        /* height: 100vh; */
-        width: 60%;
+    .practice__screen .code-morror {
+        grid-column: 2;
     }
 
-    .practice__screen .cm-result {
-        width: 20%;
-        min-height: 94vh;
+    .practice__screen .code-result {
+        grid-column: 1/-1;
+    }
+
+
+    .practice__screen .code-lists .form-create {
+        padding: 5px 5px;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-between; */
+        align-items: center;
+        gap: 5px;
+    }
+
+
+
+    .practice__screen .code-lists .form-create .btn-form {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+    }
+
+
+    .practice__screen .code-lists .item .form-click {
+        background-color: rgb(65, 25, 99);
+        padding: 5px 5px;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-between; */
+        align-items: center;
+        gap: 5px;
+    }
+
+    .practice__screen .code-lists .item .form-click button {
+        display: block;
+        width: 100%;
+    }
+
+    .practice__screen .code-result>button {
+        margin-top: 0;
+    }
+
+}
+
+@media screen and (min-width:800px) {
+    .practice__screen {
+        grid-template-columns: 250px auto 250px;
+        grid-template-rows: auto;
+    }
+
+    .practice__screen .code-lists {
+        grid-column: 1;
+    }
+
+    .practice__screen .code-morror {
+        grid-column: 2;
+    }
+
+    .practice__screen .code-result {
+        grid-column: 3;
     }
 
 }
