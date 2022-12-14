@@ -93,7 +93,7 @@ const LoginScreen = () => {
                                         borderRadius: 'rgba(90, 0, 0, 1)'
                                     }}>&nbsp;{loginError && `Error: ${loginError}`}</div>
                                 }
-                                <form onSubmit={handleSubmit}>
+                                <form className='form-login' onSubmit={handleSubmit}>
                                     <div className='role' >
                                         <div>You are  </div>
                                         <select value={role} onChange={e => setRole(e.target.value)}>

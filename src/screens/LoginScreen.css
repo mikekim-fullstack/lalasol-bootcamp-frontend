@@ -141,9 +141,9 @@ body {
     transition: all 100ms ease;
 }
 
-.loginScreen__input>form {
+.loginScreen__input .form-login {
     display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr;
     /* flex-direction: column; */
     align-items: center;
     /* justify-content: center; */
@@ -154,13 +154,13 @@ body {
 
 }
 
-.loginScreen__input>form .role {
+.loginScreen__input .form-login .role {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.loginScreen__input>form .role div {
+.loginScreen__input .form-login .role div {
     margin-right: 10px;
     font-size: 1rem;
     width: 110px;
@@ -171,7 +171,7 @@ body {
     height: 2.4rem;
 }
 
-.loginScreen__input>form .role select {
+.loginScreen__input .form-login .role select {
     /* margin: 10px; */
     width: 110px;
     font-size: 1rem;
@@ -181,16 +181,16 @@ body {
     border-radius: 5px;
 }
 
-.loginScreen__input>form .email,
-.loginScreen__input>form .password {
+.loginScreen__input .form-login .email,
+.loginScreen__input .form-login .password {
     position: relative;
-    height: 100%;
+    /* height: 100%; */
     width: 100%;
 }
 
 
-.loginScreen__input>form .email>input,
-.loginScreen__input>form .password>input {
+.loginScreen__input .form-login .email>input,
+.loginScreen__input .form-login .password>input {
     padding: 10px 0;
 
     padding-right: 50px;
@@ -206,8 +206,8 @@ body {
 
 }
 
-.loginScreen__input>form .email>input:focus,
-.loginScreen__input>form .password>input:focus {
+.loginScreen__input .form-login .email>input:focus,
+.loginScreen__input .form-login .password>input:focus {
     border: 1.5px solid rgb(255, 69, 100);
 }
 
@@ -331,7 +331,7 @@ body {
         top: 15%;
     }
 
-    .loginScreen__input>form {
+    .loginScreen__input .form-login {
         /* grid-template-columns: auto;
         grid-template-rows: auto auto; */
         /* flex-direction: row; */
@@ -340,7 +340,7 @@ body {
         max-width: 600px;
     }
 
-    .loginScreen__input>form .loginScreen__btn_signIn {
+    .loginScreen__input .form-login .loginScreen__btn_signIn {
         /* text-align: center; */
         margin: auto;
         max-width: 100%;
