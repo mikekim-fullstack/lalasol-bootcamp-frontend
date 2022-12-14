@@ -1,3 +1,34 @@
+/** OVERRIDE SELECTED TEXT HIGHLIGHT COLOR FOR THEMES: **/
+
+/* isotope theme */
+.cm-s-isotope div.CodeMirror-selected {
+    background: #0004FF !important;
+}
+
+/* colorforth theme */
+.cm-s-colorforth div.CodeMirror-selected {
+    background: #0004FF !important;
+}
+
+/* 3024-night theme */
+.cm-theme .CodeMirror-selected {
+    background: #cbcbdb !important;
+}
+
+.practice__screen .cm-theme .notranslate .CodeMirror-selected {
+    background-color: #CCCCCC !important;
+}
+
+.CodeMirror-selected::-moz-selection {
+    background: rgba(30, 50, 50, 0.1);
+}
+
+.CodeMirror-focused .CodeMirror-selected::-moz-selection {
+    background: rgba(30, 50, 50, 0.2);
+}
+
+/** - - - - - **/
+
 .practice__screen {
     margin-top: var(--nav-height);
     width: var(--width-view);
@@ -7,6 +38,11 @@
     display: flex;
     flex-direction: column;
 
+}
+
+.practice__screen .code-lists {
+    width: 100%;
+    min-height: 300px;
 }
 
 .practice__screen .cm-theme {
@@ -35,6 +71,24 @@ const data=[1,2,3,4]
   }
    */
 
+.practice__screen .code-lists {
+    background-color: #1a1b26;
+    color: white;
+}
+
+.practice__screen .code-lists .item {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.practice__screen .code-lists span {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.practice__screen .code-lists button {
+    padding: 5px 14px;
+}
 
 .practice__screen .cm-result>button {
     display: inline-block;
@@ -69,13 +123,17 @@ const data=[1,2,3,4]
         flex-direction: row;
     }
 
+    .practice__screen .code-lists {
+        width: 20%;
+    }
+
     .practice__screen .cm-theme {
         /* height: 100vh; */
-        width: 70%;
+        width: 60%;
     }
 
     .practice__screen .cm-result {
-        width: 30%;
+        width: 20%;
         min-height: 94vh;
     }
 
