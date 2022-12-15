@@ -187,17 +187,18 @@
 
 @media screen and (min-width:600px) {
     .practice__html_screen {
-        grid-template-columns: 250px auto auto;
+        grid-template-columns: 200px 1fr 1fr 1fr;
         grid-auto-rows: auto;
     }
 
     .practice__html_screen .code-lists {
         grid-column: 1;
+
     }
 
     .practice__html_screen .code-container.html {
-        grid-column: 2;
-        width: 100%;
+        grid-column: 2/-1;
+        /* width: 100%; */
     }
 
     .practice__html_screen .code-container.css {
@@ -254,7 +255,7 @@
 
 @media screen and (min-width:1200px) {
     .practice__html_screen {
-        grid-template-columns: 250px 1fr 1fr 1fr;
+        grid-template-columns: 200px 1fr 1fr;
         grid-template-rows: auto;
     }
 
@@ -269,10 +270,11 @@
 
     .practice__html_screen .code-container.css {
         grid-column: 3;
+        width: 100%;
     }
 
     .practice__html_screen .code-container.js {
-        grid-column: 4;
+        grid-column: 1/-1;
     }
 
     .practice__html_screen .code-result {

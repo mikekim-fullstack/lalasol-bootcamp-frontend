@@ -58,7 +58,7 @@ const PracticeJSScreen = () => {
 
     }
     const onClickCreateCode = (e) => {
-        setSelCode({ title: 'New Code', id: -1, js_code: "// Let\'s start LaLaSol coding!" })
+        setSelCode({ title: 'New Code', id: -1, js_code: "// Let\'s start LaLaSol coding!\n" })
         resultRef.current.innerHTML = ''
         setMode('create')
     }

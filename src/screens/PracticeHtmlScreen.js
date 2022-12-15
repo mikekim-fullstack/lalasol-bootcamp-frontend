@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Helmet } from "react-helmet";
 import './PracticeHtmlScreen.css'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -19,20 +20,46 @@ const PracticeHtmlScreen = () => {
     const user = useSelector(getUser)
 
     const serializedState = localStorage.getItem('myEditorState');
-    const value = localStorage.getItem('myValue') || '// Let\'s start LaLaSol coding!';
+    const value = localStorage.getItem('myValue') || '// Let\'s start LaLaSol coding!\n';
     // When custom fields should be serialized, you can pass them in as an object mapping property names to fields.
     // See [toJSON](https://codemirror.net/docs/ref/#state.EditorState.toJSON) documentation for more details
     const stateFields = { history: historyField };
 
     const [code, setCode] = useState(null)
-    const [codeResult, setCodeResult] = useState(null)
+    const [codeResult, setCodeResult] = useState(false)
     const resultRef = useRef(null)
     const [fetchedCode, setFetchedCode] = useState(null)
     const [selCode, setSelCode] = useState(null)
     const [mode, setMode] = useState(null)
+    const [iframeKey, setIframeKey] = useState(0)
+    const defaultHtmlCode = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Hello World.</h1>
+    </body>
+    </html>
+            `
+    const defaultCssCode = `
+    body{
+        background-color: #1a1b26;
+    }
+    h1{
+         text-align:center;
+         color:white;
+    }
+    `
+
 
     const fetchJSCode = async () => {
-        const url = axios.defaults.baseURL + '/api/student-js-view/' + user.id
+        const user_role = user.role == 'student' ? 1 : 2
+        const url = axios.defaults.baseURL + `/api/user-html-view/${user_role}/${user.id}`
         await axios({
             method: 'GET',
             url,
@@ -51,21 +78,29 @@ const PracticeHtmlScreen = () => {
         const selCodeItem = fetchedCode.filter(item => item.id == codeId)[0]
 
         // console.log('selCodeItem-', selCodeItem)
-        localStorage.setItem('myValue', selCodeItem.js_code);
+        // localStorage.setItem('myValue', selCodeItem.js_code);
         setSelCode(selCodeItem)
 
         // setCode(selCodeItem.js_code)
-        resultRef.current.innerHTML = ''
+        // resultRef.current.innerHTML = ''
         setMode('click')
 
     }
     const onClickCreateCode = (e) => {
-        setSelCode({ title: 'New Code', id: -1, js_code: "// Let\'s start LaLaSol coding!" })
-        resultRef.current.innerHTML = ''
+
+        setSelCode({
+            title: 'New Code',
+            id: -1,
+            html_code: defaultHtmlCode,
+            css_code: defaultCssCode,
+            js_code: "// Let\'s start LaLaSol coding!\n"
+        })
+
         setMode('create')
+        setCodeResult(null)
     }
     const onClickDeleteCode = (e, id) => {
-        const url = axios.defaults.baseURL + '/api/student-js-delete/' + id
+        const url = axios.defaults.baseURL + '/api/user-html-delete/' + id
         axios({
             method: 'DELETE',
             url,
@@ -77,7 +112,7 @@ const PracticeHtmlScreen = () => {
             .then(res => {
                 // console.log('fetchJSCode:' + url, res.data)
                 fetchJSCode()
-                resultRef.current.innerHTML = ''
+                // resultRef.current.innerHTML = ''
                 setSelCode(null)
                 setMode(null)
                 // setFetchedCode(res.data)
@@ -86,62 +121,79 @@ const PracticeHtmlScreen = () => {
 
     }
 
-    const onSubmit = (e, id) => {
+    const onSubmitCreate = (e, id) => {
         e.preventDefault()
-        const js_code = localStorage.getItem('myValue')
-
-
-        if (id >= 0) {
-            /** Update Mode */
-            const url = axios.defaults.baseURL + '/api/student-js-update/' + selCode.id
-            const bodyData = { 'title': selCode.title, 'js_code': js_code }
-            // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
-            axios({
-                method: 'PATCH',
-                url,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(bodyData)
-
-
-            })
-                .then(res => {
-                    // console.log('onSubmit-fetchJSCode:' + url, res.data)
-                    fetchJSCode()
-                    setSelCode(res.data)
-                })
-                .catch(err => console.log('fetchJSCode-error:' + url, err))
+        // const js_code = localStorage.getItem('myValue')
+        /** Create Mode */
+        const url = axios.defaults.baseURL + '/api/user-html-create/'
+        // const bodyData = { 'title': selCode.title, 'js_code': js_code, [user?.role]: user?.id }
+        const bodyData = {
+            'title': selCode.title,
+            'html_code': selCode.html_code,
+            'css_code': selCode.css_code,
+            'js_code': selCode.js_code,
+            'student': null, 'teacher': null
         }
-        else {
-            /** Create Mode */
-            const url = axios.defaults.baseURL + '/api/student-js-create/'
-            const bodyData = { 'title': selCode.title, 'js_code': js_code, 'student': user?.id }
-            // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
-            axios({
-                method: 'POST',
-                url,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(bodyData)
+        bodyData[user?.role] = user?.id
+        // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+        axios({
+            method: 'POST',
+            url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(bodyData)
 
 
+        })
+            .then(res => {
+                // console.log('onSubmit-fetchJSCode:' + url, res.data)
+                fetchJSCode()
+                setMode('click')
+                setSelCode(res.data)
             })
-                .then(res => {
-                    // console.log('onSubmit-fetchJSCode:' + url, res.data)
-                    fetchJSCode()
-                    setMode('click')
-                    setSelCode(res.data)
-                })
-                .catch(err => console.log('fetchJSCode-error:' + url, err))
-        }
+            .catch(err => console.log('fetchJSCode-error:' + url, err))
+
+
     }
+    const onSubmitUpdate = (e, id) => {
+        e.preventDefault()
+        console.log('onSubmitUpdate')
+        /** Update Mode */
+        const url = axios.defaults.baseURL + '/api/user-html-update/' + selCode.id
+        const bodyData = {
+            'title': selCode.title,
+            'html_code': selCode.html_code,
+            'css_code': selCode.css_code,
+            'js_code': selCode.js_code,
+            // 'student': null, 'teacher':null
+        }
+        // bodyData[user?.role] = user?.id
+        // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+        axios({
+            method: 'PATCH',
+            url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(bodyData)
 
+
+        })
+            .then(res => {
+                // console.log('onSubmit-fetchJSCode:' + url, res.data)
+                fetchJSCode()
+                setSelCode(res.data)
+            })
+            .catch(err => console.log('fetchJSCode-error:' + url, err))
+    }
 
     const onClickRunCode = (e) => {
 
-        // console.log('html:', selCode?.html_code.search('/</body>/g'))
+
+        // resultRef.current.innerHTML = ''
+        if (!selCode?.html_code) return
+
         let index = selCode?.html_code.search(/<\/head>/g)
         // console.log('head index', index)
         let combindedCode = null
@@ -149,22 +201,25 @@ const PracticeHtmlScreen = () => {
 
             combindedCode = selCode?.html_code.slice(0, index) + '<style>' + selCode?.css_code + '</style>' + selCode?.html_code.slice(index)
         }
+        else {
+            combindedCode = selCode?.html_code
+
+        }
         index = combindedCode?.search(/<\/body>/g)
         // console.log('body index', index)
+        let combindedCodeJS = null
         if (index >= 0 && selCode?.js_code) {
 
-            combindedCode = combindedCode.slice(0, index) + '<script>' + selCode?.css_code + '</script>' + combindedCode.slice(index)
+            combindedCodeJS = combindedCode.slice(0, index) + '<script>' + selCode?.js_code + '</script>' + combindedCode.slice(index)
+        }
+        else {
+            combindedCodeJS = combindedCode
         }
 
-        // console.log(combindedCode)
 
-
-        if (combindedCode) resultRef.current.innerHTML = combindedCode
-        setCodeResult('ran')
-        return
-        const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
-        if (!selCode?.js_code) return
-        const data = { 'user': user.email, 'id': user.id, 'js-code': selCode.js_code }
+        // const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
+        const url = 'http://localhost:5000/api-html'
+        const data = { 'user': user.email, 'id': user.id, 'html-code': combindedCodeJS }
         // console.log('data: ', JSON.stringify(data))
         axios({
             method: 'POST',
@@ -174,19 +229,27 @@ const PracticeHtmlScreen = () => {
             data: JSON.stringify(data)
         })
             .then(res => {
-                // console.log('onClickRunCode-' + url, res.data, resultRef)
-                setCodeResult(res.data)
+                /** iframeKey makes to reload src=url in iframe by changing key value property */
+                setIframeKey(iframeKey + 1)
+                setCodeResult(data)
 
-                resultRef.current.innerHTML = res.data.replace(/\n/g, "<br />")
+                // resultRef.current.innerHTML = res.data.replace(/\n/g, "<br />")
             })
             .catch(err => console.log('onClickRunCode-error:' + url, err))
+
     }
+
     useEffect(() => {
 
+        console.log('useEffect-codeResult')
     }, [codeResult])
+
     useEffect(() => {
         fetchJSCode()
     }, [])
+
+
+
     return (
 
         <div className='practice__html_screen'>
@@ -196,7 +259,7 @@ const PracticeHtmlScreen = () => {
                     <button className='btn-create' onClick={onClickCreateCode}>Create New</button>
                     {
                         mode == 'create' &&
-                        <form className='form-create' onSubmit={e => onSubmit(e, selCode?.id)}>
+                        <form className='form-create' onSubmit={e => onSubmitCreate(e, selCode?.id)}>
                             <label>Title</label>
                             <input type='text' name='title' value={selCode.title} onChange={e => setSelCode({ ...selCode, 'title': e.target.value })} />
                             <button className='btn-form' type='submit'>Save</button>
@@ -210,7 +273,7 @@ const PracticeHtmlScreen = () => {
                             <button className='btn-click' onClick={e => onClickFetchedCode(e, item.id)}>{item.title}</button>
                             {
                                 mode == 'click' && selCode?.id == item.id &&
-                                <form className='form-click' onSubmit={e => onSubmit(e, selCode?.id)}>
+                                <form className='form-click' onSubmit={e => onSubmitUpdate(e, selCode?.id)}>
                                     <label>Title</label>
                                     <input type='text' name='title' value={selCode.title} onChange={e => setSelCode({ ...selCode, 'title': e.target.value })} />
                                     <button className='id-btn-form' type='submit'>Update</button>
@@ -233,10 +296,10 @@ const PracticeHtmlScreen = () => {
                     onChange={(value, viewUpdate) => {
                         // setCode(value)
                         setSelCode({ ...selCode, html_code: value })
-                        localStorage.setItem('myValue', value);
+                        // localStorage.setItem('myValue', selCode);
 
                         const state = viewUpdate.state.toJSON(stateFields);
-                        localStorage.setItem('myEditorState', JSON.stringify(state));
+                        localStorage.setItem('myEditorState-html', JSON.stringify(state));
                     }}
                 />
             </div>
@@ -251,10 +314,10 @@ const PracticeHtmlScreen = () => {
                     onChange={(value, viewUpdate) => {
                         // setCode(value)
                         setSelCode({ ...selCode, css_code: value })
-                        localStorage.setItem('myValue', value);
+                        // localStorage.setItem('myValue', value);
 
                         const state = viewUpdate.state.toJSON(stateFields);
-                        localStorage.setItem('myEditorState', JSON.stringify(state));
+                        localStorage.setItem('myEditorState-css', JSON.stringify(state));
                     }}
                 />
             </div>
@@ -269,17 +332,28 @@ const PracticeHtmlScreen = () => {
                     onChange={(value, viewUpdate) => {
                         // setCode(value)
                         setSelCode({ ...selCode, js_code: value })
-                        localStorage.setItem('myValue', value);
+                        // localStorage.setItem('myValue', value);
 
                         const state = viewUpdate.state.toJSON(stateFields);
-                        localStorage.setItem('myEditorState', JSON.stringify(state));
+                        localStorage.setItem('myEditorState-js', JSON.stringify(state));
                     }}
                 />
             </div>
             <div className='code-result'>
 
                 <button onClick={e => onClickRunCode(e)}>Run Code</button>
-                {<div className='code-result' ref={resultRef}></div>}
+                {/* <div className='code-result' id='code-result' ref={resultRef}></div> */}
+                {/* {console.log('codeResult', codeResult)} */}
+                {codeResult ? <iframe key={iframeKey}
+                    style={{ width: '100%', backgroundColor: 'white' }}
+                    className='iframe__view'
+                    src={`http://localhost:5000/get-html/?email=${codeResult.user}&id=${codeResult.id}`}
+                    title="description">
+                </iframe>
+                    : <div></div>
+
+                }
+
 
             </div>
 
