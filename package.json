@@ -4,6 +4,8 @@
   "private": true,
   "proxy": "https://lalasol-bootcamp-backend-production.up.railway.app",
   "dependencies": {
+    "@codemirror/lang-css": "^6.0.1",
+    "@codemirror/lang-html": "^6.4.0",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.9",

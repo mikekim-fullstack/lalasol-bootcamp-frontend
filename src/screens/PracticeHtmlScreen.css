@@ -1,0 +1,286 @@
+.practice__html_screen {
+    min-width: 380px;
+    margin-top: var(--nav-height);
+    width: var(--width-view);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
+
+    /* flex-direction: column; */
+    background-color: #1a1b26;
+    color: white;
+    background-color: #1a1b26;
+    color: white;
+    display: grid;
+    grid-template-columns: 1fr;
+
+}
+
+.practice__html_screen .code-lists {
+    /* width: 100%; */
+    min-height: 300px;
+    margin: 10px 20px 10px 7px;
+
+}
+
+.practice__html_screen .code-lists .selected-create {
+    border: 2px solid pink;
+    border-radius: 5px;
+    margin: 10px 5px;
+    padding: 5px;
+}
+
+.practice__html_screen .code-lists .create {
+    margin: 10px 5px;
+    padding: 5px;
+    width: 100%
+}
+
+
+.practice__html_screen .code-lists .btn-create {
+
+    background-color: rgb(80, 28, 169);
+    color: white;
+    border-style: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: all 0.25s ease;
+    margin-bottom: 5px;
+    padding: 12px 0px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.practice__html_screen .code-lists .btn-create :hover {
+    background-color: rgb(117, 62, 194);
+}
+
+.practice__html_screen .code-lists .form-create {
+    background-color: rgb(65, 25, 99);
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.practice__html_screen .code-lists .form-create>input[type='text'] {
+    background-color: rgb(215, 169, 255);
+    padding-left: 5px;
+}
+
+.practice__html_screen .code-lists .form-create .btn-form {
+    width: 100px;
+    padding: 8px;
+}
+
+/* ------------------------------- */
+
+
+
+
+
+.practice__html_screen .code-lists .item {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.practice__html_screen .code-lists .item .btn-click {
+    background-color: rgb(155, 28, 169);
+    color: white;
+    border-style: none;
+    padding: 12px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: all 0.25s ease;
+}
+
+.practice__html_screen .code-lists .item .btn-click:hover {
+    background-color: rgb(205, 16, 226);
+}
+
+.practice__html_screen .code-lists .item .selected-item {
+    border: 2px solid pink;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+.practice__html_screen .code-lists .item .selected-item .btn-click {
+    background-color: rgb(205, 16, 226);
+}
+
+.practice__html_screen .code-lists .item .form-click {
+    background-color: rgb(65, 25, 99);
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.practice__html_screen .code-lists .form-click>input[type='text'] {
+    background-color: rgb(215, 169, 255);
+    padding-left: 5px;
+}
+
+.practice__html_screen .code-lists .item .form-click button {
+    width: 100px;
+}
+
+/* .practice__html_screen .code-lists span {
+    display: inline-block;
+    margin-right: 5px;
+} */
+
+.practice__html_screen .code-lists .item button {
+    padding: 8px 14px;
+    width: 100%;
+    /* min-width: 100px;
+    max-width: 150px; */
+}
+
+/* .practice__html_screen .code-lists .form-create {
+    border: 1px solid pink;
+} */
+
+.practice__html_screen .code-container {
+    width: 100%;
+    /* height: 70vh; */
+    overflow: scroll;
+}
+
+.practice__html_screen .code-result {
+    width: 100%;
+    min-height: 300px;
+
+    padding: 5px;
+
+    background-color: #292a3c;
+    color: white;
+    /* height: 95.45vh; */
+}
+
+
+.practice__html_screen .code-result>button {
+    display: block;
+    width: 100%;
+    background-color: rgb(62, 9, 66);
+    color: white;
+    /* outline: none; */
+    border: none;
+    padding: 10px 0px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.practice__html_screen .code-result>button:hover {
+    background-color: rgb(97, 24, 103);
+}
+
+
+
+
+
+
+@media screen and (min-width:600px) {
+    .practice__html_screen {
+        grid-template-columns: 250px auto auto;
+        grid-auto-rows: auto;
+    }
+
+    .practice__html_screen .code-lists {
+        grid-column: 1;
+    }
+
+    .practice__html_screen .code-container.html {
+        grid-column: 2;
+        width: 100%;
+    }
+
+    .practice__html_screen .code-container.css {
+        grid-column: 1/-1;
+    }
+
+    .practice__html_screen .code-container.js {
+        grid-column: 1/-1;
+    }
+
+    .practice__html_screen .code-result {
+        grid-column: 1/-1;
+    }
+
+
+    .practice__html_screen .code-lists .form-create {
+        padding: 5px 5px;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-between; */
+        align-items: center;
+        gap: 5px;
+    }
+
+
+
+    .practice__html_screen .code-lists .form-create .btn-form {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+    }
+
+
+    .practice__html_screen .code-lists .item .form-click {
+        background-color: rgb(65, 25, 99);
+        padding: 5px 5px;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-between; */
+        align-items: center;
+        gap: 5px;
+    }
+
+    .practice__html_screen .code-lists .item .form-click button {
+        display: block;
+        width: 100%;
+    }
+
+    .practice__html_screen .code-result>button {
+        margin-top: 0;
+    }
+
+}
+
+@media screen and (min-width:1200px) {
+    .practice__html_screen {
+        grid-template-columns: 250px 1fr 1fr 1fr;
+        grid-template-rows: auto;
+    }
+
+    .practice__html_screen .code-lists {
+        grid-column: 1;
+    }
+
+    .practice__html_screen .code-container.html {
+        grid-column: 2;
+        width: 100%;
+    }
+
+    .practice__html_screen .code-container.css {
+        grid-column: 3;
+    }
+
+    .practice__html_screen .code-container.js {
+        grid-column: 4;
+    }
+
+    .practice__html_screen .code-result {
+        grid-column: 1/-1;
+    }
+
+    .practice__html_screen .code-result {
+        grid-column: 1/-1;
+    }
+
+}

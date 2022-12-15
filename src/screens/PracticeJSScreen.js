@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import './PracticeScreen.css'
+import './PracticeJSScreen.css'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 
@@ -11,7 +11,7 @@ import { historyField } from '@codemirror/commands';
 import { getUser } from '../slices/userSlices';
 import { useSelector } from 'react-redux';
 
-const PracticeScreen = () => {
+const PracticeJSScreen = () => {
 
     const { practice_id } = useParams()
     const user = useSelector(getUser)
@@ -153,7 +153,7 @@ const PracticeScreen = () => {
                 // console.log('onClickRunCode-' + url, res.data, resultRef)
                 setCodeResult(res.data)
 
-                resultRef.current.innerHTML = res.data.replace(/\n/g, "<br />")
+                resultRef.current.innerText = res.data //res.data.replace(/\n/g, "<br />")
             })
             .catch(err => console.log('onClickRunCode-error:' + url, err))
     }
@@ -236,4 +236,4 @@ const PracticeScreen = () => {
     )
 }
 
-export default PracticeScreen
+export default PracticeJSScreen

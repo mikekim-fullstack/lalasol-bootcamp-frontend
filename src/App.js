@@ -10,7 +10,8 @@ import ProjectScreen from './screens/ProjectScreen'
 import SkillScreen from './screens/SkillScreen'
 import ReferenceScreen from './screens/ReferenceScreen'
 import NavHeader from './components/NavHeader'
-import PracticeScreen from './screens/PracticeScreen'
+import PracticeJSScreen from './screens/PracticeJSScreen'
+import PracticeHtmlScreen from './screens/PracticeHtmlScreen'
 import GeneralScreen from './screens/GeneralScreen'
 import HRScreen from './screens/HRScreen'
 import Screen404 from './screens/Screen404'
@@ -63,8 +64,8 @@ function App() {
             <Route path='/skills/:skill_id' element={<SkillScreen />} />
             <Route path='/references/:reference_id' element={<ReferenceScreen />} />
 
-            <Route path='/practices/:practice_id' element={<PracticeScreen />} />
-            <Route path='/general/:general_id' element={<GeneralScreen />} />
+            <Route path='/practices-js/' element={<PracticeJSScreen />} />
+            <Route path='/practices-html/' element={<PracticeHtmlScreen />} />
             <Route path='/hr/:hr_id' element={<HRScreen />} />
 
             <Route path='/screen404' element={<Screen404 />} />
