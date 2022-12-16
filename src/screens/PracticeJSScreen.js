@@ -200,20 +200,9 @@ const PracticeJSScreen = () => {
             </div>
             <CodeMirror className='code-mirror'
                 value={selCode?.js_code}
-                // initialState={
-                //     serializedState
-                //         ? {
-                //             json: JSON.parse(serializedState || ''),
-                //             fields: stateFields,
-                //         }
-                //         : undefined
-                // }
                 minWidth={"100%"}
                 height="100vh"
                 theme={tokyoNight}
-                // highlightActiveLine={false}
-                // rectangularSelection={false}
-                // lineNumbers='false'
                 extensions={[javascript({ jsx: false })]}
                 onChange={(value, viewUpdate) => {
                     setCode(value)

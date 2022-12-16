@@ -4,16 +4,30 @@
     width: var(--width-view);
     margin-left: auto;
     margin-right: auto;
-    padding: 0;
+    padding-right: 12px;
 
     /* flex-direction: column; */
-    background-color: #1a1b26;
+    background-color: #1d1e31;
     color: white;
-    background-color: #1a1b26;
-    color: white;
+
     display: grid;
     grid-template-columns: 1fr;
 
+}
+
+/* Override select properties on <codeMirror> */
+.practice__html_screen .cm-selectionLayer .cm-selectionBackground {
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+.practice__html_screen .cm-activeLine {
+    background-color: inherit;
+}
+
+.practice__html_screen button {
+    font-size: 1rem;
+    color: black;
 }
 
 .practice__html_screen .code-lists {
@@ -69,9 +83,31 @@
     padding-left: 5px;
 }
 
-.practice__html_screen .code-lists .form-create .btn-form {
-    width: 100px;
-    padding: 8px;
+
+
+.code-mirror {
+    /* font-family: Arial, monospace; */
+    font-size: 1.1em;
+}
+
+
+/* .code-mirror .selected {
+    background-color: white;
+} */
+
+
+.practice__html_screen .code-lists .form-create button {
+    /* box-sizing: border-box; */
+    display: block;
+    width: 100%;
+    border-radius: 5px;
+    border-style: none;
+    padding: 10px 5px;
+    background-color: rgb(222, 198, 198);
+}
+
+.practice__html_screen .code-lists .form-create button:hover {
+    background-color: white;
 }
 
 /* ------------------------------- */
@@ -125,6 +161,7 @@
 }
 
 .practice__html_screen .code-lists .item .form-click button {
+    padding: 10px 5px;
     width: 100px;
 }
 
@@ -136,8 +173,13 @@
 .practice__html_screen .code-lists .item button {
     padding: 8px 14px;
     width: 100%;
-    /* min-width: 100px;
-    max-width: 150px; */
+    border-radius: 5px;
+    border-style: none;
+    background-color: rgb(222, 198, 198);
+}
+
+.practice__html_screen .code-lists .item button:hover {
+    background-color: #fff;
 }
 
 /* .practice__html_screen .code-lists .form-create {
@@ -187,7 +229,8 @@
 
 @media screen and (min-width:600px) {
     .practice__html_screen {
-        grid-template-columns: 200px 1fr 1fr 1fr;
+        grid-template-columns: 200px 1fr 1fr 1fr 1fr;
+        grid-gap: 2px;
         grid-auto-rows: auto;
     }
 
@@ -202,11 +245,11 @@
     }
 
     .practice__html_screen .code-container.css {
-        grid-column: 1/-1;
+        grid-column: 2/-1;
     }
 
     .practice__html_screen .code-container.js {
-        grid-column: 1/-1;
+        grid-column: 2/-1;
     }
 
     .practice__html_screen .code-result {
@@ -225,11 +268,6 @@
 
 
 
-    .practice__html_screen .code-lists .form-create .btn-form {
-        box-sizing: border-box;
-        display: block;
-        width: 100%;
-    }
 
 
     .practice__html_screen .code-lists .item .form-click {
@@ -244,6 +282,7 @@
 
     .practice__html_screen .code-lists .item .form-click button {
         display: block;
+        padding: 10px 0px;
         width: 100%;
     }
 
@@ -257,6 +296,7 @@
     .practice__html_screen {
         grid-template-columns: 200px 1fr 1fr;
         grid-template-rows: auto;
+        grid-gap: 5px;
     }
 
     .practice__html_screen .code-lists {
@@ -274,15 +314,13 @@
     }
 
     .practice__html_screen .code-container.js {
-        grid-column: 1/-1;
+        grid-column: 2/-1;
     }
 
     .practice__html_screen .code-result {
         grid-column: 1/-1;
     }
 
-    .practice__html_screen .code-result {
-        grid-column: 1/-1;
-    }
+
 
 }

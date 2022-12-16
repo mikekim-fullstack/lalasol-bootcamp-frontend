@@ -9,11 +9,30 @@
     /* flex-direction: column; */
     background-color: #1a1b26;
     color: white;
-    background-color: #1a1b26;
-    color: white;
+
     display: grid;
     grid-template-columns: 1fr;
 
+}
+
+/* Override select properties on <codeMirror> */
+.practice__screen .cm-selectionLayer .cm-selectionBackground {
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+.practice__screen .cm-activeLine {
+    background-color: inherit;
+}
+
+.code-mirror {
+    /* font-family: Arial, monospace; */
+    font-size: 1.1em;
+}
+
+.practice__screen button {
+    font-size: 1rem;
+    color: black;
 }
 
 .practice__screen .code-lists {
@@ -69,9 +88,21 @@
     padding-left: 5px;
 }
 
+
+
+
 .practice__screen .code-lists .form-create .btn-form {
-    width: 100px;
-    padding: 8px;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border-radius: 5px;
+    border-style: none;
+    padding: 10px 0px;
+    background-color: rgb(222, 198, 198);
+}
+
+.practice__screen .code-lists .form-create .btn-form:hover {
+    background-color: white;
 }
 
 /* ------------------------------- */
@@ -89,7 +120,7 @@
     background-color: rgb(155, 28, 169);
     color: white;
     border-style: none;
-    padding: 12px 0;
+    padding: 12px 5px;
     border-radius: 5px;
     cursor: pointer;
     transform: all 0.25s ease;
@@ -125,6 +156,7 @@
 }
 
 .practice__screen .code-lists .item .form-click button {
+    padding: 10px 5px;
     width: 100px;
 }
 
@@ -136,18 +168,28 @@
 .practice__screen .code-lists .item button {
     padding: 8px 14px;
     width: 100%;
-    /* min-width: 100px;
-    max-width: 150px; */
+    border-radius: 5px;
+    border-style: none;
+    background-color: rgb(222, 198, 198);
+}
+
+.practice__screen .code-lists .item button:hover {
+    background-color: #fff;
 }
 
 /* .practice__screen .code-lists .form-create {
     border: 1px solid pink;
 } */
 
-.practice__screen .code-mirror {
-    /* width: 100%; */
+.practice__screen .cm-theme {
+    width: 100%;
     /* height: 70vh; */
     overflow: scroll;
+}
+
+
+.practice__screen .cm-theme {
+    font-size: 1.1em;
 }
 
 .practice__screen .code-result {
@@ -187,7 +229,7 @@
 
 @media screen and (min-width:600px) {
     .practice__screen {
-        grid-template-columns: 250px auto;
+        grid-template-columns: 200px auto;
         grid-auto-rows: auto;
     }
 
@@ -215,11 +257,22 @@
 
 
 
+    /* 
+
     .practice__screen .code-lists .form-create .btn-form {
         box-sizing: border-box;
         display: block;
         width: 100%;
+        border-radius: 5px;
+        border-style: none;
+        padding: 10px 0px;
+        background-color: rgb(222, 198, 198);
     }
+
+    .practice__screen .code-lists .form-create .btn-form:hover {
+        background-color: white;
+    } */
+
 
 
     .practice__screen .code-lists .item .form-click {
@@ -243,9 +296,9 @@
 
 }
 
-@media screen and (min-width:800px) {
+@media screen and (min-width:600px) {
     .practice__screen {
-        grid-template-columns: 250px auto 250px;
+        grid-template-columns: 200px 1fr 1fr;
         grid-template-rows: auto;
     }
 
@@ -253,7 +306,47 @@
         grid-column: 1;
     }
 
-    .practice__screen .code-morror {
+    .practice__screen .cm-theme {
+        grid-column: 2/-1;
+    }
+
+    .practice__screen .code-result {
+        grid-column: 1/-1;
+    }
+
+}
+
+@media screen and (min-width:900px) {
+    .practice__screen {
+        grid-template-columns: 200px minmax(40%, auto) minmax(250px, auto);
+        grid-template-rows: auto;
+    }
+
+    .practice__screen .code-lists {
+        grid-column: 1;
+    }
+
+    .practice__screen .cm-theme {
+        grid-column: 2;
+    }
+
+    .practice__screen .code-result {
+        grid-column: 3;
+    }
+
+}
+
+@media screen and (min-width:1200px) {
+    .practice__screen {
+        grid-template-columns: 200px minmax(40%, auto) minmax(350px, auto);
+        grid-template-rows: auto;
+    }
+
+    .practice__screen .code-lists {
+        grid-column: 1;
+    }
+
+    .practice__screen .cm-theme {
         grid-column: 2;
     }
 

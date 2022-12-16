@@ -217,8 +217,8 @@ const PracticeHtmlScreen = () => {
         }
 
 
-        // const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
-        const url = 'http://localhost:5000/api-html'
+        const url = 'https://express-shell-execute-js-production.up.railway.app/api-html/'
+        // const url = 'http://localhost:5000/api-html'
         const data = { 'user': user.email, 'id': user.id, 'html-code': combindedCodeJS }
         // console.log('data: ', JSON.stringify(data))
         axios({
@@ -347,7 +347,8 @@ const PracticeHtmlScreen = () => {
                 {codeResult ? <iframe key={iframeKey}
                     style={{ width: '100%', backgroundColor: 'white' }}
                     className='iframe__view'
-                    src={`http://localhost:5000/get-html/?email=${codeResult.user}&id=${codeResult.id}`}
+                    // src={`http://localhost:5000/get-html/?email=${codeResult.user}&id=${codeResult.id}`}
+                    src={`https://express-shell-execute-js-production.up.railway.app/get-html/?email=${codeResult.user}&id=${codeResult.id}`}
                     title="description">
                 </iframe>
                     : <div></div>
