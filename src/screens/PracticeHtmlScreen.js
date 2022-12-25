@@ -156,10 +156,41 @@ const PracticeHtmlScreen = () => {
 
 
     }
+    const updateCode = async () => {
+        const url = axios.defaults.baseURL + '/api/user-html-update/' + selCode.id
+        const bodyData = {
+            'title': selCode.title,
+            'html_code': selCode.html_code,
+            'css_code': selCode.css_code,
+            'js_code': selCode.js_code,
+            // 'student': null, 'teacher':null
+        }
+        // bodyData[user?.role] = user?.id
+        // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+        await axios({
+            method: 'PATCH',
+            url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(bodyData)
+
+
+        })
+            .then(res => {
+                // console.log('onSubmit-fetchJSCode:' + url, res.data)
+                fetchJSCode()
+                setSelCode(res.data)
+            })
+            .catch(err => console.log('fetchJSCode-error:' + url, err))
+    }
     const onSubmitUpdate = (e, id) => {
         e.preventDefault()
         console.log('onSubmitUpdate')
+
         /** Update Mode */
+        updateCode()
+        /*
         const url = axios.defaults.baseURL + '/api/user-html-update/' + selCode.id
         const bodyData = {
             'title': selCode.title,
@@ -186,6 +217,7 @@ const PracticeHtmlScreen = () => {
                 setSelCode(res.data)
             })
             .catch(err => console.log('fetchJSCode-error:' + url, err))
+        */
     }
 
     const onClickRunCode = (e) => {
@@ -193,7 +225,7 @@ const PracticeHtmlScreen = () => {
 
         // resultRef.current.innerHTML = ''
         if (!selCode?.html_code) return
-
+        updateCode()
         let index = selCode?.html_code.search(/<\/head>/g)
         // console.log('head index', index)
         let combindedCode = null
@@ -341,7 +373,7 @@ const PracticeHtmlScreen = () => {
             </div>
             <div className='code-result'>
 
-                <button onClick={e => onClickRunCode(e)}>Run Code</button>
+                <button onClick={e => onClickRunCode(e)}><span style={{ fontSize: '1.3rem' }}>Run Code</span></button>
                 {/* <div className='code-result' id='code-result' ref={resultRef}></div> */}
                 {/* {console.log('codeResult', codeResult)} */}
                 {codeResult ? <iframe key={iframeKey}

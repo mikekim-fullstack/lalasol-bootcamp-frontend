@@ -498,11 +498,11 @@ const AddChapter = ({ teacherId }) => {
         // console.log('useEffect - 3. AddChapter->chapterLists: setClickedChapter-pathID?.chapterID', pathID?.chapterID)
     }, [isCompleteFetchChapter, updateRender])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        // console.log('useEffect - inputData:', inputData)
-        // contentFileRef && contentFileRef.current.files[0].name
-    }, [inputData])
+    //     // console.log('useEffect - inputData:', inputData)
+    //     // contentFileRef && contentFileRef.current.files[0].name
+    // }, [inputData])
 
 
     useEffect(() => {

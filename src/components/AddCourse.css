@@ -85,8 +85,8 @@ textarea {
     border-radius: 0 0.2rem 0.2rem 0;
 }
 
-.add_course__form input[type=file] {
-    /* margin: 5px 0; */
+.add_course__form input[type="file"] {
+    position: relative;
     width: 100%;
     max-width: 100%;
     background-color: rgba(255, 255, 255, 0.797);
@@ -96,7 +96,7 @@ textarea {
     color: #000;
 }
 
-.add_course__form input[type=file]:hover {
+.add_course__form input[type="file"]:hover {
     box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -webkit-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
     -moz-box-shadow: 0px 0px 2px 2px rgba(225, 0, 0, 0.97);
@@ -104,14 +104,40 @@ textarea {
 
 
 
-.add_course__form input[type=file]::file-selector-button {
+.add_course__form input[type="file"]::file-selector-button {
+
+    position: relative;
+    appearance: auto;
+    /* 
+    -webkit-user-modify: read-only !important;
+    white-space: nowrap;
+    -webkit-user-select: auto; */
+
 
     background-color: rgb(232, 232, 232);
     font-size: 0.8rem;
     color: #000;
     border: 0px;
     border-right: 1px solid #b6b6b6;
-    padding: 0.63rem 1.4rem !important;
+    padding: 0.78em 1.5em !important;
+    margin-right: 20px;
+    border-radius: 0.2rem 0 0 0.2rem !important;
+    transition: .5s;
+
+
+}
+
+/* For mobile device */
+.add_course__form input[type="file"]::-webkit-file-upload-button {
+
+    position: relative;
+    appearance: auto;
+    background-color: rgb(232, 232, 232);
+    font-size: 0.8rem;
+    color: #000;
+    border: 0px;
+    border-right: 1px solid #b6b6b6;
+    padding: 0.78em 1.5em !important;
     margin-right: 20px;
     border-radius: 0.2rem 0 0 0.2rem !important;
     transition: .5s;
@@ -119,7 +145,7 @@ textarea {
 
 
 
-.add_course__form input[type=file]::file-selector-button:hover {
+.add_course__form input[type="file"]::file-selector-button:hover {
     background-color: rgb(139, 138, 138);
     border: 0px;
     border-right: 1px solid #e5e5e5;

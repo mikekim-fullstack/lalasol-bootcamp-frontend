@@ -13,7 +13,7 @@
     /* max-width: 750px; */
     max-width: 850px;
 
-    padding: 0;
+    padding: 0 10px;
     text-align: center;
 
 }
@@ -180,11 +180,13 @@
     font-size: 1.25rem;
 }
 
-.content__preview .main_paragraph ul {
+.content__preview .main_paragraph ul,
+.content__preview .main_paragraph ol {
     margin-left: 20px;
 }
 
-.content__preview .main_paragraph ul li {
+.content__preview .main_paragraph ul li,
+.content__preview .main_paragraph ol li {
     /* border: 1px dashed pink; */
     /* padding-left: 20px; */
 }

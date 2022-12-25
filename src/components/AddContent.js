@@ -161,6 +161,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     }
 
     const handleAddContent = (e) => {
+
         dispatch(setBackupContentAction())
         setInputContent({ file: null, url: null, text: null })
         setContentChoice(null)
@@ -437,7 +438,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         }
     }
     const handleClickContent = (e, content, index) => {//clickedChapter?.content
-        // console.log('handleClickContent: ', content)
+        console.log('handleClickContent: ', content)
         /**
          * Show filename in input file
          */
@@ -498,7 +499,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         })
             .then(res => {
 
-                console.log('updateContentSequence:' + url, res.data)
+                // console.log('updateContentSequence:' + url, res.data)
                 dispatch(setClickedChapter(res.data))
                 setTriggerUseEffect(!triggerUseEffect)
             })
@@ -545,8 +546,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         e.preventDefault()
         /** reset inputContent */
         setInputContent({ file: null, url: null, text: null })
-        /** delete any created acation */
-        // dispatch(deleteContentAddAction())
+
         setOperateContent(true)
         setClickedAddContent(false)
         setClickedUpdateContent(false)
@@ -614,6 +614,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         setInputContent({ file: null, url: null, text: null })
         /** delete any created acation */
         dispatch(deleteContentAddAction())
+
         setOperateContent(true)
         setClickedAddContent(false)
         setClickedUpdateContent(false)
@@ -652,8 +653,8 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         })
             .then(res => {
                 // console.log('Success - End point-/api/chapter-content/', res.data)
-
-                dispatch(setPathContentID(res.data.id))
+                const contentId = res.data.id
+                // dispatch(setPathContentID(res.data.id))
 
                 // console.log('clickedContentId:', clickedContentId, clickedContent?.id, ', res.data.id', res.data.id)
 
@@ -662,12 +663,13 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 /** ++ Add the created content into the chapter DB in server. ++*/
                 const formData = new FormData()
                 formData.append('chapter_id', clickedChapter?.id)
-                formData.append('content_id', res.data.id)
+                formData.append('content_id', contentId)
                 clickedContent?.id && formData.append('content_insert_id', clickedContent?.id)
-
+                const url = axios.defaults.baseURL + '/api/chapter-content-add/'
+                // console.log('formData' + url, formData)
                 axios({
                     method: 'PUT',
-                    url: axios.defaults.baseURL + '/api/chapter-content-add/',
+                    url: url,
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -675,17 +677,15 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 })
                     .then(res => {
                         // console.log('Success-End point-/api/chapter-content-add/', res.data)
-
+                        dispatch(setPathContentID(contentId))
                         /** For rerendering to update */
+                        fetchChapters()
                         fetchContentByCourseID()
                         dispatch(setChapterUpdatedStatus())
 
                         /** ++ After add content the view point changes to show current current card.++ */
-                        setIsCreatedContent(true)
-                        // const id_content_select = document.getElementById('id_content_select')
-                        // if (id_content_select) {
-                        //     id_content_select.scrollIntoView()
-                        // }
+                        setIsCreatedContent(false)
+
                         // console.log('getPathID', pathID, ', id_content_select', id_content_select)
 
                         //-- end --
@@ -838,7 +838,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     useEffect(() => {
         // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
 
-    }, [contentChoice?.title, operateContent,])// contentAction])
+    }, [contentChoice?.title, operateContent,])
 
     useEffect(() => {
         /** ++ After add content the view point changes to show current current card.++ */
@@ -851,9 +851,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         //-- end --
     }, [pathID?.contentID])
     // console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
-    // const pasteEvent = (e) => {
-    //     console.log('pasteEvent: ', e, e.clipboardData.files)
-    // }
+
     useEffect(() => {
         // console.log('useEffect AddContent- refresh: ')
         if (contentChoice?.title.includes('Break Line')) {
@@ -904,7 +902,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
 
             }
-            {/* -- When the Add Chapter + sign pressed.-- */}
+            {/* -- When the Update Chapter edit sign pressed.-- */}
             {
                 clickedUpdateContent &&
                 <form className='add_content_form' onSubmit={onSubmitUpdateContentForm} onPasteCapture={onPasteCaptureImage}>

@@ -11,6 +11,7 @@ import { historyField } from '@codemirror/commands';
 import { getUser } from '../slices/userSlices';
 import { useSelector } from 'react-redux';
 
+
 const PracticeJSScreen = () => {
 
     const { practice_id } = useParams()
@@ -28,6 +29,7 @@ const PracticeJSScreen = () => {
     const [fetchedCode, setFetchedCode] = useState(null)
     const [selCode, setSelCode] = useState(null)
     const [mode, setMode] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const fetchJSCode = async () => {
         const url = axios.defaults.baseURL + '/api/student-js-view/' + user.id
@@ -40,8 +42,11 @@ const PracticeJSScreen = () => {
 
         })
             .then(res => {
-                // console.log('fetchJSCode:' + url, res.data)
-                setFetchedCode(res.data)
+                const data = [...res.data]
+
+                // console.log('fetchJSCode:' + url, data)
+
+                setFetchedCode(data)
             })
             .catch(err => console.log('fetchJSCode-error:' + url, err))
     }
@@ -49,6 +54,7 @@ const PracticeJSScreen = () => {
         const selCodeItem = fetchedCode.filter(item => item.id == codeId)[0]
 
         // console.log('selCodeItem-', selCodeItem)
+        selCodeItem.js_code += '\n\n\n\n\n'
         localStorage.setItem('myValue', selCodeItem.js_code);
         setSelCode(selCodeItem)
 
@@ -83,7 +89,30 @@ const PracticeJSScreen = () => {
             .catch(err => console.log('fetchJSCode-error:' + url, err))
 
     }
+    const updateCode = async () => {
+        // const js_code = localStorage.getItem('myValue')
+        const url = axios.defaults.baseURL + '/api/student-js-update/' + selCode.id
+        const bodyData = { 'title': selCode.title, 'js_code': selCode.js_code }
+        // console.log('onSubmit: ', selCode, ', bodyData', JSON.stringify(bodyData))
+        await axios({
+            method: 'PATCH',
+            url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(bodyData)
 
+
+        })
+            .then(res => {
+                // console.log('onSubmit-fetchJSCode:' + url, res.data)
+                const data = res.data
+                data.js_code += '\n\n\n\n\n'
+                fetchJSCode()
+                setSelCode(data)
+            })
+            .catch(err => console.log('fetchJSCode-error:' + url, err))
+    }
     const onSubmit = (e, id) => {
         e.preventDefault()
         const js_code = localStorage.getItem('myValue')
@@ -107,6 +136,8 @@ const PracticeJSScreen = () => {
                 .then(res => {
                     // console.log('onSubmit-fetchJSCode:' + url, res.data)
                     fetchJSCode()
+                    const data = res.data
+                    data.js_code += '\n\n\n\n\n'
                     setSelCode(res.data)
                 })
                 .catch(err => console.log('fetchJSCode-error:' + url, err))
@@ -138,8 +169,13 @@ const PracticeJSScreen = () => {
 
 
     const onClickRunCode = (e) => {
-        const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
+
         if (!selCode?.js_code) return
+        setIsLoading(true)
+        resultRef.current.innerText = 'Running Code'
+        updateCode()
+        const url = 'https://express-shell-execute-js-production.up.railway.app/api/'
+
         const data = { 'user': user.email, 'id': user.id, 'js-code': selCode.js_code }
         // console.log('data: ', JSON.stringify(data))
         axios({
@@ -156,6 +192,9 @@ const PracticeJSScreen = () => {
                 resultRef.current.innerText = res.data //res.data.replace(/\n/g, "<br />")
             })
             .catch(err => console.log('onClickRunCode-error:' + url, err))
+            .finally(() => {
+                setIsLoading(false)
+            })
     }
     useEffect(() => {
 
@@ -213,9 +252,9 @@ const PracticeJSScreen = () => {
                     localStorage.setItem('myEditorState', JSON.stringify(state));
                 }}
             />
-            <div className='code-result'>
+            <div className='code-result' style={isLoading ? { cursor: 'wait' } : { cursor: 'default' }}>
 
-                <button onClick={e => onClickRunCode(e)}>Run Code</button>
+                <button onClick={e => onClickRunCode(e)}><span style={{ fontSize: '1.3rem' }}>Run Code</span></button>
                 {<div className='code-result' ref={resultRef}></div>}
 
             </div>

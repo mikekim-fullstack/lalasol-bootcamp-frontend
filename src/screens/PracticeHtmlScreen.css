@@ -11,6 +11,7 @@
     color: white;
 
     display: grid;
+
     grid-template-columns: 1fr;
 
 }
@@ -290,6 +291,10 @@
         margin-top: 0;
     }
 
+}
+
+.practice__html_screen .cm-line .ͼ1i {
+    color: #f5676784;
 }
 
 @media screen and (min-width:1200px) {

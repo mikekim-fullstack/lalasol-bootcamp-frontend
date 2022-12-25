@@ -318,12 +318,18 @@
 
 @media screen and (min-width:900px) {
     .practice__screen {
-        grid-template-columns: 200px minmax(40%, auto) minmax(250px, auto);
+        grid-template-columns: 210px minmax(40%, auto) minmax(250px, auto);
         grid-template-rows: auto;
     }
 
     .practice__screen .code-lists {
         grid-column: 1;
+        overflow-y: scroll;
+        height: 90vh;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-bottom: 10px;
+        /* border: 1px solid white; */
     }
 
     .practice__screen .cm-theme {
@@ -336,14 +342,22 @@
 
 }
 
+.practice__screen .cm-line .ͼ1i {
+    color: #f5676784;
+}
+
+
+
 @media screen and (min-width:1200px) {
     .practice__screen {
-        grid-template-columns: 200px minmax(40%, auto) minmax(350px, auto);
+        grid-template-columns: 210px minmax(40%, auto) minmax(350px, auto);
         grid-template-rows: auto;
     }
 
     .practice__screen .code-lists {
         grid-column: 1;
+
+
     }
 
     .practice__screen .cm-theme {
