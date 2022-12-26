@@ -143,6 +143,7 @@ const chapterSlice = createSlice({
             })
         },
         setRestoreContentAction: (state, action) => {
+            if (state.contentActionList.length < 1) return
             state.contentActionList.splice(0, state.contentActionList.length)
             state.backupContentAction.forEach(contentItem => {
                 const item = {}

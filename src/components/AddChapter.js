@@ -64,6 +64,11 @@ const AddChapter = ({ teacherId }) => {
     })
     const [toggleRefresh, setToggleRefresh] = useState(false)
     const [selectedContentInPreview, setSelectedContentInPreview] = useState(null)
+    /**
+     * setIsContentEditMode(true) 
+     * Prevent from adding content when preveiw clicked during adding and updating.
+     */
+    const [isContentEditMode, setIsContentEditMode] = useState(false)
 
 
     const copyObject = (_clickedCourseItem, objItem) => {
@@ -457,9 +462,12 @@ const AddChapter = ({ teacherId }) => {
      * -------------------------------------------------------------------------------------
      */
     const onClickedElement = (e, content) => {
-        // console.log('onClickedElement-', content.id, e)
-        // dispatch(setPathContentID(content.id))
-
+        // console.log('onClickedElement-setIsContentEditMode-', isContentEditMode, content.id, e)
+        /**
+         * If isContentEditMode is true
+         * Prevent from clicked preview item when adding and updating.
+         */
+        if (isContentEditMode) return
         setSelectedContentInPreview(content)
     }
     useEffect(() => {
@@ -626,7 +634,7 @@ const AddChapter = ({ teacherId }) => {
                 </div> */}
 
                 {/* ---------------------- 3. Lists of Content of Chapter ------------------------- */}
-                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} teacherId={teacherId} selectedContentInPreview={selectedContentInPreview} />}
+                {chapterLists?.length > 0 && <AddContent funcSetCreateMode={funcSetCreateMode} teacherId={teacherId} selectedContentInPreview={selectedContentInPreview} setIsContentEditMode={setIsContentEditMode} />}
 
 
             </div >

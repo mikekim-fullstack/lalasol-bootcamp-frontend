@@ -174,6 +174,9 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                             element = <img key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}} src={src} />
                             break
                         }
+                    case 16:// Question
+                        element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='question' dangerouslySetInnerHTML={{ __html: `<div class='question_title'>Question</div>` + `<div class='question_content'>` + content.text + `</div>` }} /></div>
+                        break
                     default:
                         element = <div key={content.id}></div>
                         break

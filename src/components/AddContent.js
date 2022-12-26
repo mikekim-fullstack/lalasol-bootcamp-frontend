@@ -18,7 +18,7 @@ import PreviewContent from './PreviewContent'
 import DialogBox from './DialogBox'
 import { Form } from 'react-router-dom'
 
-const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) => {
+const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, setIsContentEditMode }) => {
     const dispatch = useDispatch()
     const pathID = useSelector(getPathID)
     const clickedChapter = useSelector(getClickedChapter)
@@ -39,7 +39,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         itemName: "",
         content: null,
     });
-    const [isCreatedContent, setIsCreatedContent] = useState(false)
+    // const [isCreatedContent, setIsCreatedContent] = useState(false)
     /** 
     * -- 
     * 1. operateContent: show on and off for + and - sign 
@@ -134,6 +134,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
     const handleUpdateContent = (e) => {
         // console.log('handleUpdateCourse-clickedContent', clickedContent)
+        /**
+         * setIsContentEditMode(true) 
+         * Prevent from adding content when preveiw clicked during adding and updating.
+         */
+        setIsContentEditMode(true)
         fetchChapters()
 
         dispatch(setBackupContentAction())
@@ -145,11 +150,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
     }
     const handleCancelUpdate = (e) => {
-        // const recovery_clickedContent = {}
-        // Object.keys(copidClickedContent).map(key => recovery_clickedContent[key] = copidClickedContent[key])
-        // dispatch(setClickedContent(recovery_clickedContent))
-
-        // dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creater: teacherId }))
+        /**
+         * setIsContentEditMode(false) 
+         * Enable clicked preview item after adding and updating.
+         */
+        setIsContentEditMode(false)
         dispatch(setRestoreContentAction())
         setOperateContent(true)
         setClickedAddContent(false)
@@ -161,7 +166,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     }
 
     const handleAddContent = (e) => {
-
+        /**
+         * setIsContentEditMode(true) 
+         * Prevent from adding content when preveiw clicked during adding and updating.
+         */
+        setIsContentEditMode(true)
         dispatch(setBackupContentAction())
         setInputContent({ file: null, url: null, text: null })
         setContentChoice(null)
@@ -171,7 +180,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
     }
     const handleClickCloseContent = (e) => {
         // console.log('handleClickCloseContent: ', contentAction, ', previousClickedContent:', previousClickedContent)
-
+        /**
+         * setIsContentEditMode(false) 
+         * Enable clicked preview item after adding and updating.
+         */
+        setIsContentEditMode(false)
         if (clickedUpdateContent) {
             dispatch(setRestoreContentAction())
             setClickedUpdateContent(false)
@@ -342,6 +355,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
             return <div className='element_input'>
                 <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
             </div>
+        if (contentChoice.title.includes('Question'))
+            return <div className='element_input'>
+                <textarea required className='input_question' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            </div>
 
 
     }
@@ -397,6 +414,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 <textarea required className='input_note' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             </div>
 
+        if (contentChoice.title.includes('Question'))
+            return <div className='element_input'>
+                <textarea required className='input_question' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+            </div>
+
         if (contentChoice.title.includes('Break Line')) {
 
             // console.log('Break Line-inputContent', inputContent)
@@ -438,12 +460,12 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         }
     }
     const handleClickContent = (e, content, index) => {//clickedChapter?.content
-        console.log('handleClickContent: ', content)
+        // console.log('handleClickContent: ', content)
         /**
          * Show filename in input file
          */
         // 
-        setIsCreatedContent(false)
+        // setIsCreatedContent(false)
         const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
         const linkInput = document.querySelector('input_url')
         if (urlFilter && urlFilter[0]?.title.includes('Link')) {
@@ -544,6 +566,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
     const onSubmitUpdateContentForm = (e) => {
         e.preventDefault()
+        /**
+         * setIsContentEditMode(false) 
+         * Enable clicked preview item after adding and updating.
+         */
+        setIsContentEditMode(false)
         /** reset inputContent */
         setInputContent({ file: null, url: null, text: null })
 
@@ -609,7 +636,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
 
     const onSubmitAddContentForm = (e) => {
         e.preventDefault()
-
+        /**
+         * setIsContentEditMode(false) 
+         * Enable clicked preview item after adding and updating.
+         */
+        setIsContentEditMode(false)
         /** reset inputContent */
         setInputContent({ file: null, url: null, text: null })
         /** delete any created acation */
@@ -666,7 +697,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                 formData.append('content_id', contentId)
                 clickedContent?.id && formData.append('content_insert_id', clickedContent?.id)
                 const url = axios.defaults.baseURL + '/api/chapter-content-add/'
-                // console.log('formData' + url, formData)
+                console.log('formData' + url, formData)
                 axios({
                     method: 'PUT',
                     url: url,
@@ -684,7 +715,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                         dispatch(setChapterUpdatedStatus())
 
                         /** ++ After add content the view point changes to show current current card.++ */
-                        setIsCreatedContent(false)
+                        // setIsCreatedContent(false)
 
                         // console.log('getPathID', pathID, ', id_content_select', id_content_select)
 
@@ -827,7 +858,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
         // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
 
         if (clickedChapter?.content?.length > 0) {
-            setIsCreatedContent(false)
+            // setIsCreatedContent(false)
             initSelectContent(selectedContentInPreview, true)
             // selectedContentInPreview.scrollIntoView()
         }
@@ -968,7 +999,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview }) 
                             //     id_content_select.scrollIntoView()
                             // }
 
-                            isCreatedContent && scrollIntoView()
+                            // isCreatedContent && scrollIntoView()
 
                         }
 
