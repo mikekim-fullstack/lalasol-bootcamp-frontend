@@ -587,7 +587,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         })
 
 
-        // ++ show the last content category ++
+        // ++ show the selected content list ++
         const content_lists_item = document.querySelectorAll(`.main_section .element_${content?.id}`)
         console.log('handleClickLastContent-content_lists_item-', content_lists_item)
         if (content_lists_item?.length > 0) {
@@ -956,11 +956,16 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                     // initSelectContent(foundContent[0])
                     // console.log('content_lists_item-', content_lists_item[0], ', clickedContent', clickedContent, ', foundContent[0]', foundContent[0])
 
+                    selectContentChoice(foundContent[0])
                     if (content_lists_item?.length > 0) {
                         const lastItem = content_lists_item[0]
                         if (lastItem) lastItem.scrollIntoView()
+                        const chapter_content__view = document.querySelector('.chapter_content__view')
+                        console.log('chapter_content__view-', chapter_content__view)
+                        if (chapter_content__view) {
+                            chapter_content__view.scrollIntoView()
+                        }
                     }
-                    selectContentChoice(foundContent[0])
 
                 }
                 else initSelectContent(contentAction[0])

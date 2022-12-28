@@ -6,6 +6,7 @@
     text-align: center;
     transition: all 0.5s ease;
     background-color: rgb(244, 245, 247);
+    /* background-color: rgb(218, 219, 222); */
 
 }
 
@@ -68,7 +69,7 @@
     /* flex-wrap: wrap; */
     overflow-x: scroll;
     align-items: center;
-
+    /* background-color: #13111c; */
 
 
 }
