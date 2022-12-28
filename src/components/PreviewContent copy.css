@@ -1,22 +1,3 @@
-body,
-html {
-    /* width: 100%; */
-    height: 100%;
-    margin: 0;
-    padding: 0;
-
-}
-
-.chapter__screen {
-    margin-left: var(--side-menu-width-on-off);
-    margin-top: var(--nav-height);
-    padding: 0;
-    text-align: center;
-    transition: all 0.5s ease;
-    /* display: flex; */
-    /* border: 1px dashed pink; */
-}
-
 .chapter__content__view {
 
     transition: all 0.5s ease;
@@ -24,7 +5,7 @@ html {
     text-rendering: optimizeLegibility;
     color: #25265e;
 
-    padding: 0;
+    padding: 0 10px;
 
     display: grid;
 
@@ -46,15 +27,7 @@ html {
     /* border: 1px dashed pink; */
     background-color: rgb(75, 51, 110);
     color: white;
-
-    padding-left: 5px;
-    padding-right: 5px;
-
-    overflow-y: none;
-    max-height: none;
 }
-
-
 
 .chapter__content__view .left_section .element:nth-child(even) {
 
@@ -72,10 +45,13 @@ html {
 }
 
 .chapter__content__view .main_section {
-    overflow-y: none;
-    max-height: none;
+    /* margin-left: auto;
+    margin-right: auto; */
+
+    /* min-width: 400px;
+    max-width: 850px; */
+    /* border: 1px dashed pink; */
     padding-left: 5px;
-    padding-right: 5px;
 }
 
 
@@ -302,22 +278,27 @@ html {
 
     .chapter__content__view {
 
+        /* display: grid; */
+        /* padding-left: 10px; */
         grid-template-columns: minmax(200px, 20%) 80%;
         grid-template-rows: auto;
+        /* justify-content: center; */
         align-items: left;
         display: grid;
+        /* position: relative; */
 
     }
 
     .chapter__content__view .left_section {
-
-
+        padding-left: 5px;
+        padding-right: 10px;
+        overflow-y: scroll;
         margin: unset;
         margin-left: 0;
-        padding-bottom: 50px;
+        /* margin: 10px auto 0 auto; */
+        /* border: 1px solid pink; */
+        /* align-self: stretch; */
 
-        overflow-y: scroll;
-        max-height: 100vh;
 
     }
 
@@ -331,13 +312,10 @@ html {
 
     .chapter__content__view .left_section>h1 {
         margin-top: 50px;
-        margin-bottom: 25px;
+        margin-bottom: 50px;
         font-size: 1.4em;
     }
 
-    .chapter__content__view .main_section {
-        overflow-y: scroll;
-        max-height: 100vh;
-    }
+    .chapter__content__view .main_section {}
 
 }

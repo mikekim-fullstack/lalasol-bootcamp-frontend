@@ -80,7 +80,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
 
             <div className='left_section'>
                 <h1>Content Lists</h1>
-                {localContentAction && localContentAction.map(content => {
+                {localContentAction && localContentAction.map((content, index) => {
                     let element = ''
                     switch (content.chapter_category) {
 
@@ -110,7 +110,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
             </div>
             <div className='main_section'>
 
-                {localContentAction && localContentAction.map(content => {
+                {localContentAction && localContentAction.map((content, index) => {
                     let element = ''
                     switch (content.chapter_category) {
                         case 1: // html file
@@ -223,7 +223,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                             element = <div key={content.id}></div>
                             break
                     }
-                    return <div key={content.id} className={(content.action == '') ? 'element' : ''} onClick={e => onClickedElement(e, content)}><a href='#id_element'>{element}</a></div>
+                    return <div key={content.id} className={(content.action == '') ? `element_${content.id}` : ''} onClick={e => onClickedElement(e, content)}><a href={`#id_element`}>{element}</a></div>
 
                 })}
             </div>

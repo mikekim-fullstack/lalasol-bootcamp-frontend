@@ -50,7 +50,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
     const [clickedUpdateContent, setClickedUpdateContent] = useState(false)
     const [operateContent, setOperateContent] = useState(true)
 
-    // const [selectContent, setSelectContent] = useState(false)
+    const [triggerUpdate, setTriggerUpdate] = useState(false)
 
 
 
@@ -121,6 +121,97 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
     }
     // ----------------------------------------------------
+    const scrollIntoView = () => {
+        /** ++ After add content the view point changes to show current current card.++ */
+        const id_content_select = document.getElementById('id_content_select')
+        if (id_content_select) {
+            id_content_select.scrollIntoView()
+        }
+        // setIsCreatedContent(false)
+    }
+    const selectContentChoice = (content) => {
+        if (!content) return
+        outlinedContentCard(content.id)
+        dispatch(setPathContentID(content.id))
+        dispatch(setClickedContent(content))
+
+        const urlFilter = chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)
+        const linkInput = document.querySelector('input_url')
+        if (urlFilter && urlFilter[0]?.title.includes('Link')) {
+
+            // console.log('-----clickContent:', content, urlFilter, ', linkInput', linkInput)
+            if (linkInput) {
+                linkInput.innerHTML = content.url
+                linkInput.style.display = 'unset'
+            }
+        }
+
+        /**
+         * selectionRef.current.value is for initial value of select tag
+         */
+        if (selectionRef?.current) selectionRef.current.value = content.chapter_category
+        // console.log('chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0]: ', chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
+        setContentChoice(chapterCategory?.filter((chCat) => chCat.id == content.chapter_category)[0])
+        setInputContent({
+            url: content.url,
+            file: content.file,
+            text: content.text,
+            title: content.title,
+            image: content.image,
+            code: content.code,
+        })
+
+        // ++ Scroll screen to current selected content ++
+        // const id_element = document.querySelectorAll(`.element_${content.id}`)
+        // console.log(`id_element_${content.id}`, id_element)
+        // if (id_element?.length > 0) {
+        //     const lastItem = id_element[0]
+        //     if (lastItem) lastItem.scrollIntoView()
+        // }
+
+    }
+    const handleClickFirstContent = (e) => {
+        if (contentAction?.length < 1) return
+
+
+        // ++ Show the first content category ++
+        const content_lists_item = document.querySelectorAll('.content_lists_item')
+        // console.log('content_lists_item-', content_lists_item)
+        if (content_lists_item?.length > 0) {
+            const lastItem = content_lists_item[0]
+            if (lastItem) lastItem.scrollIntoView()
+            const chapter_content__view = document.querySelector('.chapter_content__view')
+            // console.log('chapter_content__view-', chapter_content__view)
+            if (chapter_content__view) {
+                chapter_content__view.scrollIntoView()
+            }
+        }
+
+        const content = contentAction[0]
+        selectContentChoice(content)
+
+    }
+    const handleClickLastContent = (e) => {
+        if (contentAction?.length < 1) return
+
+
+        // ++ show the last content category ++
+        const content_lists_item = document.querySelectorAll('.content_lists_item')
+        // console.log('handleClickLastContent-content_lists_item-', content_lists_item)
+        if (content_lists_item?.length > 0) {
+            const lastItem = content_lists_item[content_lists_item.length - 1]
+            if (lastItem) lastItem.scrollIntoView()
+            const chapter_content__view = document.querySelector('.chapter_content__view')
+            // console.log('chapter_content__view-', chapter_content__view)
+            if (chapter_content__view) {
+                chapter_content__view.scrollIntoView()
+            }
+        }
+
+        const content = contentAction[contentAction?.length - 1]
+        selectContentChoice(content)
+
+    }
     const handleDeleteContent = (e) => {
         const contentCat = chapterCategory.filter(item => item.id == clickedContent?.chapter_category)
         setDialogDeleteContent({
@@ -154,6 +245,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
          * setIsContentEditMode(false) 
          * Enable clicked preview item after adding and updating.
          */
+
         setIsContentEditMode(false)
         dispatch(setRestoreContentAction())
         setOperateContent(true)
@@ -161,8 +253,8 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         setClickedUpdateContent(false)
         funcSetCreateMode(false)
         setTriggerUseEffect(!triggerUseEffect)
-        // console.log('handleCancelUpdate-recovery_clickedContent: ', recovery_clickedContent, ', copidClickedContent:', copidClickedContent, ', clickedContent:', clickedContent)
-        // console.log('handleCancelUpdate-,  clickedContent:', clickedContent)
+
+        // console.log('handleCancelUpdate-,  clickedContent:', clickedContent, copidClickedContent)
     }
 
     const handleAddContent = (e) => {
@@ -427,15 +519,15 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
     }
     /** Find current Content Card by the card index and cat ID */
     const outlinedContentCard = (contentID, isFromPreview = false) => {
-        // console.log('outlinedChapterCard - contentID', contentID)
         const content_card_outline = document.querySelectorAll('.add_chapter__component .content_lists_item')
+        // console.log('outlinedChapterCard - contentID', contentID, content_card_outline)
         const shadowColor = '0px 0px 3px 2px rgba(0, 200,200 , 0.95)'
 
         for (let i = 0; i < content_card_outline.length; i++) {
 
             const card = content_card_outline[i]
-            const id = card.className.split(' ').pop()
-
+            const id = card.className.split(' ').pop().replace('id', '')
+            // console.log('outlinedChapterCard-', id)
             /** Reset previous outline to nothing */
             card.style['box-shadow'] = ''
             card.style['-webkit-box-shadow'] = ''
@@ -493,6 +585,21 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
             image: content.image,
             code: content.code,
         })
+
+
+        // ++ show the last content category ++
+        const content_lists_item = document.querySelectorAll(`.main_section .element_${content?.id}`)
+        console.log('handleClickLastContent-content_lists_item-', content_lists_item)
+        if (content_lists_item?.length > 0) {
+            const lastItem = content_lists_item[0]
+            if (lastItem) lastItem.scrollIntoView()
+            // const chapter_content__view = document.querySelector('.chapter_content__view')
+            // console.log('chapter_content__view-', chapter_content__view)
+            // if (chapter_content__view) {
+            //     chapter_content__view.scrollIntoView()
+            // }
+        }
+
     }
 
     const fetchContentByCourseID = async () => {
@@ -622,7 +729,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
                 fetchChapters()
                 fetchContentByCourseID()
-                setTriggerUseEffect(!triggerUseEffect)
+                // setTriggerUseEffect(!triggerUseEffect)
 
 
             })
@@ -714,7 +821,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                         fetchChapters()
                         fetchContentByCourseID()
                         dispatch(setChapterUpdatedStatus())
-
+                        setTriggerUpdate(!triggerUpdate)
                         /** ++ After add content the view point changes to show current current card.++ */
                         // setIsCreatedContent(false)
 
@@ -757,7 +864,15 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
             if (selectionRef?.current) selectionRef.current.value = _clickedContent.chapter_category
             // console.log('init-click Content:', _clickedContent, ', choice: ', chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0].title)
             setContentChoice(chapterCategory?.filter((chCat) => chCat.id == _clickedContent.chapter_category)[0])
+
+            // const content_lists_item = document.querySelectorAll('.content_lists_item')
+            // console.log('content_lists_item-', content_lists_item)
+            // if (content_lists_item?.length > 0) {
+            //     const lastItem = content_lists_item[content_lists_item.length - 1]
+            //     if (lastItem) lastItem.scrollIntoView()
+            // }
         }
+
     }
 
 
@@ -809,28 +924,20 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         }
     }
 
-    const scrollIntoView = () => {
-        /** ++ After add content the view point changes to show current current card.++ */
-        const id_content_select = document.getElementById('id_content_select')
-        if (id_content_select) {
-            id_content_select.scrollIntoView()
-        }
-        // setIsCreatedContent(false)
-    }
+
     //-----------------------------------------------------------------------
-    // useEffect(() => {
-    //     selectedContentInPreview && handleClickContent(null, selectedContentInPreview)
-    //     console.log('useEffect - ', selectedContentInPreview)
-    // }, selectedContentInPreview)
+
     /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
     useEffect(() => {
+        // console.log('useEffect - 3. AddContent->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID, ', operateContent-', operateContent)
+
         dispatch(setClickedContent(null))
 
         setOperateContent(true)
         setClickedAddContent(false)
         setClickedUpdateContent(false)
 
-        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
+
 
         if (clickedChapter?.content?.length > 0) {
 
@@ -842,13 +949,28 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
             /** --2. Initialize Content with first one.-- */
             if (contentAction.length > 0) {
 
+                // ++ show the last content category ++
+                const content_lists_item = document.querySelectorAll(`.content_lists_item.id${clickedContent?.id}`)
                 const foundContent = contentAction.filter(content => content.id == pathID?.contentID)
-                if (foundContent.length == 1) initSelectContent(foundContent[0])
+                if (content_lists_item.length == 1) {
+                    // initSelectContent(foundContent[0])
+                    // console.log('content_lists_item-', content_lists_item[0], ', clickedContent', clickedContent, ', foundContent[0]', foundContent[0])
+
+                    if (content_lists_item?.length > 0) {
+                        const lastItem = content_lists_item[0]
+                        if (lastItem) lastItem.scrollIntoView()
+                    }
+                    selectContentChoice(foundContent[0])
+
+                }
                 else initSelectContent(contentAction[0])
             }
+
         }
 
-    }, [clickedChapter, triggerUseEffect, clickedCourse?.course?.chapter_list_sequence])
+    }, [clickedChapter, clickedCourse?.course?.chapter_list_sequence, triggerUseEffect])
+
+
     useEffect(() => {
         dispatch(setClickedContent(null))
 
@@ -856,8 +978,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         setClickedAddContent(false)
         setClickedUpdateContent(false)
 
-        // console.log('useEffect - 3. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end-pathID?.contentID', pathID?.contentID)
-
+        // console.log('useEffect - 4. selectedContentInPreview')
         if (clickedChapter?.content?.length > 0) {
             // setIsCreatedContent(false)
             initSelectContent(selectedContentInPreview, true)
@@ -868,9 +989,8 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
 
     useEffect(() => {
-        // document.cookie = "CookieName=Cheecker; path =/; HttpOnly; samesite=None; Secure;"
-
-    }, [contentChoice?.title, operateContent,])
+        // console.log('useEffect - 6. [contentChoice?.title, operateContent,]', contentChoice?.title, operateContent)
+    }, [contentChoice?.title, operateContent])
 
     useEffect(() => {
         /** ++ After add content the view point changes to show current current card.++ */
@@ -879,7 +999,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
             // id_content_select.scrollIntoView()
         }
-        // console.log('useEffect- id_content_select', id_content_select, pathID)
+        // console.log('useEffect- 7. [pathID?.contentID]', id_content_select, pathID)
         //-- end --
     }, [pathID?.contentID])
     // console.log('<<<< refesth from AddContent-clickedContent: ', clickedContent, ', previousClickedContent-', previousClickedContent)
@@ -892,7 +1012,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         }
         // document.addEventListener('paste', pasteEvent)
         // return () => window.removeEventListener('paste', pasteEvent)
-
+        // if (contentChoice) selectContentChoice(contentChoice)
     }, [])
     return (
         <div className='chapter_content__view'>
@@ -903,6 +1023,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
             </div>
             <div className='svg_icon'>
+                {contentAction?.length > 0 && operateContent && <svg onClick={e => handleClickFirstContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M11.125 17.65 5.475 12l5.65-5.65 1.05 1.05L7.6 12l4.575 4.6Zm6.35 0L11.825 12l5.65-5.65 1.05 1.05L13.95 12l4.575 4.6Z" /></svg>}
                 {/* -- delete sign -- */}
                 {contentAction?.length > 0 && operateContent && <svg onClick={e => handleDeleteContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.3 20.5q-.75 0-1.275-.525Q5.5 19.45 5.5 18.7V6h-1V4.5H9v-.875h6V4.5h4.5V6h-1v12.7q0 .75-.525 1.275-.525.525-1.275.525ZM17 6H7v12.7q0 .125.088.213.087.087.212.087h9.4q.1 0 .2-.1t.1-.2ZM9.4 17h1.5V8H9.4Zm3.7 0h1.5V8h-1.5ZM7 6V19v-.3Z" /></svg>}
                 {/* -- edit sign -- */}
@@ -912,7 +1033,10 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                 {operateContent && <svg onClick={e => handleAddContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M11.25 16.75h1.5v-4h4v-1.5h-4v-4h-1.5v4h-4v1.5h4ZM5.3 20.5q-.75 0-1.275-.525Q3.5 19.45 3.5 18.7V5.3q0-.75.525-1.275Q4.55 3.5 5.3 3.5h13.4q.75 0 1.275.525.525.525.525 1.275v13.4q0 .75-.525 1.275-.525.525-1.275.525Zm0-1.5h13.4q.1 0 .2-.1t.1-.2V5.3q0-.1-.1-.2t-.2-.1H5.3q-.1 0-.2.1t-.1.2v13.4q0 .1.1.2t.2.1ZM5 5v14V5Z" /></svg>}
                 {/* close add - sign */}
                 {!operateContent && <svg onClick={e => handleClickCloseContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M5.25 12.75v-1.5h13.5v1.5Z" /></svg>}
+                {contentAction?.length > 0 && operateContent && <svg onClick={e => handleClickLastContent(e,)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="m6.525 17.65-1.05-1.05L10.05 12 5.475 7.4l1.05-1.05 5.65 5.65Zm6.35 0-1.05-1.05L16.4 12l-4.575-4.6 1.05-1.05 5.65 5.65Z" /></svg>}
             </div>
+
+
             {/* -- When the Add Chapter + sign pressed.-- */}
             {clickedAddContent &&
                 <form className='add_content_form' onSubmit={onSubmitAddContentForm} onPasteCapture={onPasteCaptureImage}>
@@ -982,7 +1106,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                                     onDragEnd={e => handleDragEnd(e)}
                                     onDrop={(e) => handleDrop(e, index)}
                                 >
-                                    <div className={`content_lists_item ${content.id}`} key={content.id} onClick={e => handleClickContent(e, content, index)}>
+                                    <div className={`content_lists_item id${content.id}`} key={content.id} onClick={e => handleClickContent(e, content, index)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M9 19.225q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm6 0q-.5 0-.863-.362-.362-.363-.362-.863t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.863q-.363.362-.863.362Zm-6-6q-.5 0-.863-.363Q7.775 6.5 7.775 6t.362-.863Q8.5 4.775 9 4.775t.863.362q.362.363.362.863t-.362.862Q9.5 7.225 9 7.225Zm6 0q-.5 0-.863-.363-.362-.362-.362-.862t.362-.863q.363-.362.863-.362t.863.362q.362.363.362.863t-.362.862q-.363.363-.863.363Z" /></svg>
                                         <span>{index + 1}/{contentAction.length}. {chapterCategory.filter((cat) => cat.id == content.chapter_category)[0].title}</span>
                                     </div>

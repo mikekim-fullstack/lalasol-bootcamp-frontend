@@ -14,7 +14,7 @@ import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import a11yDark from "react-syntax-highlighter/dist/esm/styles/prism/a11y-dark"
-import '../components/PreviewContent.css'
+// import '../components/PreviewContent.css'
 import HomeScreen from './HomeScreen'
 
 const ChapterScreen = () => {
@@ -207,8 +207,8 @@ const ChapterScreen = () => {
         <div >
             {(!chapters || !contentAction) ? <HomeScreen /> :
                 <div className='chapter__screen'>
-                    <ProgressBarChapter />
-                    <div className='content__preview'>
+
+                    <div className='chapter__content__view'>
 
                         {/* {console.log('contentAction: ', contentAction)} */}
                         <div className='left_section'>
@@ -248,6 +248,7 @@ const ChapterScreen = () => {
                             })}
                         </div>
                         <div className='main_section'>
+                            {/* <ProgressBarChapter /> */}
                             {chapters && contentAction && contentAction.map(content => {
 
                                 switch (content.chapter_category) {
@@ -358,63 +359,6 @@ const ChapterScreen = () => {
         </div>
     )
 }
-// <div className='chapter__screen'>
-//     {!selectedCatStatus && <ProgressBarChapter />}
-//     {
-//         chapter && (
-//             <div className='chapter__screen_container'>
-//                 <div className='chapter__screen_body'>
-//                     <h1>{chapter.title}</h1>
-//                     <h2>{chapter.sub_title}</h2>
-//                     <p>{chapter.description}</p>
-//                     {false && htmlCode && <div className='html_container' dangerouslySetInnerHTML={{ __html: htmlCode }} />}
-//                     {true && filePath &&
-//                         <div id='top' className='iframe_container_file' >
 
-//                             <iframe
-//                                 id='iframe_file'
-//                                 frameBorder="0"
-//                                 border='0'
-//                                 // width="1024"
-//                                 width='100%'
-//                                 // scrolling="no"
-//                                 className='iframe__view'
-//                                 src={filePath}
-//                                 title="description">
-
-//                             </iframe>
-//                         </div>
-//                     }
-
-//                     {youtube &&
-//                         <div id='top' className='iframe_container_youtube'>
-//                             <iframe
-//                                 frameBorder="0"
-//                                 border='0'
-//                                 scrolling="no"
-//                                 className='iframe__view'
-//                                 src={`https://www.youtube.com/embed/${youtube.split('/').pop()}`}
-//                                 title="YouTube video player"
-
-//                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
-//                             </iframe>
-//                         </div>
-//                     }
-//                 </div>
-//                 {chapterContentLength > 1 &&
-//                     <div className='chapter__screen_footer'>
-//                         <div className='chapter__screen_footer_buttons'>
-//                             <a href='#top' name='left' onClick={handleContentNavigation}>left</a>
-//                             <a href='#top' name='right' onClick={handleContentNavigation}>right</a>
-//                         </div>
-//                     </div>
-//                 }
-
-//             </div>
-//         )
-//     }
-// </div>
-//     )
-// }
 
 export default ChapterScreen
