@@ -105,12 +105,16 @@
 
 .nav__user svg {
     fill: white;
-
+    display: none
 }
 
 @media screen and (min-width:400px) {
+
     /* .nav__menu .cat {
         display: unset
     } */
-
+    .nav__user svg {
+        fill: white;
+        display: inline-block
+    }
 }

@@ -416,7 +416,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
         if (contentChoice.title.includes('Question'))
             return <div className='element_input'>
-                <textarea required className='input_question' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputAdd(e, 'text')} />
+                <textarea required className='input_question' rows='7' ref={codeRef} name='text' type='text' value={inputContent.text} onChange={e => handleOnChangeInputUpdate(e, 'text')} />
             </div>
 
         if (contentChoice.title.includes('Break Line')) {
@@ -565,6 +565,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
 
     const onSubmitUpdateContentForm = (e) => {
+        // console.log('onSubmitUpdateContentForm-contentAction:', contentAction)
         e.preventDefault()
         /**
          * setIsContentEditMode(false) 

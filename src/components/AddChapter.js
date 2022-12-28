@@ -461,6 +461,15 @@ const AddChapter = ({ teacherId }) => {
     /**
      * -------------------------------------------------------------------------------------
      */
+    const onClickedTitleElement = (e, content) => {
+        // console.log('onClickedElement-setIsContentEditMode-', isContentEditMode, content.id, e)
+        /**
+         * If isContentEditMode is true
+         * Prevent from clicked preview item when adding and updating.
+         */
+        if (isContentEditMode) return
+        setSelectedContentInPreview(content)
+    }
     const onClickedElement = (e, content) => {
         // console.log('onClickedElement-setIsContentEditMode-', isContentEditMode, content.id, e)
         /**
@@ -471,6 +480,7 @@ const AddChapter = ({ teacherId }) => {
         setSelectedContentInPreview(content)
     }
     useEffect(() => {
+        // console.log('useEffect:AddChapter - 1. clickedCourse?.course?.chapter_list_sequence',)
         if (operationStage == 'delete') {
             setOperationStage('')
         }
@@ -480,19 +490,13 @@ const AddChapter = ({ teacherId }) => {
         }
     }, [clickedCourse?.course?.chapter_list_sequence])
 
-
-    // useEffect(() => {
-    //     // setClickedChapter(null)
-    //     // fetchChapters('refresh')
-    //     console.log('useEffect - 1. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id, ', chapterLists-', chapterLists, ', operateChapter-', operateChapter)
-    // }, [isChapterUpdated,])
-
     useEffect(() => {
+        // console.log('useEffect:AddChapter - 2. [chapterUpdatedStatus, toggleRefresh]',)
         // console.log('useEffect - 2. AddChapter->fetchChapters', ', course_id:', clickedCourse?.course?.id)
-    }, [chapterUpdatedStatus], toggleRefresh)
+    }, [chapterUpdatedStatus, toggleRefresh])
 
     useEffect(() => {
-        // setIsChapterUpdated(false)
+        // console.log('useEffect:AddChapter - 3. [isCompleteFetchChapter, updateRender]',)
         setClickedChapter(null)
         dispatch(setContentAction([]))
         if (chapterLists?.length > 0) {
@@ -506,22 +510,17 @@ const AddChapter = ({ teacherId }) => {
         // console.log('useEffect - 3. AddChapter->chapterLists: setClickedChapter-pathID?.chapterID', pathID?.chapterID)
     }, [isCompleteFetchChapter, updateRender])
 
-    // useEffect(() => {
-
-    //     // console.log('useEffect - inputData:', inputData)
-    //     // contentFileRef && contentFileRef.current.files[0].name
-    // }, [inputData])
 
 
     useEffect(() => {
-
+        // console.log('useEffect:AddChapter - 4. [clickedCourse] ',)
         setClickedAddChapter(false)
         setClickedUpdateChapter(false)
         setOperateChapter(true)
     }, [clickedCourse])
 
     useEffect(() => {
-
+        // console.log('useEffect:AddChapter - 5. [clickedUpdateChapter, clickedAddChapter, isCreateContentMode, isPreViewMode, clickedChapter] ',)
     }, [clickedUpdateChapter, clickedAddChapter, isCreateContentMode, isPreViewMode, clickedChapter])
 
 
@@ -531,19 +530,11 @@ const AddChapter = ({ teacherId }) => {
         e.target.style.height = (e.target.scrollHeight) + "px";
     }
 
-    /** -- When clicked on the chapter it triggers useEffect [clickedChapter].-- */
-    // useEffect(() => {
-    //     console.log('useEffect - 4. AddChapter->clickedChapter: ', clickedChapter, ', clickedContent: ', clickedContent, ' end')
 
-    //     setClickedAddChapter(false)
-    //     setClickedUpdateChapter(false)
-    //     setOperateChapter(true)
-
-    // }, [clickedChapter])
 
     useEffect(() => {
 
-
+        // console.log('useEffect:AddChapter - 6. [chapterLists] ',)
         // console.log('useEffect - pathID:', pathID, ', chapterLists:', chapterLists)
     }, [chapterLists])
 
@@ -649,8 +640,8 @@ const AddChapter = ({ teacherId }) => {
                     {isPreViewMode && <svg onClick={e => setIsPreViewMode(false)} xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M12 15.575q1.7 0 2.887-1.188 1.188-1.187 1.188-2.887t-1.188-2.887Q13.7 7.425 12 7.425T9.113 8.613Q7.925 9.8 7.925 11.5t1.188 2.887Q10.3 15.575 12 15.575Zm0-1.375q-1.125 0-1.912-.788Q9.3 12.625 9.3 11.5t.788-1.913Q10.875 8.8 12 8.8t1.913.787q.787.788.787 1.913t-.787 1.912q-.788.788-1.913.788Zm0 4.3q-3.45 0-6.287-1.9-2.838-1.9-4.163-5.1 1.325-3.2 4.163-5.1Q8.55 4.5 12 4.5q3.45 0 6.288 1.9 2.837 1.9 4.162 5.1-1.325 3.2-4.162 5.1Q15.45 18.5 12 18.5Zm0-7Zm0 5.5q2.825 0 5.188-1.488Q19.55 14.025 20.8 11.5q-1.25-2.525-3.612-4.013Q14.825 6 12 6 9.175 6 6.812 7.487 4.45 8.975 3.2 11.5q1.25 2.525 3.612 4.012Q9.175 17 12 17Z" /></svg>}
 
                 </div>
-                {isPreViewMode && <div >
-                    <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} onClickedElement={onClickedElement} />
+                {isPreViewMode && contentAction?.length > 0 && <div >
+                    <PreviewContent contentAction={contentAction} clickedContentId={clickedContent?.id} isCreateContentMode={isCreateContentMode} onClickedElement={onClickedElement} onClickedTitleElement={onClickedTitleElement} />
                 </div>}
             </div>
         </div >
