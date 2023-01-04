@@ -300,7 +300,7 @@
         padding-bottom: 50px;
 
         overflow-y: scroll;
-        max-height: 100vh;
+        height: 100vh;
     }
 
     .content__preview .left_section>* {
@@ -319,7 +319,9 @@
 
     .content__preview .main_section {
         overflow-y: scroll;
-        max-height: 100vh;
+        height: 100vh;
+        padding-left: 25px;
+        padding-right: 25px;
     }
 
 }

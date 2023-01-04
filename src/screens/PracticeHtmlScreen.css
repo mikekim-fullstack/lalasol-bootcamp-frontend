@@ -34,7 +34,7 @@
 .practice__html_screen .code-lists {
     /* width: 100%; */
     min-height: 300px;
-    margin: 10px 20px 10px 7px;
+    margin: 10px 3px 10px 7px;
 
 }
 
@@ -236,8 +236,12 @@
     }
 
     .practice__html_screen .code-lists {
-        grid-column: 1;
-
+        grid-row: 1/3;
+        margin: 10px 20px 10px 7px;
+        /* height: 82vh; */
+        height: 200vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .practice__html_screen .code-container.html {

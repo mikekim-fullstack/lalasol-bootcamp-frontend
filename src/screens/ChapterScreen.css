@@ -307,6 +307,7 @@ html {
         align-items: left;
         display: grid;
 
+
     }
 
     .chapter__content__view .left_section {
@@ -317,7 +318,7 @@ html {
         padding-bottom: 50px;
 
         overflow-y: scroll;
-        max-height: 100vh;
+        height: 100vh;
 
     }
 
@@ -336,8 +337,10 @@ html {
     }
 
     .chapter__content__view .main_section {
+        padding-left: 25px;
+        padding-right: 25px;
         overflow-y: scroll;
-        max-height: 100vh;
+        height: 100vh;
     }
 
 }

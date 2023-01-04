@@ -33,27 +33,37 @@ const PracticeHtmlScreen = () => {
     const [mode, setMode] = useState(null)
     const [iframeKey, setIframeKey] = useState(0)
     const defaultHtmlCode = `
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src='https://unpkg.com/react@16.7.0/umd/react.production.min.js' type="text/javascript"></script>
+        <script src='https://unpkg.com/react-dom@16.7.0/umd/react-dom.production.min.js' type="text/javascript"></script>
+        <script src='https://unpkg.com/react-router@6.6.1/dist/umd/react-router.production.min.js' type="text/javascript"></script>
+        <script src='https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js' type="text/javascript"></script>
+        <script src='https://unpkg.com/@reduxjs/toolkit@1.9.1/dist/redux-toolkit.umd.min.js' type="text/javascript"></script>
+        <script src='https://unpkg.com/@babel/standalone/babel.min.js'></script>
         <title>Document</title>
     </head>
-    <body>
-        <h1>Hello World.</h1>
+    <body id='root'>
     </body>
-    </html>
+</html>
             `
     const defaultCssCode = `
-    body{
-        background-color: #1a1b26;
-    }
-    h1{
-         text-align:center;
-         color:white;
-    }
+body{
+    background-color: #1a1b26;
+}
+h1{
+        text-align:center;
+        color:white;
+}
+`
+    const defaultJSCode = `
+// Let\'s start LaLaSol coding!
+const root = document.getElementById('root')
+ReactDOM.render(<h1>Hello</h1>,root)
     `
 
 
@@ -93,7 +103,7 @@ const PracticeHtmlScreen = () => {
             id: -1,
             html_code: defaultHtmlCode,
             css_code: defaultCssCode,
-            js_code: "// Let\'s start LaLaSol coding!\n"
+            js_code: defaultJSCode
         })
 
         setMode('create')
@@ -157,6 +167,7 @@ const PracticeHtmlScreen = () => {
 
     }
     const updateCode = async () => {
+        if (selCode?.id < 0) return
         const url = axios.defaults.baseURL + '/api/user-html-update/' + selCode.id
         const bodyData = {
             'title': selCode.title,
@@ -165,8 +176,12 @@ const PracticeHtmlScreen = () => {
             'js_code': selCode.js_code,
             // 'student': null, 'teacher':null
         }
+        if (!selCode.html_code || !selCode.css_code || !selCode.js_code) {
+            console.log('Error-not updating your code because one of your code is empty')
+            return
+        }
         // bodyData[user?.role] = user?.id
-        // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
+        // console.log('onSubmit: ', selCode, ', bodyData', JSON.stringify(bodyData))
         await axios({
             method: 'PATCH',
             url,
@@ -186,38 +201,11 @@ const PracticeHtmlScreen = () => {
     }
     const onSubmitUpdate = (e, id) => {
         e.preventDefault()
-        console.log('onSubmitUpdate')
+        // console.log('onSubmitUpdate')
 
         /** Update Mode */
         updateCode()
-        /*
-        const url = axios.defaults.baseURL + '/api/user-html-update/' + selCode.id
-        const bodyData = {
-            'title': selCode.title,
-            'html_code': selCode.html_code,
-            'css_code': selCode.css_code,
-            'js_code': selCode.js_code,
-            // 'student': null, 'teacher':null
-        }
-        // bodyData[user?.role] = user?.id
-        // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
-        axios({
-            method: 'PATCH',
-            url,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify(bodyData)
 
-
-        })
-            .then(res => {
-                // console.log('onSubmit-fetchJSCode:' + url, res.data)
-                fetchJSCode()
-                setSelCode(res.data)
-            })
-            .catch(err => console.log('fetchJSCode-error:' + url, err))
-        */
     }
 
     const onClickRunCode = (e) => {
@@ -242,7 +230,7 @@ const PracticeHtmlScreen = () => {
         let combindedCodeJS = null
         if (index >= 0 && selCode?.js_code) {
 
-            combindedCodeJS = combindedCode.slice(0, index) + '<script>' + selCode?.js_code + '</script>' + combindedCode.slice(index)
+            combindedCodeJS = combindedCode.slice(0, index) + `<script type='text/babel'>` + selCode?.js_code + '</script>' + combindedCode.slice(index)
         }
         else {
             combindedCodeJS = combindedCode
@@ -273,7 +261,7 @@ const PracticeHtmlScreen = () => {
 
     useEffect(() => {
 
-        console.log('useEffect-codeResult')
+        // console.log('useEffect-codeResult')
     }, [codeResult])
 
     useEffect(() => {
@@ -321,8 +309,8 @@ const PracticeHtmlScreen = () => {
                 <h2 style={{ textAlign: 'center', color: 'yellow' }}>HTML Editor</h2>
                 <CodeMirror className='code-mirror html'
                     value={selCode?.html_code}
-                    minWidth={"100%"}
-                    height="50vh"
+                    // minWidth={"100%"}
+                    height="75vh"
                     theme={tokyoNight}
                     extensions={[html()]}
                     onChange={(value, viewUpdate) => {
@@ -340,7 +328,7 @@ const PracticeHtmlScreen = () => {
                 <CodeMirror className='code-mirror css'
                     value={selCode?.css_code}
                     minWidth={"100%"}
-                    height="50vh"
+                    height="75vh"
                     theme={tokyoNight}
                     extensions={[css()]}
                     onChange={(value, viewUpdate) => {
@@ -358,7 +346,7 @@ const PracticeHtmlScreen = () => {
                 <CodeMirror className='code-mirror js'
                     value={selCode?.js_code}
                     minWidth={"100%"}
-                    height="50vh"
+                    height="90vh"
                     theme={tokyoNight}
                     extensions={[javascript({ jsx: false })]}
                     onChange={(value, viewUpdate) => {
