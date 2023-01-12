@@ -304,10 +304,14 @@
 
     .practice__screen .code-lists {
         grid-column: 1;
+        height: 100vh;
+        overflow-y: scroll;
     }
 
     .practice__screen .cm-theme {
         grid-column: 2/-1;
+        height: 100vh;
+        overflow-y: scroll;
     }
 
     .practice__screen .code-result {
@@ -324,8 +328,9 @@
 
     .practice__screen .code-lists {
         grid-column: 1;
-        overflow-y: scroll;
-        height: 90vh;
+
+
+
         padding-left: 5px;
         padding-right: 5px;
         margin-bottom: 10px;
@@ -338,6 +343,8 @@
 
     .practice__screen .code-result {
         grid-column: 3;
+        height: 100vh;
+        overflow-y: scroll;
     }
 
 }

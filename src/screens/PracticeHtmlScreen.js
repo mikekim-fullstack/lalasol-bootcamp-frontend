@@ -32,6 +32,8 @@ const PracticeHtmlScreen = () => {
     const [selCode, setSelCode] = useState(null)
     const [mode, setMode] = useState(null)
     const [iframeKey, setIframeKey] = useState(0)
+
+    // <script src='https://unpkg.com/@babel/standalone/babel.min.js'></script>
     const defaultHtmlCode = `
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +46,6 @@ const PracticeHtmlScreen = () => {
         <script src='https://unpkg.com/react-router@6.6.1/dist/umd/react-router.production.min.js' type="text/javascript"></script>
         <script src='https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js' type="text/javascript"></script>
         <script src='https://unpkg.com/@reduxjs/toolkit@1.9.1/dist/redux-toolkit.umd.min.js' type="text/javascript"></script>
-        <script src='https://unpkg.com/@babel/standalone/babel.min.js'></script>
         <title>Document</title>
     </head>
     <body id='root'>
@@ -61,11 +62,9 @@ h1{
 }
 `
     const defaultJSCode = `
-// Let\'s start LaLaSol coding!
-const root = document.getElementById('root')
-ReactDOM.render(<h1>Hello</h1>,root)
-    `
-
+//const root = document.getElementById('root')
+//ReactDOM.render(<h1>Hello</h1>,root)
+`
 
     const fetchJSCode = async () => {
         const user_role = user.role == 'student' ? 1 : 2
@@ -230,7 +229,7 @@ ReactDOM.render(<h1>Hello</h1>,root)
         let combindedCodeJS = null
         if (index >= 0 && selCode?.js_code) {
 
-            combindedCodeJS = combindedCode.slice(0, index) + `<script type='text/babel'>` + selCode?.js_code + '</script>' + combindedCode.slice(index)
+            combindedCodeJS = combindedCode.slice(0, index) + `<script type='text/javascript'>` + selCode?.js_code + '</script>' + combindedCode.slice(index)
         }
         else {
             combindedCodeJS = combindedCode
