@@ -97,7 +97,10 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
 
                         case 16:// Question
                             element = <div key={content.id} ><div style={{ textAlign: 'left' }} className='' dangerouslySetInnerHTML={{ __html: `<div class=''>Q: ${cnt1++}-${content.text}  </div>` }} /></div>
-                            // setQuestionNumber(questionNumber + 1)
+                            break
+
+                        case 17:// Answer
+                            element = <div key={content.id} ><div style={{ textAlign: 'left' }} className='' dangerouslySetInnerHTML={{ __html: `<div class=''>Answer: ${content.text}  </div>` }} /></div>
                             break
                         default:
 
@@ -218,6 +221,10 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                         case 16:// Question
                             element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='question' dangerouslySetInnerHTML={{ __html: `<div class='question_title'>Question ${cnt++}</div>` + `<div class='question_content'>` + content.text + `</div>` }} /></div>
                             // setQuestionNumber(questionNumber + 1)
+                            break
+
+                        case 17:// Answer
+                            element = <div key={content.id} style={clickedContentId == content.id ? { border: '3px dashed pink' } : {}}><div className='answer' dangerouslySetInnerHTML={{ __html: `<div class='answer_title'>Answer:</div>` + `<div class='answer_content'>` + content.text + `</div>` }} /></div>
                             break
                         default:
                             element = <div key={content.id}></div>

@@ -43,6 +43,7 @@ const ChapterScreen = () => {
     const previousContentIndex = useRef();
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
+    const [toggleAnswer, setToggleAnswer] = useState({})
 
     /**
        * Question auto number
@@ -51,6 +52,7 @@ const ChapterScreen = () => {
     let cntQ1 = 1
     let titleCnt = 1, questionCnt = 1
     let titleCnt1 = 1, questionCnt1 = 1
+
 
 
     const resolveBlockMixedActivity = (file) => {
@@ -168,6 +170,15 @@ const ChapterScreen = () => {
                 .catch(e => console.log('error: ', e))
         }
     }
+    const clickedAnswer = (e, id) => {
+        const newToggle = { ...toggleAnswer }
+        newToggle[id] = !newToggle[id] ?? true
+
+        // console.log(newToggle, newToggle.id, document.getElementById(`answer_${id}`))
+
+        document.getElementById(`answer_${id}`).style.display = newToggle[id] ? 'unset' : 'none'
+        setToggleAnswer(newToggle)
+    }
     //-----------------------------------------------
     const handleContentNavigation = async (e) => {
 
@@ -201,7 +212,9 @@ const ChapterScreen = () => {
         document.addEventListener("scroll", isViewedContent)
         return () => document.removeEventListener("scroll", isViewedContent)
     }, [])
-
+    useEffect(() => {
+        // console.log('useEffect-toggleAnswer')
+    }, [toggleAnswer])
 
     return (
         <div >
@@ -346,8 +359,24 @@ const ChapterScreen = () => {
                                         }
                                     case 16:// Question
                                         return <div key={content.id} ><div id={`id_view_title${titleCnt1 - 1}_${questionCnt1++}`} className='question' dangerouslySetInnerHTML={{ __html: `<div class='question_title'>Question ${cntQ++}</div>` + `<div class='question_content'>` + content.text + `</div>` }} /></div>
-                                        // setQuestionNumber(questionNumber + 1)
-                                        break
+
+                                    case 17:// Answer
+                                        return <div key={content.id} >
+                                            <div className='answer_title'
+
+                                                onClick={(e) => clickedAnswer(e, content.id)}>
+                                                Answer:
+                                            </div>
+                                            {!toggleAnswer[content.id] && <br></br>}
+                                            <div id={`answer_${content.id}`} style={{ display: 'none' }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        `<div class='answer_content'>
+                                                         ${content.text}
+                                                        </div>`
+                                                }} />
+                                        </div>
+
                                     default:
                                         <div key={content.id}></div>
                                 }

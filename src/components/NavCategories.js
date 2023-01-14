@@ -96,6 +96,7 @@ const NavCategoreis = () => {
         })
             .then(res => {
                 const _sortedChapterCat = res.data.sort((a, b) => a.seq_no > b.seq_no ? 1 : a.seq_no < b.seq_no ? -1 : 0)
+                // console.log('_sortedChapterCat: ', _sortedChapterCat, res.data)
                 dispatch(setChapterCategory(_sortedChapterCat))
             })
             .catch(e => console.log('fetchChapterCategory-Error:', e))

@@ -166,6 +166,23 @@
     text-align: center;
 }
 
+.content__preview .main_section .answer_title {
+    font-family: EuclidCircularMedium, Arial, Helvetica, sans-serif;
+    background-color: rgba(81, 11, 186, 0.7);
+    color: white;
+
+    padding: 7px 7px;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.content__preview .main_section .answer_title:hover {
+    background-color: rgba(81, 11, 186, 0.9);
+}
+
 .content__preview .main_section .question_content {
     background-color: rgba(178, 190, 254, 0.4);
     padding: 10px 10px;
@@ -175,6 +192,35 @@
     line-height: 28px;
     font-size: 18px;
     text-align: left;
+}
+
+
+.content__preview .main_section .answer_content {
+    padding: 10px 17px;
+    background-color: rgba(81, 11, 186, 0.4);
+    font-family: EuclidCircularMedium, Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 28px;
+    font-size: 18px;
+    text-align: left;
+    border-radius: 0 0 5px 5px;
+}
+
+.chapter__content__view .main_section .main_paragraph code,
+.chapter__content__view .main_section .note code {
+    border: 1px solid #d3dce6;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-style: normal;
+    font-family: "Droid Sans Mono", "Inconsolata", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier", monospace;
+    display: inline-block;
+    line-height: 24px;
+    font-size: 14px;
+    /* line-height: 20px; */
+    margin: 0 2px;
+    background-color: #e6e8f0;
+
 }
 
 .content__preview .main_section .main_paragraph code,
