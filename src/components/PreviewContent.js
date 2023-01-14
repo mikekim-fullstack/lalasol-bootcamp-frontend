@@ -99,9 +99,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
                             element = <div key={content.id} ><div style={{ textAlign: 'left' }} className='' dangerouslySetInnerHTML={{ __html: `<div class=''>Q: ${cnt1++}-${content.text}  </div>` }} /></div>
                             break
 
-                        case 17:// Answer
-                            element = <div key={content.id} ><div style={{ textAlign: 'left' }} className='' dangerouslySetInnerHTML={{ __html: `<div class=''>Answer: ${content.text}  </div>` }} /></div>
-                            break
+
                         default:
 
                             break
