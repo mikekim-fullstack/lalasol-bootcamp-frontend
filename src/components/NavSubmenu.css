@@ -26,7 +26,7 @@
 .submenu__title {
     font-size: 1.2rem;
     width: 100%;
-    background-color: rgb(52, 52, 52);
+    background-color: rgb(99, 94, 94);
     color: white;
     padding: 10px 0;
     text-align: center;
@@ -42,7 +42,7 @@
     /* border-top: 2px solid rgba(255, 192, 203, 0.4); */
     border-bottom: 1px solid rgba(100, 100, 100, 0.4);
     text-align: start;
-    padding: 10px;
+    padding: 10px 0px;
     /* opacity: 0.5; */
 }
 
@@ -103,26 +103,26 @@
 
 .submenu__course_content .content__subject {
     display: block;
-    width: 90%;
+    width: 83%;
     /* border: 1px solid gray; */
     border: none;
     outline: none;
     color: white;
     background-color: #2b2b2b;
-    padding: 7px 10px;
+    padding: 4px 10px 4px 10px;
     cursor: pointer;
-    margin: 10px auto;
-    border-radius: 2px;
+    margin: 10px 15px 10px auto;
+    border-radius: 4px;
     text-align: left;
     transition: all 200ms ease-in-out;
 }
 
 .submenu__course_content .content__subject span {
     display: inline-block;
-    padding: 5px;
+    padding: 4px;
     background-color: cyan;
-    width: 30px;
-    line-height: 1.2rem;
+    width: 24px;
+    line-height: 1.2em;
     border-radius: 50%;
     margin-right: 5px;
     text-align: center;
@@ -138,7 +138,9 @@
     transform: scale(1.07);
 }
 
-.add_course {
+.add_course,
+.js_practice,
+.html_practice {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -160,6 +162,14 @@
 
 .add_course>svg {
     fill: yellowgreen;
+}
+
+.js_practice>svg {
+    fill: rgb(233, 181, 11);
+}
+
+.html_practice>svg {
+    fill: rgb(0, 255, 247);
 }
 
 .add_course>span {

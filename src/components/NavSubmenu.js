@@ -163,14 +163,14 @@ const NavSubmenu = ({ className, clickedCat }) => {
                 </div>
             }
             {
-                <div className='add_course' onClick={handlePracticeHtml}>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.25 3.25h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm8.5-1.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm-11.5 8.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm11.5-1.5h1.5v3h3v1.5h-3v3h-1.5v-3h-3v-1.5h3Zm-1.5-8.5v4.5h4.5v-4.5Zm-10 0v4.5h4.5v-4.5Zm0 10v4.5h4.5v-4.5Z" /></svg>
-                    <span>Practice HTML</span>
+                <div className='html_practice' onClick={handlePracticeHtml}>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M4.3 19.5q-.75 0-1.275-.525Q2.5 18.45 2.5 17.7V6.3q0-.75.525-1.275Q3.55 4.5 4.3 4.5h15.4q.75 0 1.275.525.525.525.525 1.275v11.4q0 .75-.525 1.275-.525.525-1.275.525Zm0-1.5h10.45v-3.7H4v3.4q0 .1.1.2t.2.1Zm11.95 0h3.45q.1 0 .2-.1t.1-.2V9.125h-3.75ZM4 12.8h10.75V9.125H4Z" /></svg>
+                    <span>Practice Web</span>
                 </div>
             }
             {
-                <div className='add_course' onClick={handlePracticeJS}>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M3.25 3.25h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm8.5-1.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm-11.5 8.5h7.5v7.5h-7.5Zm1.5 1.5v4.5Zm11.5-1.5h1.5v3h3v1.5h-3v3h-1.5v-3h-3v-1.5h3Zm-1.5-8.5v4.5h4.5v-4.5Zm-10 0v4.5h4.5v-4.5Zm0 10v4.5h4.5v-4.5Z" /></svg>
+                <div className='js_practice' onClick={handlePracticeJS}>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7.5 15q-.625 0-1.062-.438Q6 14.125 6 13.5v-1h1.5v1H9V9h1.5v4.5q0 .625-.438 1.062Q9.625 15 9 15Zm5.5 0q-.425 0-.712-.288Q12 14.425 12 14v-1h1.5v.5h2v-1H13q-.425 0-.712-.288Q12 11.925 12 11.5V10q0-.425.288-.713Q12.575 9 13 9h3q.425 0 .712.287Q17 9.575 17 10v1h-1.5v-.5h-2v1H16q.425 0 .712.287.288.288.288.713V14q0 .425-.288.712Q16.425 15 16 15Z" /></svg>
                     <span>Practice JavaScript</span>
                 </div>
             }

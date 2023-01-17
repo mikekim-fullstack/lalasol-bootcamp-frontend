@@ -328,38 +328,38 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
             e.target.nextSibling.innerHTML = e.target.files[0].name
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0], creater: teacherId }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'file', data: e.target.files[0], creator: teacherId }))
         }
         else if (type == 'image') {
             // console.log('input Image file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0], creater: teacherId }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: e.target.files[0], creator: teacherId }))
             e.target.nextSibling.innerHTML = e.target.files[0].name
         }
         else if (type == 'url') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'url', data: e.target.value, creater: teacherId }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'url', data: e.target.value, creator: teacherId }))
         }
         else if (type == 'title') {
             // console.log('e.target.name-title: ', e.target.name, e.target.value)
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creater: teacherId }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creator: teacherId }))
         }
         else if (type == 'text') {
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
-            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value, creater: teacherId }))
+            dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value, creator: teacherId }))
         }
         else if (type == 'content_name') {
-            setInputContent({ ...inputContent, [e.target.name]: e.target.value, creater: teacherId })
+            setInputContent({ ...inputContent, [e.target.name]: e.target.value, creator: teacherId })
         }
         // else if (type == 'break_line') {
-        //     setInputContent({ ...inputContent, 'text': null, creater: teacherId })
+        //     setInputContent({ ...inputContent, 'text': null, creator: teacherId })
         //     dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: null }))
         // }
     }
     const handleOnChangeInputUpdate = (e, type) => {
         // setInputContent({ file: null, url: null, text: null })
-        setInputContent({ ...inputContent, 'text': null, creater: teacherId })
+        setInputContent({ ...inputContent, 'text': null, creator: teacherId })
         if (type == 'file') {
             // console.log('input file: ', e, e.target.nextSibling, e.target.files[0])
             setInputContent({ ...inputContent, [e.target.name]: e.target.files[0] })
@@ -669,7 +669,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent?.id, type: 'image', data: container.files[0] }))
 
         // The below line causes problem later on fix it to show it to preview.
-        // clickedAddContent && dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: container.files[0], creater: teacherId }))
+        // clickedAddContent && dispatch(createContentAction({ catId: contentChoice.id, type: 'image', data: container.files[0], creator: teacherId }))
 
         setCopidClickedContent('image')
         contentFileRef.current.required = false
@@ -772,7 +772,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         let formData = new FormData()
         // formData.append('title', e.target[0].value)
         formData.append('chapter_category', Number(contentChoice.id))
-        formData.append('creater', Number(teacherId))
+        formData.append('creator', Number(teacherId))
         const _contentAction = contentAction?.filter((item) => item.action == 'created')
         if (_contentAction?.length == 1) {
             // console.log('contentAction.image: ', _contentAction[0].image)
@@ -952,7 +952,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
             // test to delete item in contentAction
             // dispatch(deleteContentAction(8))
-            // dispatch(createContentAction({ catId: 1, createrId: 1, type: 'file', data: 'a.html', }))
+            // dispatch(createContentAction({ catId: 1, creatorId: 1, type: 'file', data: 'a.html', }))
             // dispatch(updateContentActionById({ catId: 1, id: 16, type: 'url', data: 'https:www.youtube.com' }))
 
             /** --2. Initialize Content with first one.-- */

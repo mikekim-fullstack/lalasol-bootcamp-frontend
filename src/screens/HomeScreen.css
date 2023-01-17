@@ -30,8 +30,9 @@
 .home__screen_content .courses {
     margin: 2.4rem 0;
     display: flex;
-    /* gap: 20px; */
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
+    overflow-x: scroll;
+    align-items: center;
 
 }
 

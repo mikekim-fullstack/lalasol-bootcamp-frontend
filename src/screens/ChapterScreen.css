@@ -28,7 +28,7 @@ html {
 
     display: grid;
 
-    grid-template-columns: repeat(1, minmax(400px, 850px));
+    grid-template-columns: repeat(1, minmax(360px, 850px));
     grid-template-rows: auto auto;
     justify-content: center;
 

@@ -32,7 +32,8 @@ const PracticeJSScreen = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const fetchJSCode = async () => {
-        const url = axios.defaults.baseURL + '/api/student-js-view/' + user.id
+        const user_role = user.role == 'student' ? 1 : 2
+        const url = axios.defaults.baseURL + `/api/student-js-view/${user_role}/${user.id}`
         await axios({
             method: 'GET',
             url,
@@ -145,7 +146,13 @@ const PracticeJSScreen = () => {
         else {
             /** Create Mode */
             const url = axios.defaults.baseURL + '/api/student-js-create/'
-            const bodyData = { 'title': selCode.title, 'js_code': js_code, 'student': user?.id }
+            const bodyData = {
+                'title': selCode.title,
+                'js_code': js_code,
+                'student': null,
+                'teacher': null
+            }
+            bodyData[user?.role] = user?.id
             // console.log('onSubmit: ', selCode, ', value: ', js_code, ', bodyData', JSON.stringify(bodyData))
             axios({
                 method: 'POST',

@@ -157,11 +157,11 @@ const chapterSlice = createSlice({
         },
         createContentAction: (state, action) => {
 
-            // -- action.payload { catId:'', createrId:'', type:'', data:'', } --
+            // -- action.payload { catId:'', creatorId:'', type:'', data:'', } --
             const newItem = {}
             newItem['id'] = 0
             newItem['chapter_category'] = action.payload.catId
-            newItem['creater'] = action.payload.creater
+            newItem['creator'] = action.payload.creator
             newItem['text'] = null
             newItem['file'] = null
             newItem['url'] = null
