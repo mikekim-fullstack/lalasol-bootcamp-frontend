@@ -119,9 +119,9 @@
 
 .submenu__course_content .content__subject span {
     display: inline-block;
-    padding: 4px;
+    padding: 0.2em;
     background-color: cyan;
-    width: 24px;
+    width: 1.6em;
     line-height: 1.2em;
     border-radius: 50%;
     margin-right: 5px;
@@ -153,9 +153,12 @@
     cursor: pointer;
     transition: all 0.2s ease;
     margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.828);
 }
 
-.add_course:hover {
+.add_course:hover,
+.html_practice:hover,
+.js_practice:hover {
     background-color: rgb(28, 28, 28);
     border-left: 10px solid green;
 }

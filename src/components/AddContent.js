@@ -39,6 +39,8 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         itemName: "",
         content: null,
     });
+    const [wordCount, setWordCount] = useState(0)
+
     // const [isCreatedContent, setIsCreatedContent] = useState(false)
     /** 
     * -- 
@@ -342,10 +344,21 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
         }
         else if (type == 'title') {
             // console.log('e.target.name-title: ', e.target.name, e.target.value)
+            const div = document.createElement('DIV')
+            div.innerHTML = e.target.value
+            const strippedStr = (div.textContent || div.innerText || "").replace(/\r?\n|\r/g, ' ').split(' ').filter(ch => ch != '')
+            setWordCount(strippedStr.length)
+            // console.log('wordCount: ', wordCount)
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
             dispatch(createContentAction({ catId: contentChoice.id, type: 'title', data: e.target.value, creator: teacherId }))
         }
         else if (type == 'text') {
+            const div = document.createElement('DIV')
+            div.innerHTML = e.target.value
+            const strippedStr = (div.textContent || div.innerText || "").replace(/\r?\n|\r/g, ' ').split(' ').filter(ch => ch != '')
+            setWordCount(strippedStr.length)
+            // console.log('wordCount: ', wordCount)
+
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
             dispatch(createContentAction({ catId: contentChoice.id, type: 'text', data: e.target.value, creator: teacherId }))
         }
@@ -377,11 +390,22 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'url', data: e.target.value }))
         }
         else if (type == 'title') {
+            const div = document.createElement('DIV')
+            div.innerHTML = e.target.value
+            const strippedStr = (div.textContent || div.innerText || "").replace(/\r?\n|\r/g, ' ').split(' ').filter(ch => ch != '')
+            setWordCount(strippedStr.length)
+
             // console.log('e.target.name-title: ', e.target.name, e.target.value)
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'title', data: e.target.value }))
         }
         else if (type == 'text') {
+
+            const div = document.createElement('DIV')
+            div.innerHTML = e.target.value
+            const strippedStr = (div.textContent || div.innerText || "").replace(/\r?\n|\r/g, ' ').split(' ').filter(ch => ch != '')
+            setWordCount(strippedStr.length)
+
             setInputContent({ ...inputContent, [e.target.name]: e.target.value })
             dispatch(updateContentActionById({ catId: contentChoice.id, id: clickedContent.id, type: 'text', data: e.target.value }))
         }
@@ -970,7 +994,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                         const lastItem = content_lists_item[0]
                         if (lastItem) lastItem.scrollIntoView()
                         const chapter_content__view = document.querySelector('.chapter_content__view')
-                        console.log('chapter_content__view-', chapter_content__view)
+                        // console.log('chapter_content__view-', chapter_content__view)
                         if (chapter_content__view) {
                             chapter_content__view.scrollIntoView()
                         }
@@ -1089,6 +1113,7 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
                         {contentChoice && <div className='choice'>{contentChoice?.title}</div>}
                         {contentChoice && genContentDetailEleUpdate()}
                     </div>
+                    {<span disabled={contentChoice ? false : true} type='button'>word counts:{wordCount}</span>}
                     {<button disabled={contentChoice ? false : true} type='button' onClick={handleCancelUpdate}>Cancel</button>}
                     {<button disabled={contentChoice ? false : true} type='submit'>Update Content</button>}
                 </form>
