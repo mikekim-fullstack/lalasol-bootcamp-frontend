@@ -29,9 +29,9 @@ const LoginScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log('handleSubmit: role-', role)
+        // console.log('handleSubmit: role-', role, e.target)
 
-        // console.log(e.target, e.target.email.value, e.target.password.value)
+        console.log(e.target, e.target.email.value, e.target.password.value)
         try {
 
             const res = await axios({

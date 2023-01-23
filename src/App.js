@@ -32,6 +32,8 @@ import './fonts/Euclid Circular A Medium.ttf'
 import './fonts/Euclid Circular A Regular.ttf'
 import './fonts/Euclid Circular A SemiBold.ttf'
 import './fonts/Euclid Circular A SemiBold Italic.ttf'
+import LandingPage from './pages/LandingPage'
+import SigninPage from './pages/LandingPage/SigninPage'
 
 // process.env.REACT_API_DEBUG
 process.env.REACT_APP_DEBUG == 'true' ?
@@ -50,11 +52,21 @@ function App() {
 
   return (
     <div className="App">
-      {!user ? <LoginScreen /> :
+      {/* {!user ? <LoginScreen /> : */}
+      {!user ?
+        <>
+
+          <Routes>
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/signin' element={<SigninPage />} />
+          </Routes>
+        </>
+        :
         <>
           <NavHeader />
           <Routes>
             <Route path='/' element={<HomeScreen />} />
+
             <Route path='/add-course' element={<AddCourseScreen />} />
             <Route path='/profile' element={<ProfileScreen />} />
             <Route path='/chapter/:chapter_id/:user_id/' element={<ChapterScreen />} />

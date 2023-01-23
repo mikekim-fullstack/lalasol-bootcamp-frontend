@@ -1,0 +1,17 @@
+export const HomeObjOne = {
+    id: 'service1',
+    toScroll: '',
+    lightBg: false,
+    lightText: true,
+    lightTextDesc: true,
+    topLine: 'One stop',
+    headLine: 'Seamless from your content to sales',
+    description: 'Bring your tutorial content to the e-market in easy way.',
+    buttonLabel: 'Get started',
+    imgStart: false,
+    img: require('../../../images/svg-1.svg').default,
+    alt: 'Social Media',
+    dark: true,
+    primary: true,
+    darkText: false,
+}
