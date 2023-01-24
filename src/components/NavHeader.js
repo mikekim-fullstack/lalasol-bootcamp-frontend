@@ -36,7 +36,7 @@ const NavHeader = () => {
         dispatch(resetPathAll())
         dispatch(logout())
         navigate('/', { replace: true })
-        // window.location.reload()
+        window.location.reload()
         // navigate(0) // -- to refresh forcefully. --
     }
 

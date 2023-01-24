@@ -40,8 +40,11 @@ export const Icon = styled(LinkR)`
     font-size:32px;
     @media screen and (max-width:480px){
         margin-left: 16px;
-        margin-top: 8px;
+        margin-top: 40px;
     }
+    &a:visited {
+    color: white;
+}
 `
 
 export const FormContent = styled.div`

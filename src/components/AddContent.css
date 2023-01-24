@@ -201,16 +201,19 @@
 
 }
 
-a {
+.main_section a,
+.element a {
     color: inherit;
 }
 
 
-a:visited {
+.main_section a:visited,
+.element a:visited {
     color: inherit;
 }
 
-a:active {
+.main_section a:active,
+.element a:visited {
     color: inherit;
 }
 
