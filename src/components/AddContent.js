@@ -766,7 +766,11 @@ const AddContent = ({ funcSetCreateMode, teacherId, selectedContentInPreview, se
 
 
             })
-            .catch(err => console.log('Error - End point-/api/chapter-content/' + contentId, err))
+            .catch(err => {
+                fetchChapters()
+                fetchContentByCourseID()
+                console.log('Error - End point-/api/chapter-content/' + contentId, err)
+            })
 
         // console.log('+++===> onSubmitUpdateContentFor: - contentChoice:', contentChoice,
         //     'contentAction: ', contentAction, ', formData', formData

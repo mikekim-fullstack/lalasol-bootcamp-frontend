@@ -108,7 +108,7 @@ const ChapterScreen = () => {
 
     }
     const selectContentFromChapter = async (content) => {
-        // console.log('selectContentFromChapter: ', content)
+        console.log('selectContentFromChapter: ', content)
         if (content == 'null') return
         setHtmlCode(null)
         setYoutube(null)
@@ -136,9 +136,13 @@ const ChapterScreen = () => {
         const url = axios.defaults.baseURL + `/api/chapter/${chapterId}`
         await axios.get(url)
             .then(res => {
-                // console.log('fetchChapterContent: ', res.data)
+                // console.log('content length: ', res.data.content.length, 'fetchChapterContent: ', res.data)
                 setChapter(res.data)
                 if (res.data?.content?.length > 0) {
+                    dispatch(setClickedChapter(res.data))
+                }
+                else {
+                    // console.log('content length: 0')
                     dispatch(setClickedChapter(res.data))
                 }
 
@@ -218,7 +222,7 @@ const ChapterScreen = () => {
 
     return (
         <div >
-            {(!chapters || !contentAction) ? <HomeScreen /> :
+            {(!chapters || !contentAction) ? (!chapters ? <HomeScreen /> : <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}><h1 >No Content</h1></div>) :
                 <div className='chapter__screen'>
 
                     <div className='chapter__content__view'>

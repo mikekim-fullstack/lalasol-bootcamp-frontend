@@ -25,6 +25,9 @@ export const HeroContainer = styled.div`
 
         z-index:2;
     }
+    @media screen and (max-width:370px){
+        /* bottom:50px; */
+    }
 `
 
 export const HeroBg = styled.div`
@@ -36,6 +39,9 @@ export const HeroBg = styled.div`
     width: 100%;
     height: 100%;
     overflow: hidden;
+    @media screen and (max-width:370px){
+        /* height: 70%; */
+    }
 `
 
 export const VideoBg = styled.video`
@@ -75,7 +81,12 @@ export const HeroH1 = styled.h1`
     }
 
     @media screen and (max-width: 480px) {
+        line-height: 40px;
         font-size: 32px;
+    }
+    @media screen and (max-width: 375px) {
+        line-height: 30px;
+        font-size: 24px;
     }
 `
 
@@ -91,6 +102,10 @@ export const HeroP = styled.p`
     @media screen and (max-width: 480px) {
         font-size: 18px;
     }
+    @media screen and (max-width: 370px) {
+        font-size: 18px;
+    }
+    
 `
 
 export const HeroBtnWrapper = styled.div`

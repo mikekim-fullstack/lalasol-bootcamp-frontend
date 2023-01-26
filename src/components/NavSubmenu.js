@@ -128,7 +128,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
         // const selectedCourse = courses?.filter((course) => course.id == chapterId)
         if (chapters?.length > 0) navigate(`${chapter}/${chapterId}/${user.id}`)
         else navigate('screen404')
-        // console.log('handleSelectedChapter--click: ', chapter, chapterId, ', e.target.name', e.target.name, ', ', e.target.name?.split(',').pop())
+        // console.log('handleSelectedChapter--click: ', chapter, 'chapter.length-', chapter.length, 'chapterId-', chapterId, ', e.target.name', e.target.name, ', ', e.target.name?.split(',').pop())
     }
     const handleAddCourse = (e) => {
         // console.log('handleAddCourse-clicked')
