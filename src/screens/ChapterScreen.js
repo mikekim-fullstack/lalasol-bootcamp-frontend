@@ -44,7 +44,9 @@ const ChapterScreen = () => {
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
     const [toggleAnswer, setToggleAnswer] = useState({})
-
+    const [matches, setMatches] = useState(
+        window.matchMedia("(min-width: 1200px)").matches
+    )
     /**
        * Question auto number
        */
@@ -212,14 +214,40 @@ const ChapterScreen = () => {
         // }
     }
 
+    const mediaQuery = (e) => {
+        // ++ REMOVE THE LEFT CONTENT SECTION ++
+        // setMatches(e.matches)
+        let ele = document.querySelector(':root');
+        let cs = getComputedStyle(ele);
+        // console.log('------- mediaQuery: ', contentAction, cs.getPropertyValue('--content-left-width'),)
+        if (contentAction?.length < 3) {
+
+            cs.getPropertyValue('--content-left-width')
+            ele.style.setProperty('--content-left-width', '100%')
+            ele.style.setProperty('--content-main-width', '0%')
+        }
+        else {
+            ele.style.setProperty('--content-left-width', '20%')
+            ele.style.setProperty('--content-main-width', '80%')
+        }
+
+    }
+
     useEffect(() => {
         document.addEventListener("scroll", isViewedContent)
         return () => document.removeEventListener("scroll", isViewedContent)
     }, [])
+
     useEffect(() => {
         // console.log('useEffect-toggleAnswer')
     }, [toggleAnswer])
 
+    useEffect(() => {
+        // window
+        //     .matchMedia("(min-width: 1200px)")
+        //     .addEventListener('change', mediaQuery);
+        mediaQuery()
+    }, [contentAction])
     return (
         <div >
             {(!chapters || !contentAction) ? (!chapters ? <HomeScreen /> : <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}><h1 >No Content</h1></div>) :
@@ -228,7 +256,7 @@ const ChapterScreen = () => {
                     <div className='chapter__content__view'>
 
                         {/* {console.log('contentAction: ', contentAction)} */}
-                        <div className='left_section'>
+                        <div className='left_section' style={{ display: contentAction.length < 3 ? 'none' : 'inherit' }}>
                             <h1>Content Lists</h1>
                             {chapters && contentAction && contentAction.map(content => {
                                 let element = ''

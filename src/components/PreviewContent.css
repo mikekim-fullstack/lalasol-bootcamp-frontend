@@ -16,7 +16,7 @@
     display: grid;
 
     grid-template-columns: repeat(1, minmax(360px, 850px));
-    grid-template-rows: auto auto;
+    /* grid-template-rows: auto auto; */
     justify-content: center;
 
 }
@@ -332,11 +332,10 @@
 
     .content__preview {
 
-        grid-template-columns: minmax(200px, 20%) 80%;
+        grid-template-columns: minmax(200px, var(--content-left-width)) var(--content-main-width);
         grid-template-rows: auto;
         align-items: left;
         display: grid;
-
     }
 
     .content__preview .left_section {

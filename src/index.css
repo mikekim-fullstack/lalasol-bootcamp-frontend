@@ -94,6 +94,9 @@
   --view-width: 900px;
   --side-menu-width: 250px;
   --side-menu-width-on-off: 0;
+  --content-left-width: 20%;
+  --content-main-width: 80%;
+
   /* --mobile-size-tabloid: 600px; */
 }
 

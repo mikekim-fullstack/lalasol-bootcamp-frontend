@@ -79,7 +79,7 @@ const NavSubmenu = ({ className, clickedCat }) => {
             : axios.defaults.baseURL + `/api/fetch-viewed-chapters-bycourse/?user_id=${user.id}&course_id=${course.id}`
         await axios.get(url)
             .then(res => {
-                // console.log('fetchChapters: ', res.data, ', course.chapter_list_sequence', course.chapter_list_sequence)
+                console.log('fetchChapters: ', res.data, ', course.chapter_list_sequence', course.chapter_list_sequence, ', course id:', course.id)
                 dispatch(setChapters({ chapter_list_sequence: course.chapter_list_sequence, res_data: res.data }))
 
                 const seq = course.chapter_list_sequence

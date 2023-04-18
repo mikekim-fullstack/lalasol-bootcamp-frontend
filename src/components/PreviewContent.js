@@ -12,6 +12,9 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
     const [localContentAction, setLocalContentAction] = useState(null)
     const [gitHubFile, setGitHubFile] = useState(null)
     const [fileExtension, setFileExtension] = useState(null)
+    const [matches, setMatches] = useState(
+        window.matchMedia("(min-width: 1200px)").matches
+    )
     /**
      * Question auto number
      */
@@ -59,6 +62,23 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
 
     }
 
+    const mediaQuery = (e) => {
+        // setMatches(e.matches)
+        let ele = document.querySelector(':root');
+        let cs = getComputedStyle(ele);
+        if (contentAction?.length < 3) {
+
+            cs.getPropertyValue('--content-left-width')
+            ele.style.setProperty('--content-left-width', '100%')
+            ele.style.setProperty('--content-main-width', '0%')
+        }
+        else {
+            ele.style.setProperty('--content-left-width', '20%')
+            ele.style.setProperty('--content-main-width', '80%')
+        }
+
+    }
+
     useEffect(() => {
 
         // console.log('<<<< useEffect-PreviewContent: -isCreateContentMode-', isCreateContentMode, ', contentAction', contentAction)
@@ -71,14 +91,21 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
         else {
             setLocalContentAction(contentAction)
         }
-    }, [contentAction])//[contentAction, isCreateContentMode])
+        // let ele = document.querySelector(':root');
+        // let cs = getComputedStyle(ele);
+        // cs.getPropertyValue('--content-left-width')
+        // ele.style.setProperty('--content-left-width', '100%')
+        // ele.style.setProperty('--content-main-width', '0%')
+        mediaQuery()
+
+    }, [contentAction])
     // console.log('============== Preview render ==============')
     return (
         localContentAction &&
         <div className='content__preview'>
             {/* {console.log('localContentAction: ', localContentAction)} */}
 
-            <div className='left_section'>
+            <div className='left_section' style={{ display: localContentAction.length < 3 ? 'none' : 'inherit' }}>
                 <h1>Content Lists</h1>
                 {localContentAction && localContentAction.map((content, index) => {
                     let element = ''
@@ -109,7 +136,7 @@ const PreviewContent = ({ contentAction, clickedContentId, isCreateContentMode, 
 
                 })}
             </div>
-            <div className='main_section'>
+            <div className='main_section' >
 
                 {localContentAction && localContentAction.map((content, index) => {
                     let element = ''
